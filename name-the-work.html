@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Name the Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-style:italic; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo" aria-hidden="true">❦</div>
+    <div>
+      <h1>Name the Work</h1>
+      <p class="sub">Characters appear one per second, from minor to major. Name the novel, play, or poem as soon as you know it.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How it works</summary>
+    <ul>
+      <li>A new character appears every second, from minor to major.</li>
+      <li>Characters named in the title are never shown. When a work has one clear main character who isn’t named in the title, they appear last, marked with a ★.</li>
+      <li>You can answer at any time, and in a timed round, answering early leaves more time for other novels.</li>
+      <li>The six choices come from the same tradition when possible: American, British and Irish, or world literature.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="timeLbl">Format</span>
+      <div class="seg-btns" role="group" aria-labelledby="timeLbl" data-setting="dur">
+        <button type="button" data-v="0" aria-pressed="false">Untimed</button>
+        <button type="button" data-v="120" aria-pressed="true">2 min</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Works to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script>
+/*GEN*/
+var WorkGen = (function(){
+  var NOVELS = [["Moby Dick", "Herman Melville", "us", ["Stubb", "Queequeg", "Starbuck", "Captain Ahab", "Ishmael"], true, "novel"], ["The Great Gatsby", "F. Scott Fitzgerald", "us", ["Myrtle Wilson", "Jordan Baker", "Tom Buchanan", "Daisy Buchanan", "Nick Carraway"], false, "novel"], ["Don Quixote", "Miguel de Cervantes", "world", ["Sansón Carrasco", "Rocinante", "Dulcinea del Toboso", "Sancho Panza"], false, "novel"], ["1984", "George Orwell", "uk", ["Mr. Charrington", "O’Brien", "Big Brother", "Julia", "Winston Smith"], true, "novel"], ["The Scarlet Letter", "Nathaniel Hawthorne", "us", ["Governor Bellingham", "Pearl", "Roger Chillingworth", "Arthur Dimmesdale", "Hester Prynne"], true, "novel"], ["Pride and Prejudice", "Jane Austen", "uk", ["Mr. Collins", "Mr. Wickham", "Jane Bennet", "Mr. Darcy", "Elizabeth Bennet"], true, "novel"], ["Jane Eyre", "Charlotte Bronte", "uk", ["Helen Burns", "Mrs. Reed", "St. John Rivers", "Bertha Mason", "Mr. Rochester"], false, "novel"], ["To Kill a Mockingbird", "Harper Lee", "us", ["Calpurnia", "Dill Harris", "Boo Radley", "Atticus Finch", "Scout Finch"], true, "novel"], ["The Red Badge of Courage", "Stephen Crane", "us", ["The tattered soldier", "Wilson", "Jim Conklin", "Henry Fleming"], true, "novel"], ["The Adventures of Tom Sawyer", "Mark Twain", "us", ["Muff Potter", "Aunt Polly", "Injun Joe", "Becky Thatcher", "Huckleberry Finn"], false, "novel"], ["Les Misérables", "Victor Hugo", "world", ["Fantine", "Marius Pontmercy", "Cosette", "Javert", "Jean Valjean"], true, "novel"], ["The Catcher in the Rye", "J. D. Salinger", "us", ["Mr. Antolini", "Stradlater", "Allie Caulfield", "Phoebe Caulfield", "Holden Caulfield"], true, "novel"], ["The Grapes of Wrath", "John Steinbeck", "us", ["Grampa Joad", "Rose of Sharon", "Jim Casy", "Ma Joad", "Tom Joad"], true, "novel"], ["Ulysses", "James Joyce", "uk", ["Blazes Boylan", "Buck Mulligan", "Molly Bloom", "Stephen Dedalus", "Leopold Bloom"], true, "novel"], ["Heart of Darkness", "Joseph Conrad", "uk", ["The Intended", "The harlequin", "The manager", "Kurtz", "Marlow"], true, "novella"], ["Candide", "Voltaire", "world", ["Martin", "Cacambo", "Cunégonde", "Pangloss"], false, "novella"], ["The Adventures of Huckleberry Finn", "Mark Twain", "us", ["Widow Douglas", "The Duke", "The King", "Tom Sawyer", "Jim"], false, "novel"], ["Anna Karenina", "Leo Tolstoy", "world", ["Dolly Oblonskaya", "Stiva Oblonsky", "Kitty Shcherbatskaya", "Count Vronsky", "Konstantin Levin"], false, "novel"], ["Crime and Punishment", "Fyodor Dostoyevsky", "world", ["Razumikhin", "Dunya", "Porfiry Petrovich", "Sonya Marmeladova", "Rodion Raskolnikov"], true, "novel"], ["Robinson Crusoe", "Daniel Defoe", "uk", ["Xury", "The Portuguese captain", "Will Atkins", "Friday"], false, "novel"], ["War and Peace", "Leo Tolstoy", "world", ["Anatole Kuragin", "Hélène Kuragina", "Prince Andrei Bolkonsky", "Natasha Rostova", "Pierre Bezukhov"], true, "novel"], ["Brave New World", "Aldous Huxley", "uk", ["Mustapha Mond", "Helmholtz Watson", "Lenina Crowne", "Bernard Marx", "John the Savage"], true, "novel"], ["One Hundred Years of Solitude", "Gabriel Garcia Marquez", "world", ["Melquíades", "Remedios the Beauty", "Úrsula Iguarán", "Colonel Aureliano Buendía", "José Arcadio Buendía"], true, "novel"], ["Frankenstein", "Mary Shelley", "uk", ["Justine Moritz", "Henry Clerval", "Elizabeth Lavenza", "Robert Walton", "The Creature"], false, "novella"], ["Catch-22", "Joseph Heller", "us", ["Major Major", "Doc Daneeka", "Colonel Cathcart", "Milo Minderbinder", "Yossarian"], true, "novel"], ["The Three Musketeers", "Alexandre Dumas", "world", ["Cardinal Richelieu", "Constance Bonacieux", "Milady de Winter", "Athos", "d’Artagnan"], true, "novel"], ["Uncle Tom’s Cabin", "Harriet Beecher Stowe", "us", ["Topsy", "Augustine St. Clare", "Simon Legree", "Little Eva", "Eliza Harris"], false, "novel"], ["Slaughterhouse Five", "Kurt Vonnegut", "us", ["Montana Wildhack", "Roland Weary", "Edgar Derby", "Kilgore Trout", "Billy Pilgrim"], true, "novel"], ["A Tale of Two Cities", "Charles Dickens", "uk", ["Jerry Cruncher", "Madame Defarge", "Lucie Manette", "Charles Darnay", "Sydney Carton"], true, "novel"], ["Animal Farm", "George Orwell", "uk", ["Moses", "Squealer", "Boxer", "Snowball", "Napoleon"], true, "novel"], ["Little Women", "Louisa May Alcott", "us", ["Mr. Laurence", "Laurie", "Amy March", "Beth March", "Jo March"], true, "novel"], ["Oliver Twist", "Charles Dickens", "uk", ["Mr. Bumble", "Mr. Brownlow", "Nancy", "Bill Sikes", "Fagin"], false, "novel"], ["Lord of the Flies", "William Golding", "uk", ["Roger", "Simon", "Jack Merridew", "Piggy", "Ralph"], true, "novel"], ["Things Fall Apart", "Chinua Achebe", "world", ["Obierika", "Ezinma", "Ikemefuna", "Nwoye", "Okonkwo"], true, "novel"], ["The Stranger", "Albert Camus", "world", ["The chaplain", "Salamano", "Raymond Sintès", "Marie Cardona", "Meursault"], true, "novella"], ["Lolita", "Vladimir Nabokov", "world", ["Valeria", "Charlotte Haze", "Clare Quilty", "Humbert Humbert"], false, "novel"], ["Alice’s Adventures in Wonderland", "Lewis Carroll", "uk", ["The Caterpillar", "The Mad Hatter", "The Cheshire Cat", "The Queen of Hearts", "The White Rabbit"], false, "novel"], ["Wuthering Heights", "Emily Bronte", "uk", ["Lockwood", "Nelly Dean", "Edgar Linton", "Catherine Earnshaw", "Heathcliff"], true, "novel"], ["Great Expectations", "Charles Dickens", "uk", ["Joe Gargery", "Abel Magwitch", "Miss Havisham", "Estella", "Pip"], true, "novel"], ["The Call of the Wild", "Jack London", "us", ["Manuel", "François", "Spitz", "John Thornton", "Buck"], true, "novella"], ["Treasure Island", "Robert Louis Stevenson", "uk", ["Ben Gunn", "Billy Bones", "Captain Smollett", "Long John Silver", "Jim Hawkins"], true, "novel"], ["Vanity Fair", "William Makepeace Thackeray", "uk", ["Rawdon Crawley", "George Osborne", "William Dobbin", "Amelia Sedley", "Becky Sharp"], true, "novel"], ["Beloved", "Toni Morrison", "us", ["Baby Suggs", "Stamp Paid", "Paul D", "Denver", "Sethe"], false, "novel"], ["The Jungle", "Upton Sinclair", "us", ["Phil Connor", "Marija Berczynskas", "Ona Rudkus", "Jurgis Rudkus"], true, "novel"], ["The Count of Monte Cristo", "Alexandre Dumas", "world", ["Danglars", "Villefort", "Abbé Faria", "Mercédès", "Edmond Dantès"], true, "novel"], ["The Metamorphosis", "Franz Kafka", "world", ["The chief clerk", "Mr. Samsa", "Mrs. Samsa", "Grete Samsa", "Gregor Samsa"], true, "novella"], ["David Copperfield", "Charles Dickens", "uk", ["James Steerforth", "Agnes Wickfield", "Betsey Trotwood", "Mr. Micawber", "Uriah Heep"], false, "novel"], ["Gulliver’s Travels", "Jonathan Swift", "uk", ["Glumdalclitch", "The Lilliputians", "The Yahoos", "The Houyhnhnms"], false, "novel"], ["The Sound and the Fury", "William Faulkner", "us", ["Dilsey", "Quentin Compson", "Jason Compson", "Benjy Compson", "Caddy Compson"], true, "novel"], ["Of Mice and Men", "John Steinbeck", "us", ["Curley’s wife", "Candy", "Curley", "Lennie Small", "George Milton"], true, "novella"], ["The Sun Also Rises", "Ernest Hemingway", "us", ["Bill Gorton", "Pedro Romero", "Robert Cohn", "Lady Brett Ashley", "Jake Barnes"], true, "novel"], ["A Farewell to Arms", "Ernest Hemingway", "us", ["Helen Ferguson", "The priest", "Rinaldi", "Catherine Barkley", "Frederic Henry"], true, "novel"], ["The Hunchback of Notre Dame", "Victor Hugo", "world", ["Pierre Gringoire", "Phoebus", "Claude Frollo", "Esmeralda", "Quasimodo"], true, "novel"], ["Madame Bovary", "Gustave Flaubert", "world", ["Lheureux", "Homais", "Léon Dupuis", "Rodolphe Boulanger"], false, "novel"], ["Main Street", "Sinclair Lewis", "us", ["Bea Sorenson", "Erik Valborg", "Vida Sherwin", "Will Kennicott", "Carol Kennicott"], true, "novel"], ["The Pilgrim’s Progress", "John Bunyan", "uk", ["Mr. Worldly Wiseman", "Giant Despair", "Evangelist", "Faithful", "Christian"], true, "novel"], ["The Jungle Book", "Rudyard Kipling", "uk", ["Kaa", "Shere Khan", "Baloo", "Bagheera", "Mowgli"], true, "novel"], ["The Old Man and the Sea", "Ernest Hemingway", "us", ["Perico", "Martin", "The marlin", "Manolin", "Santiago"], true, "novella"], ["Ivanhoe", "Sir Walter Scott", "uk", ["Isaac of York", "Cedric the Saxon", "Brian de Bois-Guilbert", "Rowena", "Rebecca"], false, "novel"], ["Middlemarch", "George Eliot", "uk", ["Rosamond Vincy", "Mr. Casaubon", "Will Ladislaw", "Tertius Lydgate", "Dorothea Brooke"], true, "novel"], ["For Whom the Bell Tolls", "Ernest Hemingway", "us", ["Anselmo", "Pablo", "Pilar", "María", "Robert Jordan"], true, "novel"], ["All Quiet on the Western Front", "Erich Maria Remarque", "world", ["Himmelstoss", "Tjaden", "Albert Kropp", "Kat Katczinsky", "Paul Bäumer"], true, "novel"], ["The Last of the Mohicans", "James Fenimore Cooper", "us", ["Major Heyward", "Cora Munro", "Magua", "Uncas", "Hawkeye"], true, "novel"], ["A Christmas Carol", "Charles Dickens", "uk", ["Fred", "Tiny Tim", "Bob Cratchit", "Jacob Marley", "Ebenezer Scrooge"], true, "novella"], ["As I Lay Dying", "William Faulkner", "us", ["Vardaman Bundren", "Jewel Bundren", "Anse Bundren", "Addie Bundren", "Darl Bundren"], true, "novel"], ["My Ántonia", "Willa Cather", "us", ["Otto Fuchs", "Jake Marpole", "Lena Lingard", "Grandmother Burden", "Jim Burden"], false, "novel"], ["The Brothers Karamazov", "Fyodor Dostoyevsky", "world", ["Father Zosima", "Smerdyakov", "Katerina Ivanovna", "Grushenka"], false, "novel"], ["The Picture of Dorian Gray", "Oscar Wilde", "uk", ["Sibyl Vane", "James Vane", "Basil Hallward", "Lord Henry Wotton"], false, "novel"], ["Fahrenheit 451", "Ray Bradbury", "us", ["Mildred Montag", "Faber", "Clarisse McClellan", "Captain Beatty", "Guy Montag"], true, "novel"], ["Their Eyes Were Watching God", "Zora Neale Hurston", "us", ["Pheoby Watson", "Logan Killicks", "Joe Starks", "Tea Cake", "Janie Crawford"], true, "novel"], ["Sense and Sensibility", "Jane Austen", "uk", ["John Willoughby", "Colonel Brandon", "Edward Ferrars", "Marianne Dashwood", "Elinor Dashwood"], true, "novel"], ["Dracula", "Bram Stoker", "uk", ["Renfield", "Lucy Westenra", "Abraham Van Helsing", "Mina Harker", "Jonathan Harker"], true, "novel"], ["Hamlet", "William Shakespeare", "uk", ["Rosencrantz", "Horatio", "Laertes", "Ophelia", "Claudius"], false, "play"], ["Oedipus Rex", "Sophocles", "world", ["The shepherd", "Creon", "Tiresias", "Jocasta"], false, "play"], ["Macbeth", "William Shakespeare", "uk", ["Fleance", "Duncan", "The three witches", "Macduff", "Banquo"], false, "play"], ["Romeo and Juliet", "William Shakespeare", "uk", ["Paris", "Tybalt", "The Nurse", "Friar Laurence", "Mercutio"], false, "play"], ["Othello", "William Shakespeare", "uk", ["Bianca", "Roderigo", "Cassio", "Desdemona", "Iago"], false, "play"], ["The Tempest", "William Shakespeare", "uk", ["Trinculo", "Caliban", "Ariel", "Miranda", "Prospero"], true, "play"], ["King Lear", "William Shakespeare", "uk", ["The Fool", "Edmund", "Goneril", "Gloucester", "Cordelia"], false, "play"], ["A Streetcar Named Desire", "Tennessee Williams", "us", ["Eunice Hubbell", "Mitch", "Stella Kowalski", "Stanley Kowalski", "Blanche DuBois"], true, "play"], ["A Midsummer Night’s Dream", "William Shakespeare", "uk", ["Lysander", "Titania", "Oberon", "Puck", "Nick Bottom"], false, "play"], ["Our Town", "Thornton Wilder", "us", ["Mrs. Gibbs", "Dr. Gibbs", "George Gibbs", "Emily Webb", "The Stage Manager"], false, "play"], ["Pygmalion", "George Bernard Shaw", "uk", ["Freddy Eynsford-Hill", "Alfred Doolittle", "Colonel Pickering", "Henry Higgins", "Eliza Doolittle"], true, "play"], ["A Doll’s House", "Henrik Ibsen", "world", ["Dr. Rank", "Mrs. Linde", "Krogstad", "Torvald Helmer", "Nora Helmer"], true, "play"], ["The Merchant of Venice", "William Shakespeare", "uk", ["Jessica", "Bassanio", "Antonio", "Portia", "Shylock"], false, "play"], ["Julius Caesar", "William Shakespeare", "uk", ["Calpurnia", "Casca", "Mark Antony", "Cassius", "Brutus"], false, "play"], ["Death of a Salesman", "Arthur Miller", "us", ["Charley", "Linda Loman", "Happy Loman", "Biff Loman", "Willy Loman"], true, "play"], ["The Crucible", "Arthur Miller", "us", ["Tituba", "Reverend Hale", "Elizabeth Proctor", "Abigail Williams", "John Proctor"], true, "play"], ["Faust", "Johann Wolfgang von Goethe", "world", ["Wagner", "Martha", "Gretchen", "Mephistopheles"], false, "play"], ["Waiting for Godot", "Samuel Beckett", "uk", ["The Boy", "Lucky", "Pozzo", "Estragon", "Vladimir"], false, "play"], ["The Glass Menagerie", "Tennessee Williams", "us", ["Jim O’Connor", "Laura Wingfield", "Amanda Wingfield", "Tom Wingfield"], false, "play"], ["Antigone", "Sophocles", "world", ["Tiresias", "Ismene", "Haemon", "Creon"], false, "play"], ["The Importance of Being Earnest", "Oscar Wilde", "uk", ["Miss Prism", "Lady Bracknell", "Cecily Cardew", "Algernon Moncrieff", "Jack Worthing"], true, "play"], ["A Raisin in the Sun", "Lorraine Hansberry", "us", ["Joseph Asagai", "George Murchison", "Beneatha Younger", "Lena Younger", "Walter Lee Younger"], true, "play"], ["As You Like It", "William Shakespeare", "uk", ["Touchstone", "Jaques", "Celia", "Orlando", "Rosalind"], true, "play"], ["No Exit", "Jean-Paul Sartre", "world", ["The valet", "Estelle", "Inès", "Garcin"], false, "play"], ["The Iliad", "Homer", "world", ["Priam", "Patroclus", "Agamemnon", "Hector", "Achilles"], true, "epic poem"], ["The Odyssey", "Homer", "world", ["Polyphemus", "Calypso", "Athena", "Penelope", "Telemachus"], false, "epic poem"], ["The Aeneid", "Virgil", "world", ["Ascanius", "Turnus", "Juno", "Dido"], false, "epic poem"], ["Paradise Lost", "John Milton", "uk", ["Beelzebub", "Raphael", "Eve", "Adam", "Satan"], false, "epic poem"], ["The Divine Comedy", "Dante Alighieri", "world", ["Cato", "Statius", "Beatrice", "Virgil", "Dante"], true, "epic poem"], ["Beowulf", "an unknown poet", "uk", ["Unferth", "Wiglaf", "Hrothgar", "Grendel’s mother", "Grendel"], false, "epic poem"], ["Don Juan", "George Gordon, Lord Byron", "uk", ["Gulbeyaz", "Lambro", "Donna Julia", "Haidée"], false, "epic poem"], ["Bhagavad Gita", "Vyasa (traditionally)", "world", ["Sanjaya", "Dhritarashtra", "Krishna", "Arjuna"], true, "epic poem"], ["The Canterbury Tales", "Geoffrey Chaucer", "uk", ["The Pardoner", "The Knight", "The Miller", "Harry Bailly", "The Wife of Bath"], false, "poem"], ["The Rime of the Ancient Mariner", "Samuel Taylor Coleridge", "uk", ["The Hermit", "The Pilot’s Boy", "Life-in-Death", "The albatross", "The Wedding-Guest"], false, "poem"], ["The Thousand and One Nights", "many storytellers", "world", ["Sinbad", "Ali Baba", "Aladdin", "Shahryar", "Scheherazade"], true, "story collection"]];
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  var deck = [];
+  function make(){
+    if (!deck.length) deck = shuffle(NOVELS.slice());
+    var n = deck.pop(), title = n[0], author = n[1], group = n[2], chars = n[3], hasMain = n[4], kind = n[5];
+    // Wrong answers come from the same tradition (American, British and Irish, or world literature) when possible
+    var same = shuffle(NOVELS.filter(function(x){ return x[2] === group && x[0] !== title; }));
+    var other = shuffle(NOVELS.filter(function(x){ return x[2] !== group; }));
+    var wrong = same.concat(other).slice(0, 5).map(function(x){ return x[0]; });
+    var opts = shuffle([title].concat(wrong));
+    return {
+      id: title,
+      chars: chars.map(esc),
+      probH: esc(chars[chars.length - 1]),
+      bigH: "<div class=\"ask\">Name the work</div><ol class=\"chars\">" +
+        chars.map(function(c, i){ return "<li" + (hasMain && i === chars.length - 1 ? " class=\"main\"" : "") + ">" + esc(c) + "</li>"; }).join("") + "</ol>",
+      optH: opts.map(esc), ansH: "<i>" + esc(title) + "</i>", answer: opts.indexOf(title),
+      steps: "<i>" + esc(title) + "</i>, " + (/^[aeiou]/i.test(kind) ? "an " : "a ") + esc(kind) + " by " + esc(author) + ". Characters shown, from minor to major: " + chars.map(esc).join(", ") + "."
+    };
+  }
+  return { make: make, _N: NOVELS };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {all:"All works"};
+
+  var level = "all", dur = 120, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = WorkGen.make(); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "namethework:score:" + level + ":" + dur; }
+  function lbLabel(){ return LVL_NAMES[level] + ", " + DUR_NAMES[dur]; }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return (y.s - x.s) || ((y.s / Math.max(1, y.a)) - (x.s / Math.max(1, x.a))) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    if (s <= 0) return false;
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, a: a, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    if (!dur){
+      box.innerHTML = "<p class=\"lb-note\">Untimed: answer " + QN + " questions at your own pace. Best scores are kept for timed rounds.</p>";
+      return;
+    }
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + r.s + "<small> pts</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  function afterRound(){
+    var title = document.getElementById("overTitle");
+    els.best.className = "";
+    els.best.textContent = "";
+    if (!dur){
+      title.textContent = "Done!";
+      var secs = Math.round((performance.now() - startedAt) / 1000);
+      els.best.textContent = "Finished in " + Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0") + ".";
+      renderLB(els.lbOver, -1);
+      return;
+    }
+    title.textContent = "Time’s up";
+    if (lbQualifies(score(), attempted)){
+      var entry = {s: score(), a: attempted, t: Date.now()};
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent = rank === 0 ? "New personal best!" : "That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  function startReveal(){
+    clearInterval(revealTimer);
+    var items = els.prob.querySelectorAll(".chars li"), shown = 0;
+    function next(){
+      if (shown > 0) items[shown - 1].classList.remove("new");
+      if (shown < items.length){ items[shown].classList.add("on", "new"); shown++; }
+      if (shown >= items.length) clearInterval(revealTimer);
+    }
+    next();
+    revealTimer = setInterval(next, 1000);
+  }
+  function revealAll(){
+    clearInterval(revealTimer);
+    els.prob.querySelectorAll(".chars li").forEach(function(li){ li.classList.add("on"); li.classList.remove("new"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = fmtScore(score());
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>
