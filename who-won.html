@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Won?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+.choice i, .prob i, .mq i, .row i{font-family:"Times New Roman", Georgia, serif; font-size:1.1em}
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin-top:.5rem}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1.15rem; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:5.2rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo" aria-hidden="true">★</div>
+    <div>
+      <h1>Who Won?</h1>
+      <p class="sub">U.S. presidential elections from 1796 to 2024. Given the year and a major issue, pick the winner.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How the choices work</summary>
+    <ul>
+      <li>One wrong choice is the candidate who lost that election.</li>
+      <li>The other two are presidents who served within a few terms of the winner, sometimes both earlier, sometimes both later, sometimes one of each.</li>
+      <li>Elections where the winner ran unopposed (1789, 1792 and 1820) are left out.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="timeLbl">Format</span>
+      <div class="seg-btns" role="group" aria-labelledby="timeLbl" data-setting="dur">
+        <button type="button" data-v="0" aria-pressed="false">Untimed</button>
+        <button type="button" data-v="120" aria-pressed="true">2 min</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Elections to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">4</span> (or <span class="kbd">A</span>–<span class="kbd">D</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script>
+/*GEN*/
+var WhoWon = (function(){
+  var PRES = ["George Washington", "John Adams", "Thomas Jefferson", "James Madison", "James Monroe", "John Quincy Adams", "Andrew Jackson", "Martin Van Buren", "William Henry Harrison", "John Tyler", "James K. Polk", "Zachary Taylor", "Millard Fillmore", "Franklin Pierce", "James Buchanan", "Abraham Lincoln", "Andrew Johnson", "Ulysses S. Grant", "Rutherford B. Hayes", "James A. Garfield", "Chester A. Arthur", "Grover Cleveland", "Benjamin Harrison", "William McKinley", "Theodore Roosevelt", "William Howard Taft", "Woodrow Wilson", "Warren G. Harding", "Calvin Coolidge", "Herbert Hoover", "Franklin D. Roosevelt", "Harry S. Truman", "Dwight D. Eisenhower", "John F. Kennedy", "Lyndon B. Johnson", "Richard Nixon", "Gerald Ford", "Jimmy Carter", "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump", "Joe Biden"];
+  var ELECTIONS = [[1796, "John Adams", "Thomas Jefferson", "The first contested election, with the new parties split over ties to Britain or France"], [1800, "Thomas Jefferson", "John Adams", "The Alien and Sedition Acts, and an Electoral College tie decided by the House"], [1804, "Thomas Jefferson", "Charles C. Pinckney", "The popular Louisiana Purchase"], [1808, "James Madison", "Charles C. Pinckney", "The unpopular Embargo Act that cut off trade with Europe"], [1812, "James Madison", "DeWitt Clinton", "The War of 1812 with Britain"], [1816, "James Monroe", "Rufus King", "The collapse of the Federalist Party after the War of 1812"], [1824, "John Quincy Adams", "Andrew Jackson", "No one won an Electoral College majority, so the House decided, amid charges of a “corrupt bargain”"], [1828, "Andrew Jackson", "John Quincy Adams", "A rematch of 1824, with the “Tariff of Abominations” and the rise of the common man"], [1832, "Andrew Jackson", "Henry Clay", "Renewing the charter of the Second Bank of the United States"], [1836, "Martin Van Buren", "William Henry Harrison", "Continuing the outgoing president’s policies, while the Whigs ran several regional candidates"], [1840, "William Henry Harrison", "Martin Van Buren", "Hard times after the Panic of 1837, and a “log cabin and hard cider” campaign"], [1844, "James K. Polk", "Henry Clay", "Annexing Texas and expanding into Oregon"], [1848, "Zachary Taylor", "Lewis Cass", "Whether slavery could spread into the land won from Mexico"], [1852, "Franklin Pierce", "Winfield Scott", "Enforcing the Compromise of 1850 and the Fugitive Slave Act"], [1856, "James Buchanan", "John C. Frémont", "The Kansas-Nebraska Act and violence in “Bleeding Kansas”"], [1860, "Abraham Lincoln", "Stephen A. Douglas", "Slavery in the western territories, with the Democratic Party split in two"], [1864, "Abraham Lincoln", "George B. McClellan", "Whether to fight the Civil War to victory or seek a negotiated peace"], [1868, "Ulysses S. Grant", "Horatio Seymour", "Reconstruction of the South, after the first impeachment of a president"], [1872, "Ulysses S. Grant", "Horace Greeley", "Corruption in government and the future of Reconstruction"], [1876, "Rutherford B. Hayes", "Samuel J. Tilden", "Disputed electoral votes, settled by the Compromise of 1877 that ended Reconstruction"], [1880, "James A. Garfield", "Winfield Scott Hancock", "Civil service reform and the “spoils system”"], [1884, "Grover Cleveland", "James G. Blaine", "Corruption charges and personal scandals on both sides"], [1888, "Benjamin Harrison", "Grover Cleveland", "High protective tariffs"], [1892, "Grover Cleveland", "Benjamin Harrison", "Tariffs and the rise of the farmers’ Populist Party"], [1896, "William McKinley", "William Jennings Bryan", "Free silver vs. the gold standard (the “Cross of Gold” speech)"], [1900, "William McKinley", "William Jennings Bryan", "Imperialism after the Spanish-American War, including control of the Philippines"], [1904, "Theodore Roosevelt", "Alton B. Parker", "The “Square Deal” and breaking up big trusts"], [1908, "William Howard Taft", "William Jennings Bryan", "Continuing the outgoing president’s progressive reforms"], [1912, "Woodrow Wilson", "Theodore Roosevelt", "The Republican Party split, and the new Progressive (“Bull Moose”) Party ran a candidate"], [1916, "Woodrow Wilson", "Charles Evans Hughes", "Staying out of World War I (“He kept us out of war”)"], [1920, "Warren G. Harding", "James M. Cox", "A “return to normalcy” after World War I, and the League of Nations"], [1924, "Calvin Coolidge", "John W. Davis", "Postwar prosperity, after the Teapot Dome scandal"], [1928, "Herbert Hoover", "Al Smith", "Prosperity and Prohibition, with the first Catholic major-party nominee"], [1932, "Franklin D. Roosevelt", "Herbert Hoover", "The Great Depression and the promise of a “New Deal”"], [1936, "Franklin D. Roosevelt", "Alf Landon", "A referendum on the New Deal"], [1940, "Franklin D. Roosevelt", "Wendell Willkie", "An unprecedented third term, with war raging in Europe"], [1944, "Franklin D. Roosevelt", "Thomas E. Dewey", "Leadership during World War II, and a fourth term"], [1948, "Harry S. Truman", "Thomas E. Dewey", "A famous upset that newspapers got wrong on election night, with a party split over civil rights"], [1952, "Dwight D. Eisenhower", "Adlai Stevenson", "The Korean War and fears of communism"], [1956, "Dwight D. Eisenhower", "Adlai Stevenson", "Peace and prosperity, in a rematch of 1952"], [1960, "John F. Kennedy", "Richard Nixon", "The Cold War and the first televised presidential debates"], [1964, "Lyndon B. Johnson", "Barry Goldwater", "The Civil Rights Act and the “Great Society,” after a president’s assassination"], [1968, "Richard Nixon", "Hubert Humphrey", "The Vietnam War, protests, and “law and order”"], [1972, "Richard Nixon", "George McGovern", "Ending the Vietnam War, months after the Watergate break-in"], [1976, "Jimmy Carter", "Gerald Ford", "Restoring trust after Watergate and the pardon of the previous president"], [1980, "Ronald Reagan", "Jimmy Carter", "High inflation and the Iran hostage crisis"], [1984, "Ronald Reagan", "Walter Mondale", "Economic recovery (“Morning in America”)"], [1988, "George H. W. Bush", "Michael Dukakis", "Continuing the outgoing president’s policies (“Read my lips: no new taxes”)"], [1992, "Bill Clinton", "George H. W. Bush", "A weak economy and Ross Perot’s third-party run"], [1996, "Bill Clinton", "Bob Dole", "A growing economy and welfare reform"], [2000, "George W. Bush", "Al Gore", "A Florida recount, ended by a Supreme Court decision"], [2004, "George W. Bush", "John Kerry", "The Iraq War and the War on Terror after 9/11"], [2008, "Barack Obama", "John McCain", "The financial crisis and the Great Recession"], [2012, "Barack Obama", "Mitt Romney", "Economic recovery and the Affordable Care Act"], [2016, "Donald Trump", "Hillary Clinton", "Immigration, trade, and a nominee with no prior government experience"], [2020, "Joe Biden", "Donald Trump", "The COVID-19 pandemic"], [2024, "Donald Trump", "Kamala Harris", "Inflation and immigration, after the sitting president withdrew from the race"]];
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function inEra(e, era){
+    if (era === "early") return e[0] <= 1856;
+    if (era === "middle") return e[0] >= 1860 && e[0] <= 1928;
+    if (era === "modern") return e[0] >= 1932;
+    return true;
+  }
+  var deck = [], deckEra = "";
+  // Wrong answers: the losing candidate plus two presidents within four places of the winner.
+  // The pattern (both earlier, both later, or one of each) is random, so the winner is not always in the middle.
+  function distractors(w, l){
+    var wi = PRES.indexOf(w), before = [], after = [];
+    for (var d = 1; d <= 4; d++){
+      var b = PRES[wi - d], a = PRES[wi + d];
+      if (b && b !== l && b !== w) before.push(b);
+      if (a && a !== l && a !== w) after.push(a);
+    }
+    var pats = [];
+    if (before.length >= 2) pats.push("bb");
+    if (after.length >= 2) pats.push("aa");
+    if (before.length && after.length) pats.push("ba");
+    var pat = pick(pats);
+    shuffle(before); shuffle(after);
+    if (pat === "bb") return before.slice(0, 2);
+    if (pat === "aa") return after.slice(0, 2);
+    return [before[0], after[0]];
+  }
+  function make(era){
+    if (!deck.length || deckEra !== era){ deck = shuffle(ELECTIONS.filter(function(e){ return inEra(e, era); })); deckEra = era; }
+    var e = deck.pop();
+    var year = e[0], w = e[1], l = e[2], issue = e[3];
+    var opts = shuffle([w, l].concat(distractors(w, l)));
+    return {
+      id: String(year),
+      probH: String(year),
+      bigH: "<div class=\"yr\">" + year + "</div><div class=\"issue\">" + esc(issue) + "</div><div class=\"ask\">Who won?</div>",
+      optH: opts.map(esc), ansH: esc(w), answer: opts.indexOf(w),
+      steps: "In " + year + ", " + esc(w) + " defeated " + esc(l) + ". Major issue: " + esc(issue) + "."
+    };
+  }
+  return { make: make, _E: ELECTIONS, _P: PRES, _d: distractors };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {all:"1796–2024"};
+
+  var level = "all", dur = 120, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = WhoWon.make(level); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "whowon:score:" + level + ":" + dur; }
+  function lbLabel(){ return LVL_NAMES[level] + ", " + DUR_NAMES[dur]; }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return (y.s - x.s) || ((y.s / Math.max(1, y.a)) - (x.s / Math.max(1, x.a))) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    if (s <= 0) return false;
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, a: a, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    if (!dur){
+      box.innerHTML = "<p class=\"lb-note\">Untimed: answer " + QN + " questions at your own pace. Best scores are kept for timed rounds.</p>";
+      return;
+    }
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + r.s + "<small> pts</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  function afterRound(){
+    var title = document.getElementById("overTitle");
+    els.best.className = "";
+    els.best.textContent = "";
+    if (!dur){
+      title.textContent = "Done!";
+      var secs = Math.round((performance.now() - startedAt) / 1000);
+      els.best.textContent = "Finished in " + Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0") + ".";
+      renderLB(els.lbOver, -1);
+      return;
+    }
+    title.textContent = "Time’s up";
+    if (lbQualifies(score(), attempted)){
+      var entry = {s: score(), a: attempted, t: Date.now()};
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent = rank === 0 ? "New personal best!" : "That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCD"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 3) return;
+    locked = true;
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); locked = false;
+    els.fRight.textContent = fmtScore(score());
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "1234".indexOf(k);
+      if (idx < 0) idx = "abcd".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>

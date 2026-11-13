@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trivia Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f3ec; --ink:#1b1f3b; --muted:#666a85; --line:#e2ddcf; --field:#ffffff;
+  --stage:#1b1f3b; --stage-ink:#fdf8ea; --gold:#e9b414; --red:#d9483b;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11142a; --ink:#f1efe6; --muted:#a3a6c2; --line:#2a2f52; --field:#1a1e3b;
+    --stage:#0a0c1c; --stage-ink:#fdf8ea; --gold:#f2c230; --red:#ff6f61;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11142a; --ink:#f1efe6; --muted:#a3a6c2; --line:#2a2f52; --field:#1a1e3b;
+  --stage:#0a0c1c; --stage-ink:#fdf8ea; --gold:#f2c230; --red:#ff6f61;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%}
+body{
+  margin:0; min-height:100%; background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height:1.45;
+}
+.stage{background:var(--stage); color:var(--stage-ink); padding:2.4rem 1.25rem 2.6rem; text-align:center; position:relative; overflow:hidden}
+.stage::before{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(var(--gold) 1.2px, transparent 1.6px);
+  background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(to bottom, #000, transparent 85%);
+  mask-image:linear-gradient(to bottom, #000, transparent 85%);
+}
+.stage > *{position:relative}
+.kicker{display:inline-block; font-size:.8rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--stage); background:var(--gold); padding:.25rem .7rem; border-radius:999px}
+h1{
+  margin:.7rem 0 0; font-family:"Bricolage Grotesque", "Lexend", system-ui, sans-serif; font-weight:800;
+  font-size:clamp(2.6rem, 11vw, 4rem); line-height:1; letter-spacing:-.02em;
+}
+h1 span{color:var(--gold)}
+.tag{margin:.7rem auto 0; max-width:28rem; color:#c9c7d8}
+.app{max-width:40rem; margin:0 auto; padding:1.75rem 1.25rem 3rem}
+.section{margin:0 0 .7rem; font-size:1rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.games{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.9rem}
+.game{
+  display:flex; gap:1rem; align-items:center; text-decoration:none; color:inherit;
+  background:var(--field); border:2px solid var(--line); border-radius:16px; padding:1rem 1.1rem;
+  box-shadow:0 3px 0 var(--line);
+}
+.game:hover{border-color:var(--gold); box-shadow:0 3px 0 var(--gold)}
+.game:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+.icon{
+  flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--stage); color:var(--gold);
+  display:flex; align-items:center; justify-content:center; font-size:1.6rem;
+}
+.game h2{margin:0; font-size:1.25rem}
+.game p{margin:.2rem 0 0; color:var(--muted); font-size:.92rem}
+.arrow{margin-left:auto; color:var(--red); font-size:1.4rem; flex:none}
+.soon{margin:1.25rem 0 0; color:var(--muted); font-size:.9rem; text-align:center}
+footer{margin-top:2rem; padding-top:.9rem; border-top:1px solid var(--line); font-size:.88rem; color:var(--muted); text-align:center}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<header class="stage">
+  <span class="kicker">Quiz time</span>
+  <h1>Trivia <span>Games</span></h1>
+  <p class="tag">Quick rounds to test what you know. Play timed to beat your best score, or untimed at your own pace.</p>
+</header>
+
+<main class="app">
+  <h2 class="section">U.S. History</h2>
+  <ul class="games">
+    <li><a class="game" href="who-won.html">
+      <span class="icon" aria-hidden="true">★</span>
+      <span><h2>Who Won?</h2><p>Name the winner of each U.S. presidential election from 1796 to 2024, given the year and a major issue.</p></span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a></li>
+  </ul>
+  <p class="soon">More categories coming soon.</p>
+
+  <footer><a href="https://tessie-cs-f26.github.io/math/">Looking for math practice? Go to the math games.</a></footer>
+</main>
+</body>
+</html>
