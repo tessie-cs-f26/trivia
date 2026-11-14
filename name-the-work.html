@@ -170,6 +170,12 @@ footer p{margin:.25rem 0}
 .save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
 .primary.small{font-size:.95rem; padding:.55rem 1.1rem}
 
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
 @media (prefers-reduced-motion: reduce){
   .row.fresh,.choice.wrong{animation:none}
 }
@@ -229,6 +235,7 @@ footer p{margin:.25rem 0}
       <h2 id="overTitle">Time’s up</h2>
       <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
       <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
       <div class="lb" id="lbOver"></div>
       <div class="misses" id="missWrap" hidden>
         <h3>Works to review</h3>
@@ -245,6 +252,7 @@ footer p{margin:.25rem 0}
   </footer>
 </div>
 
+<script src="scores-config.js"></script>
 <script>
 /*GEN*/
 var WorkGen = (function(){
@@ -289,7 +297,7 @@ var WorkGen = (function(){
     ready:$("readyView"), play:$("playView"), over:$("overView"),
     history:$("history"), prob:$("prob"), choices:$("choices"),
     fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
-    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
     missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
   };
 
@@ -351,7 +359,62 @@ var WorkGen = (function(){
       else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
     });
   }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "name-the-work";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL || !dur){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = level + ":" + dur, round = {score: score(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + lbEsc(r.score) + "<small> pts</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            show(d.top, d.id);
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+  }
   function afterRound(){
+    classBoard();
     var title = document.getElementById("overTitle");
     els.best.className = "";
     els.best.textContent = "";
@@ -518,6 +581,7 @@ var WorkGen = (function(){
   });
 
   document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     var k = e.key;
     if (state === "playing") {

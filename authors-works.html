@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Authors &amp; Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.prob .wt{font-size:clamp(1.8rem, 7vw, 2.6rem); font-weight:700; line-height:1.15}
+.prob .kind{color:var(--muted); margin-top:.3rem}
+.prob .au{font-size:clamp(1.5rem, 6vw, 2.1rem); font-weight:700; line-height:1.2}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo" aria-hidden="true">✒</div>
+    <div>
+      <h1>Authors &amp; Works</h1>
+      <p class="sub">Name the author of a famous work, or pick the work from its author and a one-line summary.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How it works</summary>
+    <ul>
+      <li><strong>Author questions</strong> show a title. Pick who wrote it. Wrong choices are usually writers from the same tradition: American, British and Irish, or world literature.</li>
+      <li><strong>Work questions</strong> show an author and a one-sentence summary. Wrong choices include other works by the same author when there are any, so read the summary carefully.</li>
+      <li>Summaries never use the title’s words. A character named in the title is called “the title character.”</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="lvlLbl">Ask for</span>
+      <div class="seg-btns" role="group" aria-labelledby="lvlLbl" data-setting="level">
+        <button type="button" data-v="author" aria-pressed="false">Authors</button>
+        <button type="button" data-v="work" aria-pressed="false">Works</button>
+        <button type="button" data-v="all" aria-pressed="true">Both</button>
+      </div>
+    </div>
+    <div class="seg"><span class="seg-name" id="timeLbl">Format</span>
+      <div class="seg-btns" role="group" aria-labelledby="timeLbl" data-setting="dur">
+        <button type="button" data-v="0" aria-pressed="false">Untimed</button>
+        <button type="button" data-v="120" aria-pressed="true">2 min</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Questions to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script src="scores-config.js"></script>
+<script>
+/*GEN*/
+var LitGen = (function(){
+  var WORKS = [["Hamlet", "William Shakespeare", "uk", "play", "The title character, a prince of Denmark, learns from his father’s ghost that his uncle murdered the king, and agonizes over whether and how to take revenge."], ["Oedipus Rex", "Sophocles", "world", "play", "The title character, king of Thebes, investigates the murder of the former king to end a plague, and uncovers terrible truths about his own birth."], ["Macbeth", "William Shakespeare", "uk", "play", "Spurred on by three witches’ prophecy and his ambitious wife, the title character, a Scottish nobleman, murders his king to seize the throne."], ["Moby-Dick", "Herman Melville", "us", "novel", "A sailor who calls himself Ishmael joins the whaling ship Pequod, whose obsessed Captain Ahab is hunting the title character, the white whale that took his leg."], ["The Iliad", "Homer", "world", "epic poem", "During the Trojan War, the Greek hero Achilles withdraws from battle after a quarrel with Agamemnon, then returns in a rage after his friend Patroclus is killed."], ["The Great Gatsby", "F. Scott Fitzgerald", "us", "novel", "Narrator Nick Carraway watches his mysterious, wealthy neighbor, the title character, throw lavish parties in hopes of winning back Daisy Buchanan."], ["Don Quixote", "Miguel de Cervantes", "world", "novel", "The title character, a Spanish gentleman who has read too many tales of chivalry, sets out as a knight with his squire Sancho Panza and attacks windmills he believes are giants."], ["Romeo and Juliet", "William Shakespeare", "uk", "play", "The two title characters, teenagers from the feuding Montague and Capulet families of Verona, fall in love and marry in secret."], ["The Canterbury Tales", "Geoffrey Chaucer", "uk", "poem", "A group of pilgrims, including a Knight, a Miller, and the Wife of Bath, hold a storytelling contest on their way to a famous shrine."], ["Paradise Lost", "John Milton", "uk", "epic poem", "After his failed rebellion against God, Satan escapes from Hell to tempt Adam and Eve in the Garden of Eden."], ["1984", "George Orwell", "uk", "novel", "In a totalitarian state ruled by Big Brother and the Party, Winston Smith secretly rebels by keeping a diary and falling in love with Julia."], ["Othello", "William Shakespeare", "uk", "play", "The scheming Iago convinces the title character, a Moorish general, that his wife Desdemona has been unfaithful."], ["The Odyssey", "Homer", "world", "epic poem", "A Greek king spends ten years trying to sail home to Ithaca after the Trojan War, facing the Cyclops, Circe, and the Sirens along the way."], ["The Scarlet Letter", "Nathaniel Hawthorne", "us", "novel", "In Puritan Boston, Hester Prynne is forced to wear an embroidered “A” as punishment for having a child outside of marriage."], ["The Tempest", "William Shakespeare", "uk", "play", "Prospero, the exiled Duke of Milan and a powerful magician, uses the spirit Ariel to shipwreck his enemies on his island."], ["Pride and Prejudice", "Jane Austen", "uk", "novel", "Elizabeth Bennet forms a low opinion of the haughty Mr. Darcy, while her mother schemes to marry off her five daughters."], ["King Lear", "William Shakespeare", "uk", "play", "The aging title character divides his realm between the two daughters who flatter him and banishes Cordelia, the daughter who truly loves him."], ["Jane Eyre", "Charlotte Brontë", "uk", "novel", "The title character, a poor orphan, becomes a governess at Thornfield Hall and falls in love with its brooding owner, Mr. Rochester."], ["The Aeneid", "Virgil", "world", "epic poem", "A Trojan prince escapes the fall of Troy and wanders the Mediterranean, pausing for a love affair with Queen Dido of Carthage, on his destined journey to found Rome."], ["To Kill a Mockingbird", "Harper Lee", "us", "novel", "Young Scout Finch grows up in Depression-era Alabama while her father, the lawyer Atticus Finch, defends a Black man falsely accused of a crime."], ["The Red Badge of Courage", "Stephen Crane", "us", "novel", "Young Union soldier Henry Fleming flees from his first battle of the Civil War and longs for a wound to prove his bravery."], ["The Adventures of Tom Sawyer", "Mark Twain", "us", "novel", "The mischievous title character tricks other boys into whitewashing a fence and witnesses a murder in a graveyard with his friend Huck."], ["The Waste Land", "T. S. Eliot", "uk", "poem", "A fragmented modern poem shifts among many voices and scenes, from a fortune teller to a London pub, in a world shattered by World War I."], ["A Streetcar Named Desire", "Tennessee Williams", "us", "play", "Fading Southern belle Blanche DuBois moves in with her sister Stella in New Orleans and clashes with Stella’s brutish husband, Stanley Kowalski."], ["The Divine Comedy", "Dante Alighieri", "world", "epic poem", "The poet himself travels through Hell, Purgatory, and Heaven, guided first by the Roman poet Virgil and then by his beloved Beatrice."], ["Les Misérables", "Victor Hugo", "world", "novel", "After nineteen years in prison for stealing bread, Jean Valjean tries to build an honest life while being hunted by Inspector Javert."], ["The Catcher in the Rye", "J. D. Salinger", "us", "novel", "After being expelled from prep school, sixteen-year-old Holden Caulfield wanders New York City for a few days, criticizing the “phonies” around him."], ["The Grapes of Wrath", "John Steinbeck", "us", "novel", "During the Great Depression, the Joad family loses their Oklahoma farm in the Dust Bowl and travels to California in search of work."], ["Ulysses", "James Joyce", "uk", "novel", "Over a single day in Dublin, advertising canvasser Leopold Bloom and young Stephen Dedalus wander the city."], ["Heart of Darkness", "Joseph Conrad", "uk", "novella", "Sailor Charles Marlow travels up the Congo River in search of Kurtz, a mysterious ivory trader."], ["Candide", "Voltaire", "world", "novella", "The naive title character, taught by his tutor Pangloss that this is “the best of all possible worlds,” travels the globe and meets one disaster after another."], ["Beowulf", "Anonymous", "uk", "epic poem", "The title character, a Geatish warrior, sails to Denmark to kill the monster Grendel, who has been attacking King Hrothgar’s mead hall."], ["The Adventures of Huckleberry Finn", "Mark Twain", "us", "novel", "The title character fakes his own death to escape his abusive father and rafts down the Mississippi River with Jim, who is escaping slavery."], ["A Midsummer Night’s Dream", "William Shakespeare", "uk", "play", "Two pairs of young lovers, a troupe of amateur actors, and a band of fairies, including the mischievous Puck, get tangled up in an enchanted forest outside Athens."], ["Our Town", "Thornton Wilder", "us", "play", "A Stage Manager guides the audience through daily life, love, marriage, and death in the small community of Grover’s Corners, New Hampshire."], ["Anna Karenina", "Leo Tolstoy", "world", "novel", "The title character, a married Russian aristocrat, begins a passionate affair with the dashing Count Vronsky, while Konstantin Levin searches for meaning on his country estate."], ["Crime and Punishment", "Fyodor Dostoyevsky", "world", "novel", "Rodion Raskolnikov, a poor former student in St. Petersburg, murders an old pawnbroker and is tormented by guilt as a clever detective closes in."], ["Inferno", "Dante Alighieri", "world", "poem", "Lost in a dark wood, the poet himself is guided by Virgil down through the nine circles of Hell, where sinners suffer fitting punishments."], ["Robinson Crusoe", "Daniel Defoe", "uk", "novel", "The title character survives a shipwreck and lives for decades on a remote island, where he later rescues a man he names Friday."], ["War and Peace", "Leo Tolstoy", "world", "novel", "Aristocratic Russian families, including Pierre Bezukhov, Prince Andrei Bolkonsky, and Natasha Rostova, live through Napoleon’s invasion of Russia."], ["The Charge of the Light Brigade", "Alfred, Lord Tennyson", "uk", "poem", "A poem honors six hundred British cavalrymen who obey a mistaken order and ride into the “valley of Death” during the Crimean War."], ["Brave New World", "Aldous Huxley", "uk", "novel", "In a future society where people are mass-produced in hatcheries and kept content with the drug soma, Bernard Marx brings an outsider called John the Savage back to London."], ["One Hundred Years of Solitude", "Gabriel García Márquez", "world", "novel", "Seven generations of the Buendía family live through magic, war, and love in the isolated town of Macondo."], ["Frankenstein", "Mary Shelley", "uk", "novella", "The title character, a young Swiss scientist, brings a creature to life from dead body parts and then abandons it in horror."], ["Catch-22", "Joseph Heller", "us", "novel", "Bombardier Yossarian tries every trick he can to get out of flying more combat missions in World War II, but an absurd military rule keeps him trapped."], ["The Three Musketeers", "Alexandre Dumas", "world", "novel", "Young d’Artagnan travels to Paris hoping to join the King’s guards and befriends the title characters as they battle Cardinal Richelieu’s schemes."], ["Uncle Tom’s Cabin", "Harriet Beecher Stowe", "us", "novel", "The title character, an enslaved man of deep faith, is sold away from his family, while Eliza Harris escapes north with her young son."], ["Pygmalion", "George Bernard Shaw", "uk", "play", "Phonetics professor Henry Higgins bets that he can teach Cockney flower seller Eliza Doolittle to speak well enough to pass as a duchess."], ["A Doll’s House", "Henrik Ibsen", "world", "play", "Nora Helmer, a seemingly carefree wife, hides a secret loan she took out years ago to save her husband Torvald’s life."], ["The Merchant of Venice", "William Shakespeare", "uk", "play", "To help his friend Bassanio court Portia, the title character borrows money from the moneylender Shylock, who demands a pound of flesh if it is not repaid."], ["Julius Caesar", "William Shakespeare", "uk", "play", "Brutus and Cassius lead a conspiracy of Roman senators to assassinate the title character, fearing he will make himself king."], ["Slaughterhouse-Five", "Kurt Vonnegut", "us", "novel", "Billy Pilgrim, an American prisoner of war who survives the firebombing of Dresden, becomes “unstuck in time” and is kidnapped by aliens from Tralfamadore."], ["A Tale of Two Cities", "Charles Dickens", "uk", "novel", "In the years around the French Revolution, Lucie Manette, her husband Charles Darnay, and the cynical lawyer Sydney Carton are caught between London and Paris."], ["Animal Farm", "George Orwell", "uk", "novel", "Barnyard creatures overthrow their drunken owner, Mr. Jones, but the pigs, led by Napoleon, gradually seize power for themselves."], ["Little Women", "Louisa May Alcott", "us", "novel", "The four March sisters, Meg, Jo, Beth, and Amy, grow up in Massachusetts while their father is away serving in the Civil War."], ["Oliver Twist", "Charles Dickens", "uk", "novel", "The title character, an orphan who escapes a cruel workhouse, falls in with a gang of child pickpockets led by Fagin in London."], ["Death of a Salesman", "Arthur Miller", "us", "play", "Aging, worn-out Willy Loman struggles to accept that his career and his dreams for his sons, Biff and Happy, have failed."], ["The Crucible", "Arthur Miller", "us", "play", "In 1692 Salem, Massachusetts, Abigail Williams sets off accusations of witchcraft that put farmer John Proctor and his wife Elizabeth in danger."], ["The Rime of the Ancient Mariner", "Samuel Taylor Coleridge", "uk", "poem", "An old sailor stops a wedding guest to tell how he shot an albatross and brought a curse on his ship and crew."], ["Lord of the Flies", "William Golding", "uk", "novel", "After a plane crash, a group of British schoolboys stranded on an island try to govern themselves under Ralph and Piggy, while Jack’s hunters grow savage."], ["Things Fall Apart", "Chinua Achebe", "world", "novel", "Okonkwo, a proud warrior in an Igbo village in Nigeria, sees his traditional world challenged by British missionaries and colonial rule."], ["The Stranger", "Albert Camus", "world", "novella", "Meursault, an emotionally detached Frenchman in Algeria, shows no grief at his mother’s funeral and later shoots a man on a beach."], ["The Raven", "Edgar Allan Poe", "us", "poem", "A grieving scholar, mourning his lost Lenore, is visited at midnight by the title character, a bird that answers every question with “Nevermore.”"], ["Lolita", "Vladimir Nabokov", "world", "novel", "A self-deceiving narrator, Humbert Humbert, describes his disturbing obsession with a young girl, the title character, as they travel across America."], ["Alice’s Adventures in Wonderland", "Lewis Carroll", "uk", "novel", "The title character follows a White Rabbit down a hole into a strange land where she meets the Mad Hatter, the Cheshire Cat, and the Queen of Hearts."], ["Wuthering Heights", "Emily Brontë", "uk", "novel", "On the Yorkshire moors, the orphan Heathcliff and Catherine Earnshaw share a fierce love that brings ruin to two families."], ["Great Expectations", "Charles Dickens", "uk", "novel", "An orphan named Pip receives money from a mysterious benefactor and leaves his blacksmith home to become a gentleman in London, still longing for the cold-hearted Estella."], ["The Call of the Wild", "Jack London", "us", "novella", "Buck, a big pet dog from California, is stolen and sold as a sled dog in the Yukon during the Klondike Gold Rush."], ["Faust", "Johann Wolfgang von Goethe", "world", "play", "The title character, a scholar weary of learning, makes a bargain with the devil Mephistopheles and seduces the innocent Gretchen."], ["Waiting for Godot", "Samuel Beckett", "uk", "play", "Two tramps, Vladimir and Estragon, pass the time by a bare tree while expecting someone, the title character, who never seems to arrive."], ["Treasure Island", "Robert Louis Stevenson", "uk", "novel", "Young Jim Hawkins finds a pirate’s map and sails off to find buried gold, only to face a mutiny led by the ship’s cook, Long John Silver."], ["Leaves of Grass", "Walt Whitman", "us", "poetry collection", "A sprawling collection of free-verse poems celebrates the self, the body, democracy, and ordinary Americans, including “Song of Myself” and “O Captain! My Captain!”"], ["Vanity Fair", "William Makepeace Thackeray", "uk", "novel", "Clever, ambitious Becky Sharp schemes her way up English society, while her kind-hearted friend Amelia Sedley stays loyal to an unworthy husband."], ["Beloved", "Toni Morrison", "us", "novel", "Sethe, who escaped slavery, lives in a house haunted by the ghost of her baby daughter, until a mysterious young woman, the title character, arrives."], ["Ode on a Grecian Urn", "John Keats", "uk", "poem", "The speaker gazes at the figures painted on an ancient vase, frozen forever in a moment of music, love, and sacrifice."], ["The Jungle", "Upton Sinclair", "us", "novel", "Lithuanian immigrant Jurgis Rudkus and his family struggle to survive the brutal conditions of Chicago’s meatpacking plants."], ["The Thousand and One Nights", "Anonymous", "world", "story collection", "To delay her execution, the clever queen Scheherazade tells the king a new story each evening, including tales of Aladdin, Ali Baba, and Sinbad."], ["The Count of Monte Cristo", "Alexandre Dumas", "world", "novel", "Sailor Edmond Dantès is falsely imprisoned by jealous rivals, escapes, finds a hidden fortune, and plots his revenge under a new identity."], ["The Metamorphosis", "Franz Kafka", "world", "novella", "Traveling salesman Gregor Samsa wakes up one morning to find he has turned into a giant insect."], ["David Copperfield", "Charles Dickens", "uk", "novel", "The title character tells his own life story, from an unhappy childhood and work in a London warehouse to his success as a writer."], ["The Glass Menagerie", "Tennessee Williams", "us", "play", "Tom Wingfield remembers life with his faded Southern mother, Amanda, and his painfully shy sister, Laura, who collects tiny animal figurines."], ["Gulliver’s Travels", "Jonathan Swift", "uk", "novel", "The title character, a ship’s surgeon, visits a series of strange lands, including Lilliput, whose people are only six inches tall."], ["The Sound and the Fury", "William Faulkner", "us", "novel", "The decline of the once-proud Compson family of Mississippi is told in four sections, beginning with the thoughts of Benjy, who has an intellectual disability."], ["Of Mice and Men", "John Steinbeck", "us", "novella", "Migrant ranch workers George Milton and Lennie Small, a gentle giant, dream of owning a small farm of their own during the Great Depression."], ["The Sun Also Rises", "Ernest Hemingway", "us", "novel", "Journalist Jake Barnes and a group of American and British expatriates drink their way from Paris to the bullfights in Pamplona, Spain."], ["A Farewell to Arms", "Ernest Hemingway", "us", "novel", "During World War I, American ambulance driver Frederic Henry falls in love with British nurse Catherine Barkley in Italy."], ["Ode to Joy", "Friedrich Schiller", "world", "poem", "A poem celebrates the brotherhood of all people, later set to music in the final movement of Beethoven’s Ninth Symphony."], ["The Hunchback of Notre Dame", "Victor Hugo", "world", "novel", "In medieval Paris, the title character, a cathedral bell-ringer, the archdeacon Claude Frollo, and the captain Phoebus all fall for the beautiful Esmeralda."], ["Antigone", "Sophocles", "world", "play", "The title character defies King Creon’s order by burying her brother Polynices, who was declared a traitor."], ["The Importance of Being Earnest", "Oscar Wilde", "uk", "play", "Two young gentlemen, Jack and Algernon, both use the same false name to win the women they love."], ["Madame Bovary", "Gustave Flaubert", "world", "novel", "The title character, a doctor’s wife in provincial France, is bored by her marriage and seeks romance and luxury through love affairs and debts."], ["Main Street", "Sinclair Lewis", "us", "novel", "Idealistic Carol Kennicott marries a small-town doctor and tries to reform the narrow-minded Minnesota town of Gopher Prairie."], ["The Pilgrim’s Progress", "John Bunyan", "uk", "allegory", "In a dream, the narrator follows Christian on his journey from the City of Destruction to the Celestial City."], ["The Jungle Book", "Rudyard Kipling", "uk", "story collection", "A boy named Mowgli is raised by wolves in India, taught by Baloo the bear and Bagheera the panther, and hunted by the tiger Shere Khan."], ["The Tyger", "William Blake", "uk", "poem", "The speaker asks what kind of creator could have shaped such a fierce, fiery beast, and whether the same creator made the lamb."], ["A Raisin in the Sun", "Lorraine Hansberry", "us", "play", "The Younger family, crowded into a small Chicago apartment, argue over how to spend a $10,000 life insurance check."], ["Don Juan", "Lord Byron", "uk", "epic poem", "The title character, a young Spanish nobleman, has a long series of romantic adventures across Europe, from Spain to a Greek island to Russia."], ["The Old Man and the Sea", "Ernest Hemingway", "us", "novella", "Santiago, an aging Cuban fisherman who has gone 84 days without a catch, hooks an enormous marlin far out in the Gulf Stream."], ["Ivanhoe", "Sir Walter Scott", "uk", "novel", "The title character, a disinherited Saxon knight back from the Crusades, fights for his honor in 12th-century England amid tensions between Saxons and Normans."], ["Middlemarch", "George Eliot", "uk", "novel", "In a provincial English town, idealistic Dorothea Brooke marries the dry scholar Edward Casaubon, while young doctor Tertius Lydgate pursues his own ambitions."], ["For Whom the Bell Tolls", "Ernest Hemingway", "us", "novel", "During the Spanish Civil War, American dynamiter Robert Jordan joins a band of guerrilla fighters to blow up a bridge."], ["All Quiet on the Western Front", "Erich Maria Remarque", "world", "novel", "German schoolboy Paul Bäumer enlists in World War I and experiences the horrors of trench warfare."], ["The Gift of the Magi", "O. Henry", "us", "short story", "A poor young couple, Jim and Della, each secretly sacrifice their most prized possession to buy the other a Christmas present."], ["The Last of the Mohicans", "James Fenimore Cooper", "us", "novel", "During the French and Indian War, the scout Hawkeye and his Native American companions, Chingachgook and his son Uncas, the title character, escort two sisters to a British fort."], ["A Christmas Carol", "Charles Dickens", "uk", "novella", "On December 24, the miserly Ebenezer Scrooge is visited by the ghost of his old partner, Jacob Marley, and then by three spirits."], ["As I Lay Dying", "William Faulkner", "us", "novel", "The poor Bundren family carries their mother Addie’s coffin on a long journey to bury her in her hometown of Jefferson, Mississippi."], ["Bhagavad Gita", "Vyasa (traditionally)", "world", "epic poem", "On the eve of a great battle, the warrior prince Arjuna hesitates to fight his own relatives, and the god Krishna, serving as his charioteer, teaches him about duty."], ["Rip Van Winkle", "Washington Irving", "us", "short story", "The title character, a lazy but good-natured villager, wanders into the Catskill Mountains, drinks with strange little men, and falls into a deep sleep."], ["As You Like It", "William Shakespeare", "uk", "play", "Banished from court, Rosalind disguises herself as a young man and flees to the Forest of Arden, where she meets her love, Orlando."], ["Kubla Khan", "Samuel Taylor Coleridge", "uk", "poem", "A poem describes the dreamlike pleasure-dome built by a Mongol emperor, the title character, in the land of Xanadu."], ["My Ántonia", "Willa Cather", "us", "novel", "Narrator Jim Burden recalls growing up on the Nebraska prairie and his friendship with the title character, a Bohemian immigrant girl."], ["The Brothers Karamazov", "Fyodor Dostoyevsky", "world", "novel", "Three very different siblings, the title characters (passionate Dmitri, intellectual Ivan, and gentle Alyosha), clash with their selfish, scheming father."], ["The Picture of Dorian Gray", "Oscar Wilde", "uk", "novel", "A handsome young man, the title character, wishes that his portrait would age instead of him, and his wish strangely comes true."], ["The Second Coming", "W. B. Yeats", "uk", "poem", "Written after World War I, the poem describes a world falling into chaos and imagines a “rough beast” slouching toward Bethlehem."], ["Fahrenheit 451", "Ray Bradbury", "us", "novel", "In a future America where books are outlawed, fireman Guy Montag burns books for a living until a curious teenager named Clarisse makes him question his life."], ["No Exit", "Jean-Paul Sartre", "world", "play", "Three dead strangers, Garcin, Inès, and Estelle, are locked together in a single room in Hell and slowly realize they are each other’s torturers."], ["Their Eyes Were Watching God", "Zora Neale Hurston", "us", "novel", "Janie Crawford tells her friend Pheoby the story of her three marriages and her search for independence in early 20th-century Florida."], ["Howl", "Allen Ginsberg", "us", "poem", "A long, raw poem mourns the “best minds” of the poet’s generation, destroyed by madness, poverty, and a cruel society."], ["Sense and Sensibility", "Jane Austen", "uk", "novel", "After their father’s death leaves them with little money, level-headed Elinor Dashwood and emotional Marianne Dashwood look for love."], ["Dracula", "Bram Stoker", "uk", "novel", "Englishman Jonathan Harker, his fiancée Mina, and Professor Van Helsing battle the title character, a vampire who moves from Transylvania to England."]];
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function art(k){ return (/^[aeiou]/i.test(k) ? "an " : "a ") + k; }
+  function uniq(a){ var seen = {}; return a.filter(function(x){ if (seen[x]) return false; seen[x] = true; return true; }); }
+  var deck = [];
+  function next(mode){
+    for (;;){
+      if (!deck.length) deck = shuffle(WORKS.map(function(w, i){ return i; }));
+      var w = WORKS[deck.pop()];
+      var askAuthor = mode === "author" ? true : mode === "work" ? false : Math.random() < 0.5;
+      if (askAuthor && w[1] === "Anonymous") continue; // no author to name
+      return { w: w, askAuthor: askAuthor };
+    }
+  }
+  function make(mode){
+    var q = next(mode), w = q.w, title = w[0], author = w[1], group = w[2], kind = w[3], sum = w[4];
+    var opts, ans, probH, bigH, ansH;
+    if (q.askAuthor){
+      // Wrong authors: from the same tradition first, then any
+      var same = shuffle(uniq(WORKS.filter(function(x){ return x[2] === group && x[1] !== author && x[1] !== "Anonymous"; }).map(function(x){ return x[1]; })));
+      var other = shuffle(uniq(WORKS.filter(function(x){ return x[2] !== group && x[1] !== "Anonymous"; }).map(function(x){ return x[1]; })));
+      opts = shuffle([author].concat(uniq(same.concat(other)).slice(0, 5)));
+      ans = author;
+      bigH = "<div class=\"ask\">Who wrote it?</div><div class=\"wt\"><i>" + esc(title) + "</i></div><div class=\"kind\">" + esc(art(kind)) + "</div>";
+      probH = "<i>" + esc(title) + "</i>"; ansH = esc(author);
+    } else {
+      // Wrong works: other works by the same author first, then the same tradition, then any
+      var mine = shuffle(WORKS.filter(function(x){ return x[1] === author && x[0] !== title && author !== "Anonymous"; }));
+      var same2 = shuffle(WORKS.filter(function(x){ return x[2] === group && x[1] !== author; }));
+      var other2 = shuffle(WORKS.filter(function(x){ return x[2] !== group; }));
+      opts = shuffle([title].concat(uniq(mine.concat(same2, other2).map(function(x){ return x[0]; })).filter(function(t){ return t !== title; }).slice(0, 5)));
+      ans = title;
+      bigH = "<div class=\"ask\">Which work?</div><div class=\"au\">" + esc(author) + "</div><div class=\"issue\">" + esc(sum) + "</div>";
+      probH = esc(author); ansH = "<i>" + esc(title) + "</i>";
+    }
+    return {
+      id: title + (q.askAuthor ? "|a" : "|w"),
+      probH: probH, bigH: bigH, ansH: ansH,
+      optH: opts.map(function(o){ return q.askAuthor ? esc(o) : "<i>" + esc(o) + "</i>"; }), answer: opts.indexOf(ans),
+      steps: "<i>" + esc(title) + "</i>, " + esc(art(kind)) + " by " + esc(author) + ". " + esc(sum)
+    };
+  }
+  return { make: make, _W: WORKS };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {author:"Authors", work:"Works", all:"Both"};
+
+  var level = "all", dur = 120, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = LitGen.make(level); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "authorsworks:score:" + level + ":" + dur; }
+  function lbLabel(){ return LVL_NAMES[level] + ", " + DUR_NAMES[dur]; }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return (y.s - x.s) || ((y.s / Math.max(1, y.a)) - (x.s / Math.max(1, x.a))) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    if (s <= 0) return false;
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, a: a, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    if (!dur){
+      box.innerHTML = "<p class=\"lb-note\">Untimed: answer " + QN + " questions at your own pace. Best scores are kept for timed rounds.</p>";
+      return;
+    }
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + r.s + "<small> pts</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "authors-works";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL || !dur){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = level + ":" + dur, round = {score: score(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + lbEsc(r.score) + "<small> pts</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            show(d.top, d.id);
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+  }
+  function afterRound(){
+    classBoard();
+    var title = document.getElementById("overTitle");
+    els.best.className = "";
+    els.best.textContent = "";
+    if (!dur){
+      title.textContent = "Done!";
+      var secs = Math.round((performance.now() - startedAt) / 1000);
+      els.best.textContent = "Finished in " + Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0") + ".";
+      renderLB(els.lbOver, -1);
+      return;
+    }
+    title.textContent = "Time’s up";
+    if (lbQualifies(score(), attempted)){
+      var entry = {s: score(), a: attempted, t: Date.now()};
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent = rank === 0 ? "New personal best!" : "That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  function startReveal(){
+    clearInterval(revealTimer);
+    var items = els.prob.querySelectorAll(".chars li"), shown = 0;
+    function next(){
+      if (shown > 0) items[shown - 1].classList.remove("new");
+      if (shown < items.length){ items[shown].classList.add("on", "new"); shown++; }
+      if (shown >= items.length) clearInterval(revealTimer);
+    }
+    next();
+    revealTimer = setInterval(next, 1000);
+  }
+  function revealAll(){
+    clearInterval(revealTimer);
+    els.prob.querySelectorAll(".chars li").forEach(function(li){ li.classList.add("on"); li.classList.remove("new"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = fmtScore(score());
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>
