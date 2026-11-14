@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Name the President</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.prob .wt{font-size:clamp(1.8rem, 7vw, 2.6rem); font-weight:700; line-height:1.15}
+.prob .kind{color:var(--muted); margin-top:.3rem}
+.prob .au{font-size:clamp(1.5rem, 6vw, 2.1rem); font-weight:700; line-height:1.2}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo" aria-hidden="true">🏛</div>
+    <div>
+      <h1>Name the President</h1>
+      <p class="sub">Every year from 1789 to 2026. Read the year’s major events and name the president.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>Which president counts?</summary>
+    <ul>
+      <li>If a president began an elected term that year, that president is the answer, even if he died soon after. For 1841, that’s William Henry Harrison, not John Tyler.</li>
+      <li>Otherwise, it’s the president who served the most of that year. For 1923, that’s Warren G. Harding, who died in August.</li>
+      <li>Wrong choices include anyone else who was president that year, plus presidents who served around the same time.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="timeLbl">Format</span>
+      <div class="seg-btns" role="group" aria-labelledby="timeLbl" data-setting="dur">
+        <button type="button" data-v="0" aria-pressed="false">Untimed</button>
+        <button type="button" data-v="120" aria-pressed="true">2 min</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Years to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script src="scores-config.js"></script>
+<script>
+/*GEN*/
+var PresGen = (function(){
+  var PRES = ["George Washington", "John Adams", "Thomas Jefferson", "James Madison", "James Monroe", "John Quincy Adams", "Andrew Jackson", "Martin Van Buren", "William Henry Harrison", "John Tyler", "James K. Polk", "Zachary Taylor", "Millard Fillmore", "Franklin Pierce", "James Buchanan", "Abraham Lincoln", "Andrew Johnson", "Ulysses S. Grant", "Rutherford B. Hayes", "James A. Garfield", "Chester A. Arthur", "Grover Cleveland", "Benjamin Harrison", "William McKinley", "Theodore Roosevelt", "William Howard Taft", "Woodrow Wilson", "Warren G. Harding", "Calvin Coolidge", "Herbert Hoover", "Franklin D. Roosevelt", "Harry S. Truman", "Dwight D. Eisenhower", "John F. Kennedy", "Lyndon B. Johnson", "Richard Nixon", "Gerald Ford", "Jimmy Carter", "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump", "Joe Biden"];
+  var YEARS = [[1789, "George Washington", [], "The Constitution takes effect, the first Congress meets, and the Judiciary Act creates the federal courts."], [1790, "George Washington", [], "The first national census is taken, and a site on the Potomac River is chosen for the permanent capital."], [1791, "George Washington", [], "The Bill of Rights is ratified, and Congress charters the First Bank of the United States."], [1792, "George Washington", [], "Kentucky becomes a state, and the Coinage Act creates the U.S. Mint."], [1793, "George Washington", [], "A Proclamation of Neutrality keeps the nation out of war between Britain and France, and the cotton gin is invented."], [1794, "George Washington", [], "Federal troops put down the Whiskey Rebellion in Pennsylvania."], [1795, "George Washington", [], "The Senate ratifies the Jay Treaty with Britain, and Pinckney’s Treaty is signed with Spain."], [1796, "George Washington", [], "Tennessee becomes a state, and a farewell address warns against political parties and permanent foreign alliances."], [1797, "John Adams", ["George Washington"], "The XYZ Affair begins when French officials demand bribes from American diplomats."], [1798, "John Adams", [], "Congress passes the Alien and Sedition Acts, and an undeclared naval war with France begins."], [1799, "John Adams", [], "Fries’s Rebellion protests a federal property tax, and the first president dies at Mount Vernon."], [1800, "John Adams", [], "The government moves to the new federal city on the Potomac, the Library of Congress is founded, and the election ends in an Electoral College tie."], [1801, "Thomas Jefferson", ["John Adams"], "The House breaks an electoral tie, John Marshall becomes Chief Justice, and war begins with the Barbary state of Tripoli."], [1802, "Thomas Jefferson", [], "The U.S. Military Academy at West Point is founded."], [1803, "Thomas Jefferson", [], "The Louisiana Purchase doubles the nation’s size, Ohio becomes a state, and the Supreme Court establishes judicial review."], [1804, "Thomas Jefferson", [], "Lewis and Clark set out, the 12th Amendment is ratified, and Aaron Burr kills Alexander Hamilton in a duel."], [1805, "Thomas Jefferson", [], "Lewis and Clark reach the Pacific, and the First Barbary War ends."], [1806, "Thomas Jefferson", [], "Lewis and Clark return, and Zebulon Pike explores the Southwest."], [1807, "Thomas Jefferson", [], "The Embargo Act halts trade with Europe after the Chesapeake–Leopard Affair, and Aaron Burr is tried for treason."], [1808, "Thomas Jefferson", [], "The importation of enslaved people is banned."], [1809, "James Madison", ["Thomas Jefferson"], "The Non-Intercourse Act replaces the unpopular Embargo Act."], [1810, "James Madison", [], "The U.S. annexes West Florida."], [1811, "James Madison", [], "U.S. forces defeat Tecumseh’s confederacy in Indiana Territory, and the First Bank’s charter expires."], [1812, "James Madison", [], "Congress declares war on Britain, and Louisiana becomes a state."], [1813, "James Madison", [], "The U.S. Navy wins the Battle of Lake Erie."], [1814, "James Madison", [], "British troops burn the capital, the defense of Fort McHenry inspires “The Star-Spangled Banner,” and the Treaty of Ghent is signed."], [1815, "James Madison", [], "The Battle of New Orleans ends the fighting of the War of 1812."], [1816, "James Madison", [], "The Second Bank of the United States is chartered, and Indiana becomes a state."], [1817, "James Monroe", ["James Madison"], "The “Era of Good Feelings” begins, construction starts on the Erie Canal, and Mississippi becomes a state."], [1818, "James Monroe", [], "Illinois becomes a state, and the 49th parallel is set as the northern border to the Rockies."], [1819, "James Monroe", [], "Spain cedes Florida, McCulloch v. Maryland is decided, and the Panic of 1819 hits."], [1820, "James Monroe", [], "The Missouri Compromise is passed, and Maine becomes a state."], [1821, "James Monroe", [], "Missouri becomes a state, and Mexico wins independence from Spain."], [1822, "James Monroe", [], "The U.S. recognizes new Latin American republics, and Denmark Vesey’s planned uprising is discovered."], [1823, "James Monroe", [], "A doctrine warns European powers against new colonization in the Americas."], [1824, "James Monroe", [], "Gibbons v. Ogden is decided, and no candidate wins an Electoral College majority."], [1825, "John Quincy Adams", ["James Monroe"], "The House chooses the president amid charges of a “corrupt bargain,” and the Erie Canal opens."], [1826, "John Quincy Adams", [], "Two former presidents die on July 4, the nation’s 50th birthday."], [1827, "John Quincy Adams", [], "The Baltimore and Ohio, the first major U.S. railroad, is chartered."], [1828, "John Quincy Adams", [], "Congress passes the “Tariff of Abominations.”"], [1829, "Andrew Jackson", ["John Quincy Adams"], "The “spoils system” brings a wave of new federal appointees."], [1830, "Andrew Jackson", [], "The Indian Removal Act is passed, and the Webster–Hayne debate takes place in the Senate."], [1831, "Andrew Jackson", [], "Nat Turner leads a rebellion in Virginia, and The Liberator begins publication."], [1832, "Andrew Jackson", [], "The president vetoes the Bank’s recharter, South Carolina nullifies federal tariffs, and the Black Hawk War is fought."], [1833, "Andrew Jackson", [], "The Force Bill and a compromise tariff end the nullification crisis."], [1834, "Andrew Jackson", [], "The Senate censures the president, and the Whig Party forms."], [1835, "Andrew Jackson", [], "The national debt is paid off, and the first attempt to assassinate a sitting president fails."], [1836, "Andrew Jackson", [], "The Alamo falls and Texas wins independence, and Arkansas becomes a state."], [1837, "Martin Van Buren", ["Andrew Jackson"], "The Panic of 1837 begins a depression, and Michigan becomes a state."], [1838, "Martin Van Buren", [], "The Trail of Tears forces the Cherokee west."], [1839, "Martin Van Buren", [], "Captives aboard the Amistad seize the ship."], [1840, "Martin Van Buren", [], "The Independent Treasury is created, and a “log cabin and hard cider” campaign is waged."], [1841, "William Henry Harrison", ["Martin Van Buren", "John Tyler"], "A new president gives the longest inaugural address in history and dies a month later, and the Supreme Court frees the Amistad captives."], [1842, "John Tyler", [], "The Webster–Ashburton Treaty settles the Maine border, and the Dorr Rebellion breaks out in Rhode Island."], [1843, "John Tyler", [], "The “Great Migration” on the Oregon Trail begins."], [1844, "John Tyler", [], "The first long-distance telegraph message is sent, and the Senate rejects a treaty to annex Texas."], [1845, "James K. Polk", ["John Tyler"], "Texas and Florida become states, and the phrase “Manifest Destiny” is coined."], [1846, "James K. Polk", [], "The Mexican-American War begins, the Oregon Treaty is signed, and the Wilmot Proviso is proposed."], [1847, "James K. Polk", [], "U.S. troops capture Mexico City, and Mormon pioneers reach the Salt Lake Valley."], [1848, "James K. Polk", [], "The Treaty of Guadalupe Hidalgo is signed, gold is found in California, and the Seneca Falls Convention meets."], [1849, "Zachary Taylor", ["James K. Polk"], "The California Gold Rush begins, and the Department of the Interior is created."], [1850, "Zachary Taylor", ["Millard Fillmore"], "The Compromise of 1850 and the Fugitive Slave Act are passed, California becomes a state, and the president dies in July."], [1851, "Millard Fillmore", [], "Uncle Tom’s Cabin begins appearing as a newspaper serial."], [1852, "Millard Fillmore", [], "Uncle Tom’s Cabin is published as a book and becomes a bestseller."], [1853, "Franklin Pierce", ["Millard Fillmore"], "The Gadsden Purchase is made, and Commodore Perry arrives in Japan."], [1854, "Franklin Pierce", [], "The Kansas-Nebraska Act is passed, and the Republican Party is founded."], [1855, "Franklin Pierce", [], "Rival governments in Kansas set off “Bleeding Kansas.”"], [1856, "Franklin Pierce", [], "Senator Charles Sumner is beaten with a cane on the Senate floor."], [1857, "James Buchanan", ["Franklin Pierce"], "The Dred Scott decision is handed down, and the Panic of 1857 hits."], [1858, "James Buchanan", [], "A U.S. Senate race in Illinois features famous debates over slavery, and Minnesota becomes a state."], [1859, "James Buchanan", [], "John Brown raids Harpers Ferry, and Oregon becomes a state."], [1860, "James Buchanan", [], "The Pony Express begins, and South Carolina secedes after the election."], [1861, "Abraham Lincoln", ["James Buchanan"], "Confederates fire on Fort Sumter, the Civil War begins, and Kansas becomes a state."], [1862, "Abraham Lincoln", [], "The Battle of Antietam is fought, and the Homestead and Morrill Acts are passed."], [1863, "Abraham Lincoln", [], "The Emancipation Proclamation takes effect, the Battle of Gettysburg is fought, and West Virginia becomes a state."], [1864, "Abraham Lincoln", [], "Sherman marches to the sea, and Nevada becomes a state."], [1865, "Abraham Lincoln", ["Andrew Johnson"], "Lee surrenders at Appomattox, the 13th Amendment is ratified, and the president is assassinated in April."], [1866, "Andrew Johnson", [], "The Civil Rights Act of 1866 passes over a presidential veto."], [1867, "Andrew Johnson", [], "Alaska is purchased from Russia, and the Reconstruction Acts are passed."], [1868, "Andrew Johnson", [], "The president is impeached and acquitted by one vote, and the 14th Amendment is ratified."], [1869, "Ulysses S. Grant", ["Andrew Johnson"], "The transcontinental railroad is completed, and the “Black Friday” gold panic hits."], [1870, "Ulysses S. Grant", [], "The 15th Amendment is ratified, and the Department of Justice is created."], [1871, "Ulysses S. Grant", [], "The Great Chicago Fire burns, and the Ku Klux Klan Act is passed."], [1872, "Ulysses S. Grant", [], "Yellowstone becomes the first national park, and the Crédit Mobilier scandal breaks."], [1873, "Ulysses S. Grant", [], "The Panic of 1873 begins a long depression."], [1874, "Ulysses S. Grant", [], "Democrats win the House for the first time since before the Civil War."], [1875, "Ulysses S. Grant", [], "The Whiskey Ring scandal is exposed, and the Civil Rights Act of 1875 is passed."], [1876, "Ulysses S. Grant", [], "The Battle of the Little Bighorn is fought, Colorado becomes a state, and the nation celebrates its centennial."], [1877, "Rutherford B. Hayes", ["Ulysses S. Grant"], "The Compromise of 1877 ends Reconstruction, and the Great Railroad Strike spreads."], [1878, "Rutherford B. Hayes", [], "The Bland–Allison Act requires the government to buy silver for coinage."], [1879, "Rutherford B. Hayes", [], "The government resumes paying gold for paper money."], [1880, "Rutherford B. Hayes", [], "A deadlocked Republican convention picks a dark-horse nominee on the 36th ballot."], [1881, "James A. Garfield", ["Rutherford B. Hayes", "Chester A. Arthur"], "The president is shot by a disappointed office seeker and dies in September, and the American Red Cross is founded."], [1882, "Chester A. Arthur", [], "The Chinese Exclusion Act is passed."], [1883, "Chester A. Arthur", [], "The Pendleton Civil Service Reform Act is passed, and the Brooklyn Bridge opens."], [1884, "Chester A. Arthur", [], "A bitter, scandal-filled campaign ends with the first Democratic victory since before the Civil War."], [1885, "Grover Cleveland", ["Chester A. Arthur"], "The first Democratic president since before the Civil War takes office."], [1886, "Grover Cleveland", [], "The Statue of Liberty is dedicated, the Haymarket Affair takes place, and Geronimo surrenders."], [1887, "Grover Cleveland", [], "The Interstate Commerce Act and the Dawes Act are passed."], [1888, "Grover Cleveland", [], "The president wins the popular vote but loses the election."], [1889, "Benjamin Harrison", ["Grover Cleveland"], "The Oklahoma Land Rush begins, and four states join the Union."], [1890, "Benjamin Harrison", [], "The Sherman Antitrust Act is passed, the Wounded Knee Massacre occurs, and Idaho and Wyoming become states."], [1891, "Benjamin Harrison", [], "The Forest Reserve Act lets presidents protect public forests."], [1892, "Benjamin Harrison", [], "Ellis Island opens, and the Homestead Strike turns violent."], [1893, "Grover Cleveland", ["Benjamin Harrison"], "The Panic of 1893 begins a depression, and Hawaii’s monarchy is overthrown."], [1894, "Grover Cleveland", [], "The Pullman Strike is broken by federal troops, and Coxey’s Army marches on the capital."], [1895, "Grover Cleveland", [], "The Supreme Court strikes down the federal income tax."], [1896, "Grover Cleveland", [], "Plessy v. Ferguson is decided, Utah becomes a state, and the “Cross of Gold” speech is given."], [1897, "William McKinley", ["Grover Cleveland"], "The Klondike Gold Rush begins."], [1898, "William McKinley", [], "The Spanish-American War is fought, and Hawaii is annexed."], [1899, "William McKinley", [], "The Open Door Policy is announced, and the Philippine-American War begins."], [1900, "William McKinley", [], "The Gold Standard Act is passed, and U.S. troops help end the Boxer Rebellion in China."], [1901, "William McKinley", ["Theodore Roosevelt"], "The president is assassinated in Buffalo in September, and the Platt Amendment is added to Cuba’s constitution."], [1902, "Theodore Roosevelt", [], "Federal mediation settles a national coal strike, and the Newlands Reclamation Act is passed."], [1903, "Theodore Roosevelt", [], "The Wright brothers fly, and the U.S. gains the rights to build a canal in newly independent Panama."], [1904, "Theodore Roosevelt", [], "Construction begins on the Panama Canal, and a new corollary claims a U.S. right to police Latin America."], [1905, "Theodore Roosevelt", [], "The U.S. mediates the end of the Russo-Japanese War, and the Forest Service is created."], [1906, "Theodore Roosevelt", [], "The San Francisco earthquake strikes, and the Pure Food and Drug Act and Meat Inspection Act are passed."], [1907, "Theodore Roosevelt", [], "The Great White Fleet sets sail, the Panic of 1907 hits, and Oklahoma becomes a state."], [1908, "Theodore Roosevelt", [], "The Model T goes on sale, and the Bureau of Investigation is created."], [1909, "William Howard Taft", ["Theodore Roosevelt"], "The NAACP is founded, and the Payne–Aldrich Tariff is passed."], [1910, "William Howard Taft", [], "The Boy Scouts of America is founded, and the Ballinger–Pinchot controversy splits Republicans."], [1911, "William Howard Taft", [], "The Supreme Court breaks up Standard Oil, and the Triangle Shirtwaist fire kills 146 workers."], [1912, "William Howard Taft", [], "New Mexico and Arizona become states, the Titanic sinks, and the “Bull Moose” Party is formed."], [1913, "Woodrow Wilson", ["William Howard Taft"], "The 16th and 17th Amendments are ratified, and the Federal Reserve is created."], [1914, "Woodrow Wilson", [], "World War I begins in Europe, the Panama Canal opens, and the Federal Trade Commission is created."], [1915, "Woodrow Wilson", [], "A German submarine sinks the Lusitania."], [1916, "Woodrow Wilson", [], "U.S. troops chase Pancho Villa into Mexico, and the National Park Service is created."], [1917, "Woodrow Wilson", [], "The U.S. enters World War I after the Zimmermann Telegram, and the Virgin Islands are purchased."], [1918, "Woodrow Wilson", [], "The Fourteen Points are announced, World War I ends, and a flu pandemic spreads."], [1919, "Woodrow Wilson", [], "The Treaty of Versailles is signed but rejected by the Senate, and the 18th Amendment is ratified."], [1920, "Woodrow Wilson", [], "The 19th Amendment gives women the vote, Prohibition begins, and the Palmer Raids target radicals."], [1921, "Warren G. Harding", ["Woodrow Wilson"], "A naval disarmament conference meets, and the first immigration quotas are passed."], [1922, "Warren G. Harding", [], "The Five-Power Naval Treaty is signed, and the Fordney–McCumber Tariff is passed."], [1923, "Warren G. Harding", ["Calvin Coolidge"], "The president dies suddenly in August while touring the West, and the Teapot Dome investigation begins."], [1924, "Calvin Coolidge", [], "The Immigration Act of 1924 and the Indian Citizenship Act are passed."], [1925, "Calvin Coolidge", [], "The Scopes “Monkey Trial” is held in Tennessee."], [1926, "Calvin Coolidge", [], "The Air Commerce Act is passed, and Route 66 is created."], [1927, "Calvin Coolidge", [], "Lindbergh flies solo across the Atlantic, and the Great Mississippi Flood strikes."], [1928, "Calvin Coolidge", [], "The Kellogg–Briand Pact tries to outlaw war."], [1929, "Herbert Hoover", ["Calvin Coolidge"], "The stock market crashes, starting the Great Depression."], [1930, "Herbert Hoover", [], "The Smoot–Hawley Tariff is passed, and bank failures spread."], [1931, "Herbert Hoover", [], "“The Star-Spangled Banner” becomes the national anthem, and the Empire State Building opens."], [1932, "Herbert Hoover", [], "The Bonus Army is driven out of the capital, and the Reconstruction Finance Corporation is created."], [1933, "Franklin D. Roosevelt", ["Herbert Hoover"], "The New Deal’s “Hundred Days” begin, the first fireside chats air, and Prohibition ends."], [1934, "Franklin D. Roosevelt", [], "The Securities and Exchange Commission is created, and Dust Bowl storms sweep the Plains."], [1935, "Franklin D. Roosevelt", [], "The Social Security Act, the Works Progress Administration, and the Wagner Act are created."], [1936, "Franklin D. Roosevelt", [], "Jesse Owens wins four gold medals in Berlin, and the president is reelected in a landslide."], [1937, "Franklin D. Roosevelt", [], "A plan to add justices to the Supreme Court fails."], [1938, "Franklin D. Roosevelt", [], "The Fair Labor Standards Act sets the first federal minimum wage."], [1939, "Franklin D. Roosevelt", [], "World War II begins in Europe, and Albert Einstein warns that an atomic bomb may be possible."], [1940, "Franklin D. Roosevelt", [], "The first peacetime draft begins, and a president wins a third term."], [1941, "Franklin D. Roosevelt", [], "The Lend-Lease Act is passed, Japan attacks Pearl Harbor, and the U.S. enters World War II."], [1942, "Franklin D. Roosevelt", [], "Japanese Americans are forced into internment camps, and the U.S. wins the Battle of Midway."], [1943, "Franklin D. Roosevelt", [], "The Allies invade Italy, and Allied leaders meet in Tehran."], [1944, "Franklin D. Roosevelt", [], "D-Day landings in Normandy take place, and the G.I. Bill is passed."], [1945, "Franklin D. Roosevelt", ["Harry S. Truman"], "The Yalta Conference meets, the president dies in April, atomic bombs are dropped, World War II ends, and the United Nations is founded."], [1946, "Harry S. Truman", [], "Churchill warns of an “Iron Curtain,” and the Philippines gains independence."], [1947, "Harry S. Truman", [], "A doctrine of aid to Greece and Turkey begins the containment of communism, the Marshall Plan is announced, and Jackie Robinson breaks baseball’s color line."], [1948, "Harry S. Truman", [], "The Berlin Airlift begins, the armed forces are desegregated, and the U.S. recognizes Israel."], [1949, "Harry S. Truman", [], "NATO is formed, the Soviet Union tests an atomic bomb, and communists win the Chinese civil war."], [1950, "Harry S. Truman", [], "The Korean War begins, and Senator McCarthy accuses officials of being communists."], [1951, "Harry S. Truman", [], "The 22nd Amendment limits presidents to two terms, and General MacArthur is fired."], [1952, "Harry S. Truman", [], "The first hydrogen bomb is tested, and Puerto Rico becomes a commonwealth."], [1953, "Dwight D. Eisenhower", ["Harry S. Truman"], "An armistice ends the fighting in Korea, and the Rosenbergs are executed for spying."], [1954, "Dwight D. Eisenhower", [], "Brown v. Board of Education is decided, and the Army–McCarthy hearings are televised."], [1955, "Dwight D. Eisenhower", [], "The Montgomery Bus Boycott begins, and Emmett Till is murdered."], [1956, "Dwight D. Eisenhower", [], "The Federal-Aid Highway Act creates the Interstate Highway System."], [1957, "Dwight D. Eisenhower", [], "Federal troops escort the Little Rock Nine, the Soviets launch Sputnik, and a Civil Rights Act is passed."], [1958, "Dwight D. Eisenhower", [], "NASA is created, and the National Defense Education Act is passed."], [1959, "Dwight D. Eisenhower", [], "Alaska and Hawaii become states, and Fidel Castro takes power in Cuba."], [1960, "Dwight D. Eisenhower", [], "A U-2 spy plane is shot down over the Soviet Union, sit-ins begin in Greensboro, and the first televised presidential debates air."], [1961, "John F. Kennedy", ["Dwight D. Eisenhower"], "The Bay of Pigs invasion fails, the Peace Corps is created, and the Berlin Wall goes up."], [1962, "John F. Kennedy", [], "The Cuban Missile Crisis brings the world to the brink of nuclear war, and John Glenn orbits Earth."], [1963, "John F. Kennedy", ["Lyndon B. Johnson"], "Martin Luther King Jr. gives his “I Have a Dream” speech, a nuclear test ban treaty is signed, and the president is assassinated in Dallas."], [1964, "Lyndon B. Johnson", [], "The Civil Rights Act is passed, the Gulf of Tonkin Resolution is approved, and a “War on Poverty” is declared."], [1965, "Lyndon B. Johnson", [], "The Voting Rights Act, Medicare, and Medicaid are created, and combat troops are sent to Vietnam."], [1966, "Lyndon B. Johnson", [], "Miranda v. Arizona is decided, and the National Organization for Women is founded."], [1967, "Lyndon B. Johnson", [], "Thurgood Marshall joins the Supreme Court, and the 25th Amendment is ratified."], [1968, "Lyndon B. Johnson", [], "The Tet Offensive shocks the nation, Martin Luther King Jr. and a leading presidential candidate are assassinated, and the president declines to seek reelection."], [1969, "Richard Nixon", ["Lyndon B. Johnson"], "Apollo 11 lands on the Moon, and the draft lottery begins."], [1970, "Richard Nixon", [], "The first Earth Day is held, the EPA is created, and four students are killed at Kent State."], [1971, "Richard Nixon", [], "The Pentagon Papers are published, and the 26th Amendment lowers the voting age to 18."], [1972, "Richard Nixon", [], "A presidential trip to China opens relations, the Watergate break-in occurs, and Title IX is passed."], [1973, "Richard Nixon", [], "Roe v. Wade is decided, U.S. combat in Vietnam ends, the vice president resigns, and an Arab oil embargo begins."], [1974, "Richard Nixon", ["Gerald Ford"], "The president resigns in August because of the Watergate scandal."], [1975, "Gerald Ford", [], "Saigon falls to North Vietnam, and the Helsinki Accords are signed."], [1976, "Gerald Ford", [], "The nation celebrates its Bicentennial."], [1977, "Jimmy Carter", ["Gerald Ford"], "Treaties to hand over the Panama Canal are signed, and the Department of Energy is created."], [1978, "Jimmy Carter", [], "The Camp David Accords bring peace between Egypt and Israel."], [1979, "Jimmy Carter", [], "Americans are taken hostage in Iran, an accident occurs at Three Mile Island, and the Soviets invade Afghanistan."], [1980, "Jimmy Carter", [], "The U.S. boycotts the Moscow Olympics, a hostage rescue mission fails, and Mount St. Helens erupts."], [1981, "Ronald Reagan", ["Jimmy Carter"], "The Iran hostages are freed, the president survives an assassination attempt, and Sandra Day O’Connor joins the Supreme Court."], [1982, "Ronald Reagan", [], "The Equal Rights Amendment’s deadline passes, and the Vietnam Veterans Memorial is dedicated."], [1983, "Ronald Reagan", [], "U.S. troops invade Grenada, a bombing kills 241 U.S. troops in Beirut, and a space-based missile defense is proposed."], [1984, "Ronald Reagan", [], "The president wins reelection in a 49-state landslide."], [1985, "Ronald Reagan", [], "The first summit with Soviet leader Mikhail Gorbachev is held in Geneva."], [1986, "Ronald Reagan", [], "The Challenger explodes, and the Iran–Contra affair is exposed."], [1987, "Ronald Reagan", [], "A speech in Berlin calls on Gorbachev to “tear down this wall,” and the INF Treaty is signed."], [1988, "Ronald Reagan", [], "The Civil Liberties Act apologizes and pays reparations to interned Japanese Americans."], [1989, "George H. W. Bush", ["Ronald Reagan"], "The Berlin Wall falls, the Exxon Valdez spills oil in Alaska, and U.S. troops invade Panama."], [1990, "George H. W. Bush", [], "The Americans with Disabilities Act is passed, and Iraq invades Kuwait."], [1991, "George H. W. Bush", [], "Operation Desert Storm drives Iraq out of Kuwait, and the Soviet Union dissolves."], [1992, "George H. W. Bush", [], "Riots break out in Los Angeles, and NAFTA is signed."], [1993, "Bill Clinton", ["George H. W. Bush"], "The Family and Medical Leave Act is passed, the World Trade Center is bombed, and Congress approves NAFTA."], [1994, "Bill Clinton", [], "Republicans win Congress with their “Contract with America,” and a major crime bill is passed."], [1995, "Bill Clinton", [], "The Oklahoma City bombing kills 168 people, and the government shuts down over the budget."], [1996, "Bill Clinton", [], "Welfare reform is passed, and Atlanta hosts the Summer Olympics."], [1997, "Bill Clinton", [], "The Children’s Health Insurance Program is created."], [1998, "Bill Clinton", [], "The president is impeached by the House, and U.S. embassies are bombed in Kenya and Tanzania."], [1999, "Bill Clinton", [], "The Senate acquits the president, the Columbine shooting occurs, and NATO bombs Serbia over Kosovo."], [2000, "Bill Clinton", [], "A disputed Florida recount ends at the Supreme Court."], [2001, "George W. Bush", ["Bill Clinton"], "Terrorists attack on September 11, the war in Afghanistan begins, and the Patriot Act is passed."], [2002, "George W. Bush", [], "No Child Left Behind is passed, and the Department of Homeland Security is created."], [2003, "George W. Bush", [], "The Iraq War begins, and the Space Shuttle Columbia breaks apart."], [2004, "George W. Bush", [], "The Abu Ghraib prison scandal breaks, and the 9/11 Commission issues its report."], [2005, "George W. Bush", [], "Hurricane Katrina devastates New Orleans, and John Roberts becomes Chief Justice."], [2006, "George W. Bush", [], "Democrats win both houses of Congress, and Saddam Hussein is executed."], [2007, "George W. Bush", [], "Nancy Pelosi becomes the first woman Speaker of the House, and a troop “surge” is sent to Iraq."], [2008, "George W. Bush", [], "The financial crisis brings the collapse of Lehman Brothers and a bank bailout."], [2009, "Barack Obama", ["George W. Bush"], "A huge economic stimulus is passed, and Sonia Sotomayor joins the Supreme Court."], [2010, "Barack Obama", [], "The Affordable Care Act and the Dodd–Frank Act are passed, and the Deepwater Horizon oil spill occurs."], [2011, "Barack Obama", [], "Osama bin Laden is killed, and the last U.S. troops leave Iraq."], [2012, "Barack Obama", [], "The Supreme Court upholds the Affordable Care Act, the Sandy Hook shooting occurs, and Hurricane Sandy strikes."], [2013, "Barack Obama", [], "The Boston Marathon bombing occurs, the government shuts down, and Edward Snowden leaks NSA secrets."], [2014, "Barack Obama", [], "ISIS seizes territory in Iraq and Syria, and protests erupt in Ferguson, Missouri."], [2015, "Barack Obama", [], "Obergefell v. Hodges legalizes same-sex marriage nationwide, and the Paris climate agreement and Iran nuclear deal are reached."], [2016, "Barack Obama", [], "The Senate refuses to consider a Supreme Court nominee, and the winner of the presidential election loses the popular vote."], [2017, "Donald Trump", ["Barack Obama"], "A major tax cut is passed, a travel ban is imposed, and Neil Gorsuch joins the Supreme Court."], [2018, "Donald Trump", [], "Brett Kavanaugh joins the Supreme Court, a summit is held with North Korea’s leader, and Democrats win the House."], [2019, "Donald Trump", [], "The longest government shutdown up to that time ends, and the House impeaches the president."], [2020, "Donald Trump", [], "The COVID-19 pandemic spreads, George Floyd’s murder sparks nationwide protests, and the Senate acquits the president."], [2021, "Joe Biden", ["Donald Trump"], "Rioters storm the Capitol on January 6, COVID-19 vaccines roll out, and U.S. troops leave Afghanistan."], [2022, "Joe Biden", [], "Russia invades Ukraine, the Dobbs decision overturns Roe v. Wade, and the first Black woman joins the Supreme Court."], [2023, "Joe Biden", [], "The Speaker of the House is voted out for the first time, and the Supreme Court ends affirmative action in college admissions."], [2024, "Joe Biden", [], "The sitting president withdraws from the race, and a former president survives an assassination attempt in Pennsylvania."], [2025, "Donald Trump", ["Joe Biden"], "Sweeping new tariffs are imposed, a “Department of Government Efficiency” cuts federal agencies, and a long government shutdown occurs."], [2026, "Donald Trump", [], "The nation marks its 250th anniversary, U.S. and Israeli strikes on Iran start a war, and midterm elections are held."]];
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+  var deck = [];
+  // Wrong answers: anyone else who served that year, then presidents within five places of the answer,
+  // split at random between earlier and later ones so the answer is not always in the middle.
+  function make(){
+    if (!deck.length) deck = shuffle(YEARS.slice());
+    var r = deck.pop(), year = r[0], ans = r[1], also = r[2], ev = r[3];
+    var opts = [ans].concat(also);
+    var wi = PRES.indexOf(ans), before = [], after = [];
+    for (var k = 1; k <= 6; k++){
+      if (PRES[wi - k]) before.push(PRES[wi - k]);
+      if (PRES[wi + k]) after.push(PRES[wi + k]);
+    }
+    before = shuffle(before.filter(function(n){ return opts.indexOf(n) < 0; }));
+    after = shuffle(after.filter(function(n){ return opts.indexOf(n) < 0; }));
+    var need = 6 - opts.length, nb = Math.floor(Math.random() * (need + 1));
+    nb = Math.min(nb, before.length); var na = Math.min(need - nb, after.length); nb = Math.min(need - na, before.length);
+    opts = opts.concat(before.slice(0, nb), after.slice(0, na));
+    shuffle(PRES.slice()).forEach(function(n){ if (opts.length < 6 && opts.indexOf(n) < 0) opts.push(n); });
+    opts = shuffle(opts);
+    return {
+      id: String(year), probH: String(year), ansH: esc(ans),
+      bigH: "<div class=\"ask\">Who was president?</div><div class=\"wt\">" + year + "</div><div class=\"issue\">" + esc(ev) + "</div>",
+      optH: opts.map(esc), answer: opts.indexOf(ans),
+      steps: esc(year + ": " + ans + "." + (also.length ? " Also president that year: " + also.join(", ") + "." : "") + " " + ev)
+    };
+  }
+  return { make: make, _Y: YEARS, _P: PRES };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {all:"1789–2026"};
+
+  var level = "all", dur = 120, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = PresGen.make(); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "presidents:score:" + level + ":" + dur; }
+  function lbLabel(){ return LVL_NAMES[level] + ", " + DUR_NAMES[dur]; }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return (y.s - x.s) || ((y.s / Math.max(1, y.a)) - (x.s / Math.max(1, x.a))) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    if (s <= 0) return false;
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, a: a, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    if (!dur){
+      box.innerHTML = "<p class=\"lb-note\">Untimed: answer " + QN + " questions at your own pace. Best scores are kept for timed rounds.</p>";
+      return;
+    }
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + r.s + "<small> pts</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "presidents";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL || !dur){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = level + ":" + dur, round = {score: score(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + lbEsc(r.score) + "<small> pts</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            show(d.top, d.id);
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+  }
+  function afterRound(){
+    classBoard();
+    var title = document.getElementById("overTitle");
+    els.best.className = "";
+    els.best.textContent = "";
+    if (!dur){
+      title.textContent = "Done!";
+      var secs = Math.round((performance.now() - startedAt) / 1000);
+      els.best.textContent = "Finished in " + Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0") + ".";
+      renderLB(els.lbOver, -1);
+      return;
+    }
+    title.textContent = "Time’s up";
+    if (lbQualifies(score(), attempted)){
+      var entry = {s: score(), a: attempted, t: Date.now()};
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent = rank === 0 ? "New personal best!" : "That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  function startReveal(){
+    clearInterval(revealTimer);
+    var items = els.prob.querySelectorAll(".chars li"), shown = 0;
+    function next(){
+      if (shown > 0) items[shown - 1].classList.remove("new");
+      if (shown < items.length){ items[shown].classList.add("on", "new"); shown++; }
+      if (shown >= items.length) clearInterval(revealTimer);
+    }
+    next();
+    revealTimer = setInterval(next, 1000);
+  }
+  function revealAll(){
+    clearInterval(revealTimer);
+    els.prob.querySelectorAll(".chars li").forEach(function(li){ li.classList.add("on"); li.classList.remove("new"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = fmtScore(score());
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>
