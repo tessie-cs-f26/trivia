@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Middle School Trivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns{flex-wrap:wrap; border-radius:18px !important}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.prob .mq-q{font-size:clamp(1.25rem, 5vw, 1.6rem); font-weight:600; line-height:1.35; margin-top:.2rem}
+.prob .wt{font-size:clamp(1.8rem, 7vw, 2.6rem); font-weight:700; line-height:1.15}
+.prob .kind{color:var(--muted); margin-top:.3rem}
+.prob .au{font-size:clamp(1.5rem, 6vw, 2.1rem); font-weight:700; line-height:1.2}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
+.home-link{display:inline-block; margin-left:.6rem; font:inherit; font-weight:700; font-size:1.1rem; color:var(--rod); background:transparent; border:2px solid var(--rod); border-radius:999px; padding:.6rem 1.4rem; text-decoration:none}
+.home-link:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+.top-home{display:inline-block; font-size:.85rem; color:var(--muted); text-decoration:none; margin-bottom:.6rem}
+.top-home:hover{color:var(--rod)}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="top-home" href="./" data-home>← All trivia games</a>
+  <header>
+    <div class="logo" aria-hidden="true">💡</div>
+    <div>
+      <h1>Middle School Trivia</h1>
+      <p class="sub">Quick-fire general knowledge, weighted like NAQT middle school quiz bowl: science, history, literature, geography, the arts, pop culture, current events, and more.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How it works</summary>
+    <ul>
+      <li>100 questions, split across topics the way NAQT middle school tournaments are. Pick one topic or play them all.</li>
+      <li>Each round goes through every question in the topic you picked, once each, at your own pace. Each right answer is worth 1 point, and you can post your score to the class leaderboard at the end.</li>
+      <li>Current events questions were last checked in November 2026.</li>
+      <li>Each question has six choices, and the wrong ones are close calls on purpose, like Durmstrang for Hogwarts or Daedalus for Icarus.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="lvlLbl">Topic</span>
+      <div class="seg-btns" role="group" aria-labelledby="lvlLbl" data-setting="level">
+        <button type="button" data-v="all" aria-pressed="true">All</button>
+        <button type="button" data-v="sci" aria-pressed="false">Science</button>
+        <button type="button" data-v="math" aria-pressed="false">Math</button>
+        <button type="button" data-v="his" aria-pressed="false">History</button>
+        <button type="button" data-v="lit" aria-pressed="false">Literature</button>
+        <button type="button" data-v="geo" aria-pressed="false">Geography</button>
+        <button type="button" data-v="art" aria-pressed="false">Fine arts</button>
+        <button type="button" data-v="pop" aria-pressed="false">Pop culture and sports</button>
+        <button type="button" data-v="ce" aria-pressed="false">Current events</button>
+        <button type="button" data-v="soc" aria-pressed="false">Social science</button>
+        <button type="button" data-v="misc" aria-pressed="false">Everything else</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Questions to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button><a class="home-link" href="./" data-home>All trivia games</a></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script src="scores-config.js"></script>
+<script>
+/*GEN*/
+var MSGen = (function(){
+  var QS = [["sci", "What is the chemical symbol for gold?", "Au", ["Ag", "Gd", "Go", "Gl", "Pb"]], ["sci", "Which planet has the most known moons?", "Saturn", ["Jupiter", "Uranus", "Neptune", "Mars", "Earth"]], ["sci", "Which organelle is known as the powerhouse of the cell?", "Mitochondrion", ["Nucleus", "Ribosome", "Chloroplast", "Golgi apparatus", "Vacuole"]], ["sci", "What gas do plants take in from the air for photosynthesis?", "Carbon dioxide", ["Oxygen", "Nitrogen", "Hydrogen", "Methane", "Helium"]], ["sci", "What is the hardest natural mineral?", "Diamond", ["Quartz", "Topaz", "Corundum", "Talc", "Feldspar"]], ["sci", "Which scientist stated the three laws of motion?", "Isaac Newton", ["Galileo Galilei", "Albert Einstein", "Johannes Kepler", "Nicolaus Copernicus", "Robert Hooke"]], ["sci", "Which element has atomic number 1?", "Hydrogen", ["Helium", "Lithium", "Oxygen", "Carbon", "Nitrogen"]], ["sci", "What is the closest star to Earth?", "The Sun", ["Proxima Centauri", "Sirius", "Alpha Centauri A", "Betelgeuse", "Polaris"]], ["sci", "Which blood cells carry oxygen through the body?", "Red blood cells", ["White blood cells", "Platelets", "Plasma cells", "Stem cells", "Neurons"]], ["sci", "What is the most abundant gas in Earth’s atmosphere?", "Nitrogen", ["Oxygen", "Carbon dioxide", "Argon", "Hydrogen", "Water vapor"]], ["sci", "Who described evolution by natural selection in On the Origin of Species?", "Charles Darwin", ["Gregor Mendel", "Alfred Wegener", "Louis Pasteur", "Carl Linnaeus", "Jean-Baptiste Lamarck"]], ["sci", "Which scientist is called the father of genetics for his experiments with pea plants?", "Gregor Mendel", ["Charles Darwin", "James Watson", "Louis Pasteur", "Carl Linnaeus", "Dmitri Mendeleev"]], ["sci", "Which pigment makes plants green?", "Chlorophyll", ["Melanin", "Hemoglobin", "Carotene", "Keratin", "Xanthophyll"]], ["sci", "What is the largest planet in our solar system?", "Jupiter", ["Saturn", "Neptune", "Uranus", "Earth", "Venus"]], ["sci", "Which unit measures electrical resistance?", "Ohm", ["Volt", "Ampere", "Watt", "Joule", "Newton"]], ["sci", "Which layer of Earth lies directly beneath the crust?", "Mantle", ["Outer core", "Inner core", "Troposphere", "Bedrock", "Ozone layer"]], ["his", "In what year did Christopher Columbus first reach the Americas?", "1492", ["1488", "1500", "1513", "1519", "1607"]], ["his", "Who was the main author of the Declaration of Independence?", "Thomas Jefferson", ["John Adams", "Benjamin Franklin", "George Washington", "James Madison", "Alexander Hamilton"]], ["his", "Which founding document begins with the words “We the People”?", "The U.S. Constitution", ["The Declaration of Independence", "The Bill of Rights", "The Articles of Confederation", "The Mayflower Compact", "The Emancipation Proclamation"]], ["his", "Which of the Seven Wonders of the Ancient World is still standing?", "The Great Pyramid of Giza", ["The Hanging Gardens of Babylon", "The Colossus of Rhodes", "The Lighthouse of Alexandria", "The Temple of Artemis", "The Statue of Zeus"]], ["his", "Augustus was the first emperor of which empire?", "The Roman Empire", ["The Byzantine Empire", "The Ottoman Empire", "The Persian Empire", "The Macedonian Empire", "The Holy Roman Empire"]], ["his", "Which English king agreed to the Magna Carta in 1215?", "King John", ["Richard I", "Henry VIII", "William the Conqueror", "Edward I", "Henry II"]], ["his", "Which wall fell in 1989, a symbol of the end of the Cold War?", "The Berlin Wall", ["The Great Wall of China", "Hadrian’s Wall", "The Western Wall", "The Walls of Constantinople", "The Atlantic Wall"]], ["his", "Who was Britain’s prime minister for most of World War II?", "Winston Churchill", ["Neville Chamberlain", "Clement Attlee", "Margaret Thatcher", "David Lloyd George", "Anthony Eden"]], ["his", "Who led India’s independence movement using nonviolent resistance?", "Mahatma Gandhi", ["Jawaharlal Nehru", "Muhammad Ali Jinnah", "Subhas Chandra Bose", "B. R. Ambedkar", "Indira Gandhi"]], ["his", "Which ship carried the Pilgrims to Plymouth in 1620?", "The Mayflower", ["The Santa María", "The Endeavour", "The Speedwell", "The Discovery", "The Golden Hind"]], ["his", "Which civilization built Machu Picchu?", "The Inca", ["The Maya", "The Aztecs", "The Olmecs", "The Toltecs", "The Moche"]], ["his", "Who was the first woman to win a Nobel Prize?", "Marie Curie", ["Mother Teresa", "Jane Addams", "Rosalind Franklin", "Florence Nightingale", "Dorothy Hodgkin"]], ["his", "In which city was President John F. Kennedy assassinated?", "Dallas", ["Houston", "Washington, D.C.", "Chicago", "Los Angeles", "Memphis"]], ["his", "Who gave the “I Have a Dream” speech in 1963?", "Martin Luther King Jr.", ["Malcolm X", "John Lewis", "Frederick Douglass", "Thurgood Marshall", "Medgar Evers"]], ["his", "Who was the first person to walk on the Moon?", "Neil Armstrong", ["Buzz Aldrin", "Yuri Gagarin", "John Glenn", "Michael Collins", "Alan Shepard"]], ["his", "In what year did the French Revolution begin?", "1789", ["1776", "1804", "1815", "1848", "1688"]], ["his", "Which Mongol leader founded the largest connected land empire in history?", "Genghis Khan", ["Kublai Khan", "Attila", "Tamerlane", "Ögedei Khan", "Batu Khan"]], ["his", "Which president issued the Emancipation Proclamation?", "Abraham Lincoln", ["Andrew Johnson", "Ulysses S. Grant", "James Buchanan", "Lyndon B. Johnson", "Theodore Roosevelt"]], ["his", "What was the first artificial satellite, launched by the Soviet Union in 1957?", "Sputnik 1", ["Vostok 1", "Explorer 1", "Luna 2", "Mir", "Apollo 1"]], ["his", "Howard Carter found which pharaoh’s nearly intact tomb in 1922?", "Tutankhamun", ["Ramses II", "Khufu", "Cleopatra VII", "Akhenaten", "Hatshepsut"]], ["geo", "What is the longest river in Africa?", "The Nile", ["The Congo", "The Niger", "The Zambezi", "The Orange", "The Limpopo"]], ["geo", "What is the largest ocean on Earth?", "The Pacific Ocean", ["The Atlantic Ocean", "The Indian Ocean", "The Arctic Ocean", "The Southern Ocean", "The Mediterranean Sea"]], ["geo", "What is the smallest country in the world by area?", "Vatican City", ["Monaco", "San Marino", "Liechtenstein", "Malta", "Nauru"]], ["geo", "Which country has the largest population?", "India", ["China", "United States", "Indonesia", "Pakistan", "Brazil"]], ["geo", "Mount Everest sits on the border of Nepal and which other country?", "China", ["India", "Bhutan", "Pakistan", "Bangladesh", "Afghanistan"]], ["geo", "What is the largest hot desert in the world?", "The Sahara", ["The Arabian Desert", "The Gobi", "The Kalahari", "The Mojave", "The Atacama"]], ["geo", "Which U.S. state has the most people?", "California", ["Texas", "Florida", "New York", "Pennsylvania", "Illinois"]], ["geo", "What is the largest country in South America by area?", "Brazil", ["Argentina", "Peru", "Colombia", "Bolivia", "Venezuela"]], ["geo", "Which line of latitude divides Earth into the Northern and Southern Hemispheres?", "The Equator", ["The Prime Meridian", "The Tropic of Cancer", "The Tropic of Capricorn", "The International Date Line", "The Arctic Circle"]], ["geo", "What is the largest of the Great Lakes?", "Lake Superior", ["Lake Michigan", "Lake Huron", "Lake Erie", "Lake Ontario", "Great Salt Lake"]], ["lit", "Which Shakespeare play includes the line “To be, or not to be”?", "Hamlet", ["Macbeth", "King Lear", "Othello", "Romeo and Juliet", "Julius Caesar"]], ["lit", "In The Hobbit, what is the dragon’s name?", "Smaug", ["Glaurung", "Ancalagon", "Fafnir", "Norbert", "Toothless"]], ["lit", "Who wrote the poem “The Raven”?", "Edgar Allan Poe", ["Walt Whitman", "Emily Dickinson", "Robert Frost", "Henry Wadsworth Longfellow", "Nathaniel Hawthorne"]], ["lit", "In Charlotte’s Web, what kind of animal is Wilbur?", "A pig", ["A sheep", "A goose", "A rat", "A horse", "A cow"]], ["lit", "Which Greek poet is credited with the Iliad and the Odyssey?", "Homer", ["Hesiod", "Sophocles", "Virgil", "Sappho", "Aesop"]], ["lit", "What is the name of the wizarding school in the Harry Potter books?", "Hogwarts", ["Durmstrang", "Beauxbatons", "Brakebills", "Camp Half-Blood", "Nevermore"]], ["lit", "Who wrote Pride and Prejudice?", "Jane Austen", ["Charlotte Brontë", "Emily Brontë", "George Eliot", "Mary Shelley", "Louisa May Alcott"]], ["lit", "In which novel does Captain Ahab hunt a white whale?", "Moby-Dick", ["Treasure Island", "The Old Man and the Sea", "Twenty Thousand Leagues Under the Seas", "Robinson Crusoe", "Kidnapped"]], ["lit", "Which poet wrote “The Road Not Taken”?", "Robert Frost", ["Langston Hughes", "Emily Dickinson", "Carl Sandburg", "Walt Whitman", "E. E. Cummings"]], ["lit", "Who wrote The Adventures of Tom Sawyer?", "Mark Twain", ["Jack London", "Charles Dickens", "Louisa May Alcott", "Herman Melville", "Washington Irving"]], ["lit", "In the original Wonderful Wizard of Oz book, what color are Dorothy’s magic shoes?", "Silver", ["Ruby", "Gold", "Emerald", "Black", "Blue"]], ["lit", "Which author created the detective Sherlock Holmes?", "Arthur Conan Doyle", ["Agatha Christie", "Edgar Allan Poe", "Dorothy L. Sayers", "G. K. Chesterton", "Wilkie Collins"]], ["math", "What is the only even prime number?", "2", ["0", "4", "6", "1", "8"]], ["math", "The interior angles of a triangle add up to how many degrees?", "180", ["90", "270", "360", "120", "540"]], ["math", "What is pi rounded to two decimal places?", "3.14", ["3.41", "3.16", "3.12", "2.72", "3.15"]], ["math", "What is the square root of 144?", "12", ["11", "13", "14", "72", "16"]], ["math", "What is a polygon with eight sides called?", "Octagon", ["Hexagon", "Heptagon", "Nonagon", "Decagon", "Pentagon"]], ["math", "What is the next prime number after 13?", "17", ["15", "19", "14", "21", "23"]], ["math", "What is 2 to the 10th power?", "1024", ["512", "2048", "1000", "100", "20"]], ["math", "Which theorem says a² + b² = c² for a right triangle?", "The Pythagorean theorem", ["Fermat’s Last Theorem", "Euclid’s theorem", "Thales’s theorem", "The binomial theorem", "The law of sines"]], ["math", "How many sides does a dodecagon have?", "12", ["10", "11", "14", "20", "8"]], ["art", "Who painted the Mona Lisa?", "Leonardo da Vinci", ["Michelangelo", "Raphael", "Sandro Botticelli", "Titian", "Rembrandt"]], ["art", "Which Dutch painter of The Starry Night cut off part of his own ear?", "Vincent van Gogh", ["Rembrandt", "Johannes Vermeer", "Piet Mondrian", "Hieronymus Bosch", "Frans Hals"]], ["art", "Which composer kept writing music after going deaf, including his Ninth Symphony?", "Ludwig van Beethoven", ["Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Joseph Haydn", "Johannes Brahms", "Franz Schubert"]], ["art", "How many keys are on a standard piano?", "88", ["76", "61", "92", "100", "72"]], ["art", "Who composed The Four Seasons?", "Antonio Vivaldi", ["Johann Sebastian Bach", "George Frideric Handel", "Wolfgang Amadeus Mozart", "Pyotr Ilyich Tchaikovsky", "Joseph Haydn"]], ["art", "Which artist is famous for paintings of Campbell’s soup cans?", "Andy Warhol", ["Roy Lichtenstein", "Jackson Pollock", "Keith Haring", "Jasper Johns", "Salvador Dalí"]], ["art", "Which Spanish artist helped invent Cubism?", "Pablo Picasso", ["Salvador Dalí", "Francisco Goya", "Joan Miró", "Diego Velázquez", "El Greco"]], ["lit", "Who is the king of the Greek gods?", "Zeus", ["Poseidon", "Hades", "Apollo", "Ares", "Cronus"]], ["lit", "In Norse mythology, what is the name of Thor’s hammer?", "Mjölnir", ["Gungnir", "Excalibur", "Gram", "Durendal", "Brisingamen"]], ["lit", "Which Greek hero performed twelve labors?", "Heracles", ["Perseus", "Theseus", "Jason", "Achilles", "Odysseus"]], ["lit", "Which Egyptian god of the dead is shown with the head of a jackal?", "Anubis", ["Ra", "Horus", "Thoth", "Set", "Osiris"]], ["misc", "Which language has the most native speakers?", "Mandarin Chinese", ["Spanish", "English", "Hindi", "Arabic", "Bengali"]], ["pop", "How many players does one soccer team have on the field?", "11", ["9", "10", "12", "7", "15"]], ["pop", "In which sport is the Stanley Cup awarded?", "Ice hockey", ["Basketball", "Baseball", "American football", "Soccer", "Golf"]], ["misc", "What is the currency of Japan?", "The yen", ["The yuan", "The won", "The ringgit", "The baht", "The rupee"]], ["misc", "What do you call a word that reads the same forward and backward, like “racecar”?", "A palindrome", ["An anagram", "A homophone", "An acronym", "An oxymoron", "An onomatopoeia"]], ["pop", "In which country did the ancient Olympic Games begin?", "Greece", ["Italy", "France", "Egypt", "Turkey", "England"]], ["misc", "Which organization’s flag shows a world map surrounded by olive branches?", "The United Nations", ["NATO", "The Red Cross", "The European Union", "The World Health Organization", "The International Olympic Committee"]], ["soc", "How many justices sit on the U.S. Supreme Court?", "9", ["7", "11", "12", "5", "13"]], ["misc", "What do you call a word formed from the first letters of other words, like NASA?", "An acronym", ["An anagram", "A synonym", "A homonym", "A palindrome", "A metaphor"]], ["misc", "How many amendments make up the Bill of Rights?", "10", ["5", "12", "13", "15", "27"]], ["pop", "In Minecraft, what green creature explodes when it gets close to players?", "The Creeper", ["The Enderman", "The Zombie", "The Skeleton", "The Ghast", "The Slime"]], ["pop", "Which Pixar film follows a rat named Remy who dreams of cooking in Paris?", "Ratatouille", ["Up", "Coco", "Luca", "Toy Story", "Inside Out"]], ["pop", "Which sport uses the scoring terms “love” and “deuce”?", "Tennis", ["Golf", "Baseball", "Bowling", "Cricket", "Volleyball"]], ["pop", "Which Lin-Manuel Miranda musical tells the story of a Founding Father?", "Hamilton", ["In the Heights", "Rent", "Wicked", "Les Misérables", "1776"]], ["soc", "Which Greek philosopher was a tutor to Alexander the Great?", "Aristotle", ["Plato", "Socrates", "Pythagoras", "Diogenes", "Epicurus"]], ["soc", "If demand for a product rises while the supply stays the same, what usually happens to its price?", "It goes up", ["It goes down", "It stays the same", "It drops to zero", "It is set by the government", "It changes only for imports"]], ["ce", "Who became prime minister of the United Kingdom in July 2026?", "Andy Burnham", ["Keir Starmer", "Rishi Sunak", "Kemi Badenoch", "Angela Rayner", "Nigel Farage"]], ["ce", "Pope Leo XIV, elected in 2025, is the first pope from which country?", "The United States", ["Italy", "Argentina", "Poland", "Mexico", "Brazil"]], ["ce", "Who became Japan’s first woman prime minister in 2025?", "Sanae Takaichi", ["Yuriko Koike", "Shigeru Ishiba", "Fumio Kishida", "Seiko Noda", "Taro Kono"]], ["ce", "Which party won control of the U.S. Senate in the November 2026 midterm elections?", "The Democratic Party", ["The Republican Party", "The Libertarian Party", "The Green Party", "Neither (a 50-50 tie)", "Independent senators"]], ["ce", "Which Venezuelan leader was captured by the United States in January 2026?", "Nicolás Maduro", ["Hugo Chávez", "Delcy Rodríguez", "Juan Guaidó", "Diosdado Cabello", "María Corina Machado"]], ["ce", "On July 4, 2026, the United States celebrated which anniversary of the Declaration of Independence?", "The 250th", ["The 200th", "The 225th", "The 300th", "The 175th", "The 150th"]]];
+  var CATS = {"sci": "Science", "math": "Math", "his": "History", "lit": "Literature", "geo": "Geography", "art": "Fine arts", "pop": "Pop culture and sports", "ce": "Current events", "soc": "Social science", "misc": "Everything else"};
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  var decks = {};
+  function make(cat){
+    var pool = cat === "all" ? QS : QS.filter(function(x){ return x[0] === cat; });
+    if (!decks[cat] || !decks[cat].length) decks[cat] = shuffle(pool.slice());
+    var r = decks[cat].pop(), opts = shuffle([r[2]].concat(r[3]));
+    return { id: r[1], probH: esc(r[1]), ansH: esc(r[2]),
+      bigH: "<div class=\"ask\">" + esc(CATS[r[0]]) + "</div><div class=\"issue mq-q\">" + esc(r[1]) + "</div>",
+      optH: opts.map(esc), answer: opts.indexOf(r[2]), steps: "Answer: " + esc(r[2]) + "." };
+  }
+  function count(cat){ return cat === "all" ? QS.length : QS.filter(function(x){ return x[0] === cat; }).length; }
+  function resetDeck(cat){ decks[cat] = []; }
+  return { make: make, count: count, resetDeck: resetDeck };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {"all": "All topics", "sci": "Science", "math": "Math", "his": "History", "lit": "Literature", "geo": "Geography", "art": "Fine arts", "pop": "Pop culture and sports", "ce": "Current events", "soc": "Social science", "misc": "Everything else"};
+
+  var level = "all", dur = 0, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = MSGen.make(level); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "mstrivia:score:" + level; }
+  function lbLabel(){ return LVL_NAMES[level] + ", " + QN + " questions"; }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return (y.s - x.s) || ((y.s / Math.max(1, y.a)) - (x.s / Math.max(1, x.a))) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    if (s <= 0) return false;
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, a: a, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + r.s + "<small> pts</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "ms-trivia";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = level + ":" + QN, round = {score: score(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + lbEsc(r.score) + "<small> pts</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            show(d.top, d.id);
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+  }
+  function afterRound(){
+    classBoard();
+    var title = document.getElementById("overTitle");
+    els.best.className = "";
+    els.best.textContent = "";
+    title.textContent = "Done!";
+    if (lbQualifies(score(), attempted)){
+      var entry = {s: score(), a: attempted, t: Date.now()};
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent = rank === 0 ? "New personal best!" : "That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    QN = MSGen.count(level); MSGen.resetDeck(level);
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  function startReveal(){
+    clearInterval(revealTimer);
+    var items = els.prob.querySelectorAll(".chars li"), shown = 0;
+    function next(){
+      if (shown > 0) items[shown - 1].classList.remove("new");
+      if (shown < items.length){ items[shown].classList.add("on", "new"); shown++; }
+      if (shown >= items.length) clearInterval(revealTimer);
+    }
+    next();
+    revealTimer = setInterval(next, 1000);
+  }
+  function revealAll(){
+    clearInterval(revealTimer);
+    els.prob.querySelectorAll(".chars li").forEach(function(li){ li.classList.add("on"); li.classList.remove("new"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = fmtScore(score());
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values());
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+<script>if (/claude/.test(location.hostname) || location.protocol === "blob:") document.querySelectorAll("[data-home]").forEach(function(a){ a.hidden = true; });</script>
+</body>
+</html>
