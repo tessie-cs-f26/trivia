@@ -93,7 +93,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     <div class="logo" aria-hidden="true">⏳</div>
     <div>
       <h1>Chronology</h1>
-      <p class="sub">Build a timeline of 12 historical events. Place each new event where you think it belongs.</p>
+      <p class="sub">Build a timeline of 25 historical events. Place each new event where you think it belongs.</p>
     </div>
   </header>
 
@@ -103,12 +103,12 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
       <li>Your first event is placed for you, with its date showing.</li>
       <li>Each turn you get a new event with no date. Tap the gap in the timeline where it belongs.</li>
       <li>Then its date is revealed. If it’s in the right place, keep going. If not, the game ends.</li>
-      <li>Your score is the number of events in your timeline. Reach 12 for a perfect game.</li>
+      <li>Your score is the number of events in your timeline. Reach 25 for a perfect game.</li>
     </ul>
   </details>
 
   <div class="status">
-    <div><span class="big" id="count">0</span><span class="lbl"> / 12</span><div class="lbl">events in your timeline</div></div>
+    <div><span class="big" id="count">0</span><span class="lbl"> / 25</span><div class="lbl">events in your timeline</div></div>
     <div class="lbl" id="best"></div>
   </div>
 
@@ -122,7 +122,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     <div class="timeline" id="timeline"></div>
     <div id="msg"></div>
     <div class="endbox" id="endBox" hidden>
-      <p class="final"><span id="fScore">0</span><small id="fNote">out of 12</small></p>
+      <p class="final"><span id="fScore">0</span><small id="fNote">out of 25</small></p>
       <div class="lb" id="classBoard" hidden></div>
       <div class="lb" id="myBoard"></div>
       <div style="margin-top:1rem"><button type="button" class="primary" id="againBtn">Play again</button></div>
@@ -190,7 +190,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     [1994, "Nelson Mandela is elected president of South Africa"],[1997, "Hong Kong is returned to China"],[2001, "September 11 attacks"],[2003, "Human Genome Project is completed"],
     [2007, "The first iPhone goes on sale"],[2008, "Global financial crisis"],[2015, "Paris climate agreement is adopted"],[2020, "COVID-19 is declared a pandemic"]
   ];
-  var GOAL = 12;
+  var GOAL = 25;
   function fmtYear(y){ return y < 0 ? (-y) + " BCE" : (y < 1000 ? y + " CE" : String(y)); }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
   function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -203,12 +203,12 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     for (var i = 0; i < pool.length && out.length < GOAL; i++){ if (!years[pool[i][0]]){ years[pool[i][0]] = 1; out.push(pool[i]); } }
     return out;
   }
-  function getList(){ try { var a = JSON.parse(localStorage.getItem("chronology:list12") || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function getList(){ try { var a = JSON.parse(localStorage.getItem("chronology:list25") || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
   function getBest(){ var l = getList(); return l.length ? l[0].s : 0; }
   function addScore(n){
     var l = getList(), entry = {s: n, t: Date.now()};
     l.push(entry); l.sort(function(a, b){ return (b.s - a.s) || (a.t - b.t); }); l = l.slice(0, 10);
-    try { localStorage.setItem("chronology:list12", JSON.stringify(l)); } catch(e){}
+    try { localStorage.setItem("chronology:list25", JSON.stringify(l)); } catch(e){}
     return l.indexOf(entry);
   }
   function renderMine(hi){
@@ -216,10 +216,10 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     if (!l.length){ box.innerHTML = ""; return; }
     box.innerHTML = "<h3>Your best scores</h3><ol>" + l.map(function(r, i){
       var d = new Date(r.t).toLocaleDateString(undefined, {month: "short", day: "numeric"});
-      return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"n\">" + d + "</span><span class=\"s\">" + r.s + " / 12</span></li>";
+      return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"n\">" + d + "</span><span class=\"s\">" + r.s + " / 25</span></li>";
     }).join("") + "</ol>";
   }
-  function showBest(){ var b = getBest(); $("best").textContent = b ? "Your best: " + b + " / 12" : ""; }
+  function showBest(){ var b = getBest(); $("best").textContent = b ? "Your best: " + b + " / 25" : ""; }
 
   function start(){
     deck = draw10(); line = [deck.shift()]; newIdx = 0; over = false;
@@ -263,7 +263,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     render();
     if (line.length >= GOAL){
       over = true; render();
-      $("msg").innerHTML = "<div class=\"msg good\">Perfect! All twelve events are in order.</div>";
+      $("msg").innerHTML = "<div class=\"msg good\">Perfect! All 25 events are in order.</div>";
       finish(GOAL, true);
       return;
     }
@@ -274,7 +274,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     $("endBox").hidden = false;
     $("fScore").textContent = score;
     var best = getBest(), rank = addScore(score);
-    $("fNote").textContent = score > best ? "out of 12 · new personal best!" : "out of 12";
+    $("fNote").textContent = score > best ? "out of 25 · new personal best!" : "out of 25";
     renderMine(rank);
     showBest();
     classBoard(score, perfect);
@@ -297,9 +297,9 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     function show(top, myId){
       if (!top){ list.innerHTML = "<p class=\"note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
       if (!top.length){ list.innerHTML = "<p class=\"note\">No class scores yet.</p>"; return; }
-      list.innerHTML = "<ol>" + top.map(function(r){ return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"n\">" + esc(r.name) + "</span><span class=\"s\">" + esc(r.score) + " / 12</span></li>"; }).join("") + "</ol>";
+      list.innerHTML = "<ol>" + top.map(function(r){ return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"n\">" + esc(r.name) + "</span><span class=\"s\">" + esc(r.score) + " / 25</span></li>"; }).join("") + "</ol>";
     }
-    cbCall({action: "top", game: "chronology", setting: "all:12"}).then(function(d){ show(d && d.ok ? d.top : null); }).catch(function(){ show(null); });
+    cbCall({action: "top", game: "chronology", setting: "all:25"}).then(function(d){ show(d && d.ok ? d.top : null); }).catch(function(){ show(null); });
     var input = $("cbName"), btn = $("cbPost");
     if (!input) return;
     try { input.value = localStorage.getItem("trivia:name") || ""; } catch(e){}
@@ -307,7 +307,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
       if (posted) return;
       var name = input.value.trim(); if (!name){ input.focus(); return; }
       btn.disabled = true; msg.className = "cbmsg"; msg.textContent = "Posting…";
-      cbCall({action: "add", game: "chronology", setting: "all:12", name: name, score: score, right: score, wrong: perfect ? 0 : 1})
+      cbCall({action: "add", game: "chronology", setting: "all:25", name: name, score: score, right: score, wrong: perfect ? 0 : 1})
         .then(function(d){
           if (d && d.ok){ posted = true; try { localStorage.setItem("trivia:name", name); } catch(e){}
             box.querySelector(".save-row").remove(); box.querySelector(".note").remove();
