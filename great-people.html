@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>100 Great People</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.clue{max-width:34rem; margin:.4rem auto 0; text-align:left; font-size:1.08rem; line-height:1.6; min-height:6em}
+.clue .w{visibility:hidden}
+.clue .w.on{visibility:visible}
+.clue .slash{color:var(--muted); font-weight:700}
+.seg-btns{flex-wrap:wrap}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-style:italic; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
+.home-link{display:inline-block; margin-left:.6rem; font:inherit; font-weight:700; font-size:1.1rem; color:var(--rod); background:transparent; border:2px solid var(--rod); border-radius:999px; padding:.6rem 1.4rem; text-decoration:none}
+.home-link:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+.top-home{display:inline-block; font-size:.85rem; color:var(--muted); text-decoration:none; margin-bottom:.6rem}
+.top-home:hover{color:var(--rod)}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="top-home" href="./" data-home>← All trivia games</a>
+  <header>
+    <div class="logo" aria-hidden="true">🏛</div>
+    <div>
+      <h1>100 Great People</h1>
+      <p class="sub">Michael Hart’s 100 most influential people in history. Facts appear word by word, hardest first: name the person as soon as you know.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How it works</summary>
+    <ul>
+      <li>The people come from Michael Hart’s book <em>The 100: A Ranking of the Most Influential Persons in History</em> (1992 edition).</li>
+      <li>Facts appear five words per second, with a short pause between facts. They get easier as they go: the last fact is what the person is most famous for, usually with their nationality, as in “This Scottish-born inventor patented the telephone.”</li>
+      <li>Pick from six names at any time. The wrong choices usually come from the same field: scientists with scientists, rulers with rulers.</li>
+      <li>Each round is a race of 10 questions: the most right answers wins, and ties go to the faster time.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small><span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Works to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button><a class="home-link" href="./" data-home>All trivia games</a></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script src="scores-config.js"></script>
+<script>
+/*GEN*/
+var PeopleGen = (function(){
+  var W = [[1, "Muhammad", "rel", ["His move from Mecca to Medina in 622 begins the Islamic calendar.", "He also led his followers in politics and war.", "This Arab prophet founded Islam and received the revelations recorded in the Quran."]], [2, "Isaac Newton", "sci", ["He built the first practical reflecting telescope and helped invent calculus.", "He published the Principia in 1687.", "This English scientist stated the three laws of motion and the law of universal gravitation."]], [3, "Jesus", "rel", ["His Sermon on the Mount includes the Beatitudes.", "He taught through parables such as the Good Samaritan and the Prodigal Son.", "This Jewish teacher from Galilee is the central figure of Christianity, which is named for him."]], [4, "The Buddha", "rel", ["He taught the Four Noble Truths and the Eightfold Path.", "He reached enlightenment while meditating under a bodhi tree.", "This prince from what is now Nepal and northern India gave up his riches and founded a religion now followed across Asia."]], [5, "Confucius", "phi", ["His sayings were collected by his students in the Analects.", "His teachings shaped education and government for two thousand years.", "This Chinese philosopher taught respect for parents and elders, loyalty, and good government by virtuous rulers."]], [6, "Saint Paul", "rel", ["A vision on the road to Damascus converted him from persecuting Christians.", "He traveled the Mediterranean on missionary journeys.", "This apostle’s letters make up much of the New Testament."]], [7, "Cai Lun", "inv", ["He made his invention from tree bark, hemp, rags and old fishing nets.", "His invention replaced costly writing materials like silk and parchment.", "Around the year 105, this Chinese court official is credited with inventing paper."]], [8, "Johannes Gutenberg", "inv", ["His most famous book is a Bible printed in the 1450s.", "His invention helped spread the Reformation and the Scientific Revolution.", "Around 1440 this German developed the printing press with movable metal type."]], [9, "Christopher Columbus", "exp", ["His ships were sponsored by Ferdinand and Isabella.", "On his first voyage he commanded the Niña, the Pinta and the Santa María.", "In 1492 this Italian explorer from Genoa sailed west across the Atlantic and reached the Americas."]], [10, "Albert Einstein", "sci", ["He won the 1921 Nobel Prize in Physics for explaining the photoelectric effect.", "His equation E = mc² shows that mass and energy are related.", "This German-born physicist developed the theory of relativity."]], [11, "Louis Pasteur", "sci", ["He developed vaccines for rabies and anthrax.", "He showed that germs cause many diseases and spoil food.", "The process of heating milk to kill bacteria is named after this French scientist."]], [12, "Galileo Galilei", "sci", ["He showed that falling objects speed up at the same rate regardless of weight.", "He was put on trial by the Church for supporting the idea that Earth goes around the Sun.", "This Italian astronomer used one of the first telescopes to discover four moons of Jupiter."]], [13, "Aristotle", "phi", ["He founded a school in Athens called the Lyceum.", "He wrote on logic, biology, ethics, politics and poetry.", "This Greek philosopher was a student of Plato and a teacher of Alexander the Great."]], [14, "Euclid", "sci", ["He worked in Alexandria about 300 BCE.", "His book starts from a few simple axioms and proves hundreds of theorems.", "This Greek mathematician wrote the Elements and is called the father of geometry."]], [15, "Moses", "rel", ["Tradition says he parted the Red Sea.", "He received the Ten Commandments on Mount Sinai.", "According to the Bible, this Hebrew leader led the Israelites out of slavery in Egypt."]], [16, "Charles Darwin", "sci", ["He published his most famous book in 1859.", "His voyage on HMS Beagle took him to the Galápagos Islands.", "This English naturalist explained evolution by natural selection in On the Origin of Species."]], [17, "Qin Shi Huang", "pol", ["He standardized writing, money, weights and measures.", "He was buried with an army of thousands of life-size terracotta soldiers.", "In 221 BCE this ruler united China and became its first emperor."]], [18, "Augustus", "pol", ["His long reign began the Pax Romana, two centuries of relative peace.", "He defeated Mark Antony and Cleopatra.", "This adopted heir of Julius Caesar became the first Roman emperor."]], [19, "Nicolaus Copernicus", "sci", ["His book On the Revolutions of the Heavenly Spheres was published in 1543, the year he died.", "His work launched the Scientific Revolution.", "This Polish astronomer proposed that Earth and the other planets go around the Sun."]], [20, "Antoine Lavoisier", "sci", ["He was executed during the French Revolution.", "He named oxygen and hydrogen and showed that burning is combination with oxygen.", "This French scientist stated the law of conservation of mass and is called the father of modern chemistry."]], [21, "Constantine the Great", "pol", ["His Edict of Milan in 313 allowed Christians to worship freely.", "He moved the capital to Byzantium and renamed it after himself.", "This Roman emperor was the first to become a Christian."]], [22, "James Watt", "inv", ["A unit of power is named after him.", "His engines powered factories and helped drive the Industrial Revolution.", "This Scottish inventor greatly improved the steam engine."]], [23, "Michael Faraday", "sci", ["With little schooling, he rose from bookbinder’s apprentice to famous lecturer at the Royal Institution.", "He built the first electric motor and the first transformer.", "This English scientist discovered electromagnetic induction, the principle behind electric generators."]], [24, "James Clerk Maxwell", "sci", ["He made the first color photograph.", "He predicted radio waves before anyone had made them.", "This Scottish physicist’s equations unified electricity, magnetism and light."]], [25, "Martin Luther", "rel", ["He translated the Bible into everyday German.", "In 1517 he posted the Ninety-five Theses criticizing the sale of indulgences.", "This German monk began the Protestant Reformation."]], [26, "George Washington", "pol", ["He presided over the Constitutional Convention.", "He commanded the Continental Army in the American Revolution.", "This American was the first president of the United States."]], [27, "Karl Marx", "phi", ["His book Das Kapital criticized capitalism.", "His ideas inspired revolutions in Russia, China and elsewhere.", "This German thinker co-wrote The Communist Manifesto and is the father of communism."]], [28, "The Wright brothers", "inv", ["They were bicycle makers.", "Their first flight, at Kitty Hawk, North Carolina, lasted 12 seconds.", "In 1903 these American brothers made the first powered airplane flight."]], [29, "Genghis Khan", "pol", ["He united the nomadic tribes of the steppe in 1206.", "His grandson Kublai ruled China.", "This Mongol leader began the largest connected land empire in history."]], [30, "Adam Smith", "phi", ["He described how the “invisible hand” of the market turns self-interest into public good.", "He wrote The Wealth of Nations in 1776.", "This Scottish thinker is called the father of modern economics."]], [31, "William Shakespeare", "art", ["He also wrote 154 sonnets.", "His plays were performed at the Globe Theatre in London.", "This English playwright wrote Hamlet, Macbeth and Romeo and Juliet."]], [32, "John Dalton", "sci", ["He studied color blindness, which he had himself.", "He made the first table of relative atomic weights.", "This English chemist proposed the modern atomic theory."]], [33, "Alexander the Great", "pol", ["He founded many cities named after himself, the most famous in Egypt.", "He was taught by Aristotle.", "This Macedonian king conquered the Persian Empire and marched as far as India before age 33."]], [34, "Napoleon Bonaparte", "pol", ["His law code still shapes legal systems in many countries.", "He was exiled to Saint Helena.", "This French emperor conquered much of Europe and was defeated at Waterloo in 1815."]], [35, "Thomas Edison", "inv", ["His research lab earned him the nickname “the Wizard of Menlo Park.”", "He held more than a thousand patents and invented the phonograph.", "This American inventor developed a practical electric light bulb."]], [36, "Antonie van Leeuwenhoek", "sci", ["He worked as a cloth merchant in Delft.", "He called the creatures he discovered “animalcules.”", "This Dutch scientist made powerful microscopes and was the first to see bacteria."]], [37, "William T. G. Morton", "sci", ["His demonstration took place at Massachusetts General Hospital.", "Thanks to his work, surgery no longer had to be done on conscious patients.", "In 1846 this American dentist first showed that ether could be used as an anesthetic in surgery."]], [38, "Guglielmo Marconi", "inv", ["He shared the 1909 Nobel Prize in Physics.", "In 1901 he sent a signal across the Atlantic Ocean.", "This Italian inventor developed the radio."]], [39, "Adolf Hitler", "pol", ["He was born in Austria.", "His regime carried out the Holocaust, the murder of six million Jews.", "This Nazi dictator of Germany started World War II in Europe."]], [40, "Plato", "phi", ["He founded the Academy in Athens.", "He wrote dialogues starring his teacher, Socrates.", "This Greek philosopher wrote The Republic, about an ideal state ruled by philosopher-kings."]], [41, "Oliver Cromwell", "pol", ["His soldiers were called the New Model Army.", "He ruled as Lord Protector.", "This English general led Parliament against King Charles I in the English Civil War."]], [42, "Alexander Graham Bell", "inv", ["His first words on the phone were “Mr. Watson, come here, I want to see you.”", "He also taught deaf students.", "This Scottish-born inventor patented the telephone in 1876."]], [43, "Alexander Fleming", "sci", ["He shared the 1945 Nobel Prize in Medicine.", "In 1928 he noticed that a mold killed the bacteria in his culture dish.", "This Scottish scientist discovered penicillin, the first antibiotic."]], [44, "John Locke", "phi", ["His ideas strongly influenced the Declaration of Independence.", "He said government rests on the consent of the governed.", "This English philosopher argued that people have natural rights to life, liberty and property."]], [45, "Ludwig van Beethoven", "art", ["His Ninth Symphony includes the “Ode to Joy.”", "He kept composing after he became completely deaf.", "This German composer wrote nine symphonies, including the Fifth with its famous four-note opening."]], [46, "Werner Heisenberg", "sci", ["He won the 1932 Nobel Prize in Physics.", "He was a founder of quantum mechanics.", "This German physicist is known for the uncertainty principle."]], [47, "Louis Daguerre", "inv", ["He was also a painter of theater scenery.", "His pictures were made on silver-coated copper plates.", "This French inventor created an early practical method of photography."]], [48, "Simón Bolívar", "pol", ["The country whose seat of government is La Paz is named after him.", "He helped free Venezuela, Colombia, Ecuador and Peru.", "This Venezuelan general, called “the Liberator,” led South America’s wars of independence from Spain."]], [49, "René Descartes", "phi", ["He invented the coordinate plane, linking algebra and geometry.", "He is called the father of modern philosophy.", "This French philosopher wrote “I think, therefore I am.”"]], [50, "Michelangelo", "art", ["He designed the dome of St. Peter’s Basilica.", "He sculpted the statue of David.", "This Italian artist painted the ceiling of the Sistine Chapel."]], [51, "Pope Urban II", "rel", ["He gave his famous speech at the Council of Clermont.", "He was pope from 1088 to 1099.", "In 1095 this French-born pope launched the First Crusade."]], [52, "Umar", "rel", ["He started the Islamic calendar’s count of years from the Hijra.", "Under his rule, Arab armies conquered Syria, Egypt, Iraq and much of Persia.", "This Arab leader was the second caliph after Muhammad."]], [53, "Ashoka", "pol", ["He carved edicts on stone pillars.", "Horrified by the bloodshed of his war in Kalinga, he gave up conquest.", "This Indian emperor converted to Buddhism and sent Buddhist missionaries abroad."]], [54, "Saint Augustine", "rel", ["He was bishop of Hippo in North Africa.", "His book The City of God shaped Christian thought for centuries.", "This early Christian thinker wrote the Confessions, an early autobiography."]], [55, "William Harvey", "sci", ["He was physician to King Charles I.", "He published his findings in 1628.", "This English doctor discovered that blood circulates through the body, pumped by the heart."]], [56, "Ernest Rutherford", "sci", ["He discovered the proton.", "He won the 1908 Nobel Prize in Chemistry.", "This New Zealand–born physicist’s gold foil experiment showed that atoms have a tiny, dense nucleus."]], [57, "John Calvin", "rel", ["His ideas shaped Presbyterian and Puritan churches.", "He taught predestination, the idea that God has already chosen who will be saved.", "This French Protestant reformer led the church in Geneva."]], [58, "Gregor Mendel", "sci", ["He worked in what is now the Czech Republic.", "He discovered the basic laws of heredity.", "This Austrian monk experimented with pea plants and is called the father of genetics."]], [59, "Max Planck", "sci", ["A fundamental constant of physics is named after him.", "He proposed that energy comes in tiny packets called quanta.", "This German physicist’s work in 1900 began quantum theory."]], [60, "Joseph Lister", "sci", ["A mouthwash brand is named after him.", "His methods greatly reduced deaths from infection after operations.", "This English surgeon introduced antiseptic surgery, using carbolic acid to kill germs."]], [61, "Nikolaus Otto", "inv", ["He built his engine in 1876.", "The four-stroke cycle is often named after him.", "This German engineer built the first practical four-stroke engine, the kind that powers most cars."]], [62, "Francisco Pizarro", "exp", ["He founded the city of Lima.", "In 1532 he captured the Inca emperor Atahualpa.", "This Spanish conquistador conquered the Inca Empire."]], [63, "Hernán Cortés", "exp", ["He captured the emperor Moctezuma II.", "He destroyed Tenochtitlan in 1521, where Mexico City now stands.", "This Spanish conquistador conquered the Aztec Empire."]], [64, "Thomas Jefferson", "pol", ["He founded the University of Virginia.", "As president, he made the Louisiana Purchase and sent Lewis and Clark west.", "This American was the main author of the Declaration of Independence."]], [65, "Isabella I", "pol", ["She married Ferdinand of Aragon, uniting much of Spain.", "In 1492 her armies captured Granada, the last Muslim kingdom in Spain.", "This Spanish queen sponsored Columbus’s voyage in 1492."]], [66, "Joseph Stalin", "pol", ["He was born in Georgia.", "He forced farmers onto collective farms and sent millions to labor camps.", "This dictator ruled the Soviet Union from the 1920s until 1953, including through World War II."]], [67, "Julius Caesar", "pol", ["He conquered Gaul.", "He crossed the Rubicon in 49 BCE and won a civil war.", "This Roman dictator was assassinated on the Ides of March."]], [68, "William the Conqueror", "pol", ["He ordered the Domesday Book, a great survey of his kingdom.", "He invaded England in 1066.", "This Norman duke won the Battle of Hastings and became king of England."]], [69, "Sigmund Freud", "sci", ["His book The Interpretation of Dreams appeared in 1899.", "He believed the unconscious mind and childhood experiences shape behavior.", "This Austrian doctor founded psychoanalysis."]], [70, "Edward Jenner", "sci", ["He used material from cowpox sores.", "Thanks to vaccination, smallpox was wiped out worldwide in 1980.", "This English doctor created the first vaccine, for smallpox."]], [71, "Wilhelm Röntgen", "sci", ["He won the first Nobel Prize in Physics, in 1901.", "His first famous image showed the bones of his wife’s hand.", "This German physicist discovered X-rays in 1895."]], [72, "Johann Sebastian Bach", "art", ["He was a church organist and choir director in Leipzig.", "His masterpieces include the Mass in B Minor and the St. Matthew Passion.", "This German Baroque composer wrote the Brandenburg Concertos."]], [73, "Laozi", "rel", ["His teaching centers on the Way, living simply and in harmony with nature.", "He is traditionally credited with writing the Tao Te Ching.", "This Chinese sage founded Taoism."]], [74, "Voltaire", "phi", ["He fought for freedom of speech and religion and attacked the power of the Church.", "He was a leading thinker of the Enlightenment.", "This French writer wrote the satire Candide."]], [75, "Johannes Kepler", "sci", ["He worked as an assistant to the astronomer Tycho Brahe.", "He stated three laws of planetary motion.", "This German astronomer discovered that planets move in ellipses, not circles."]], [76, "Enrico Fermi", "sci", ["Element 100 is named after him.", "He worked on the Manhattan Project.", "This Italian physicist built the first nuclear reactor, in Chicago in 1942."]], [77, "Leonhard Euler", "sci", ["His identity e^(iπ) + 1 = 0 is often called the most beautiful equation.", "He introduced the notations e, i and f(x).", "This Swiss mathematician was one of the most productive mathematicians in history."]], [78, "Jean-Jacques Rousseau", "phi", ["His novel Émile is about how to educate a child.", "His ideas inspired the French Revolution.", "This Geneva-born writer wrote The Social Contract: “Man is born free, and everywhere he is in chains.”"]], [79, "Niccolò Machiavelli", "phi", ["He was a diplomat for the Republic of Florence.", "He argued that it is safer for a ruler to be feared than loved.", "This Italian writer wrote The Prince, a handbook for rulers."]], [80, "Thomas Malthus", "phi", ["His ideas influenced Charles Darwin.", "His most famous essay appeared in 1798.", "This English economist argued that population grows faster than the food supply."]], [81, "John F. Kennedy", "pol", ["He set the goal of landing a man on the Moon by the end of the 1960s.", "He faced the Cuban Missile Crisis.", "This American president was assassinated in Dallas in 1963."]], [82, "Gregory Pincus", "sci", ["He worked at the Worcester Foundation for Experimental Biology.", "His invention was approved in the United States in 1960.", "This American biologist co-developed the birth control pill."]], [83, "Mani", "rel", ["He was executed by the Persian king.", "His religion spread from the Roman Empire to China.", "This Persian prophet founded a religion that taught a struggle between light and darkness."]], [84, "Vladimir Lenin", "pol", ["His body is still displayed in a tomb on Red Square.", "He founded the Soviet Union.", "This Russian revolutionary led the Bolsheviks to power in 1917."]], [85, "Emperor Wen of Sui", "pol", ["His dynasty began the Grand Canal.", "He started rebuilding the Great Wall.", "In 589 this Chinese emperor reunited China after nearly 300 years of division, founding the Sui dynasty."]], [86, "Vasco da Gama", "exp", ["He later served as viceroy of his country’s colony in India.", "His voyage opened a sea route for the spice trade.", "In 1498 this Portuguese explorer became the first European to reach India by sailing around Africa."]], [87, "Cyrus the Great", "pol", ["He let the Jews exiled in Babylon return home to Jerusalem.", "He conquered Babylon in 539 BCE.", "This Persian king founded the Persian Empire."]], [88, "Peter the Great", "pol", ["He built his country’s first navy.", "He founded a new capital on the Baltic Sea and named it after his patron saint.", "This Russian czar modernized his country along Western European lines."]], [89, "Mao Zedong", "pol", ["He launched the Cultural Revolution in 1966.", "His Great Leap Forward caused a famine that killed tens of millions.", "This Chinese Communist leader founded the People’s Republic of China in 1949."]], [90, "Francis Bacon", "phi", ["He served as Lord Chancellor under King James I.", "He wrote “knowledge is power.”", "This English thinker championed the scientific method, based on observation and experiment."]], [91, "Henry Ford", "inv", ["He paid his workers five dollars a day, double the usual wage.", "He introduced the Model T in 1908.", "This American carmaker used the moving assembly line to make cars cheap enough for ordinary families."]], [92, "Mencius", "phi", ["He said rulers who mistreat their people lose the right to rule.", "He taught that human nature is good.", "This Chinese philosopher was the most important follower of Confucius."]], [93, "Zoroaster", "rel", ["His religion is still practiced by the Parsis of India.", "His religion teaches a struggle between good and evil.", "This Persian prophet founded an ancient Iranian religion that worships Ahura Mazda."]], [94, "Elizabeth I", "pol", ["She was the daughter of Henry VIII and Anne Boleyn.", "She never married and was called the Virgin Queen.", "This English queen’s navy defeated the Spanish Armada in 1588."]], [95, "Mikhail Gorbachev", "pol", ["He won the 1990 Nobel Peace Prize.", "His policies were called glasnost (openness) and perestroika (restructuring).", "This Russian leader was the last leader of the Soviet Union and ended the Cold War."]], [96, "Menes", "pol", ["He is said to have founded the city of Memphis.", "He is traditionally the first pharaoh of the First Dynasty.", "About 3100 BCE this Egyptian king united Upper and Lower Egypt."]], [97, "Charlemagne", "pol", ["He encouraged learning, a revival called the Carolingian Renaissance.", "He conquered much of Western Europe.", "This Frankish king was crowned emperor by the pope on Christmas Day in the year 800."]], [98, "Homer", "art", ["Tradition says he was blind.", "His epics tell of the Trojan War and Odysseus’s journey home.", "This Greek poet is credited with the Iliad and the Odyssey."]], [99, "Justinian I", "pol", ["His wife, Theodora, helped him put down the Nika riots.", "He built the Hagia Sophia in Constantinople.", "This Byzantine emperor had Roman law collected into a single code."]], [100, "Mahavira", "rel", ["He lived about the same time as the Buddha.", "He taught ahimsa, nonviolence toward all living things.", "This Indian teacher was the last great teacher, or tirthankara, of Jainism."]]];
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  var deck = [];
+  function make(){
+    if (!deck.length) deck = shuffle(W.slice());
+    var w = deck.pop(), name = w[1];
+    // wrong choices: people from the same field first (scientists with scientists, rulers with rulers), then anyone
+    var same = shuffle(W.filter(function(x){ return x[2] === w[2] && x[1] !== name; }));
+    var rest = shuffle(W.filter(function(x){ return x[2] !== w[2]; }));
+    var opts = shuffle([name].concat(same.concat(rest).slice(0, 5).map(function(x){ return x[1]; })));
+    var html = "";
+    w[3].forEach(function(seg, si){
+      seg.split(/\s+/).forEach(function(word, wi){
+        html += "<span class=\"w" + (si > 0 && wi === 0 ? " pause" : "") + "\">" + (si > 0 && wi === 0 ? "<span class=\"slash\">/</span> " : "") + esc(word) + " </span>";
+      });
+    });
+    return { id: name, probH: esc(name), ansH: esc(name),
+      bigH: "<div class=\"ask\">Who is it?</div><div class=\"clue\">" + html + "</div>",
+      optH: opts.map(esc), answer: opts.indexOf(name), steps: esc(name) + " is #" + w[0] + " on Michael Hart’s list of the 100 most influential people." };
+  }
+  return { make: make };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {all:"All works", novel:"Novels", play:"Plays", poem:"Poems", story:"Stories"};
+
+  var level = "all", clueOrder = "hard", dur = 0, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = PeopleGen.make(); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "greatpeople:race"; }
+  function lbLabel(){ return "10-question race"; }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  // Race scoring: the most right answers wins; ties go to the faster time.
+  function rawSecs(){ return Math.max(1, Math.round(((overAt || performance.now()) - startedAt) / 1000)); }
+  function timeScore(){ return rawSecs(); }
+  function fmtTime(sec){ sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return ((y.c || 0) - (x.c || 0)) || (x.s - y.s) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, c: correct, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + (r.c || 0) + "/" + QN + " <small>in " + fmtTime(r.s) + "</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "great-people";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = "time-all:" + QN, round = {score: timeScore(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + (r.right == null ? "" : r.right + "/" + QN + " ") + "<small>in " + fmtTime(r.score) + "</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            show(d.top, d.id);
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+  }
+  function afterRound(){
+    classBoard();
+    var title = document.getElementById("overTitle");
+    title.textContent = "Done!";
+    var miss = attempted - correct, ts = timeScore();
+    els.best.className = "";
+    els.best.textContent = correct + " of " + QN + " right in " + fmtTime(ts) + ".";
+    var entry = {s: ts, c: correct, a: attempted, t: Date.now()};
+    if (lbQualifies(ts, attempted)){
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent += rank === 0 ? " New personal best!" : " That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  // Words appear 5 per second, with a 1 second pause before each new clue (at each "/")
+  function startReveal(){
+    clearTimeout(revealTimer);
+    var items = els.prob.querySelectorAll(".clue .w"), shown = 0;
+    function next(){
+      if (shown >= items.length) return;
+      items[shown].classList.add("on"); shown++;
+      if (shown < items.length) revealTimer = setTimeout(next, items[shown].classList.contains("pause") ? 1000 : 200);
+    }
+    next();
+  }
+  function revealAll(){
+    clearTimeout(revealTimer);
+    els.prob.querySelectorAll(".clue .w").forEach(function(w){ w.classList.add("on"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = correct + "/" + QN;
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else if (setting === "order") clueOrder = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+<script>if (/claude/.test(location.hostname) || location.protocol === "blob:") document.querySelectorAll("[data-home]").forEach(function(a){ a.hidden = true; });</script>
+</body>
+</html>
