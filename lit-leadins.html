@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lit Lead-ins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.clue{max-width:34rem; margin:.4rem auto 0; text-align:left; font-size:1.08rem; line-height:1.6; min-height:7.5em}
+.clue .w{visibility:hidden}
+.clue .w.on{visibility:visible}
+.clue .slash{color:var(--muted); font-weight:700}
+.seg-btns{flex-wrap:wrap}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-style:italic; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
+.home-link{display:inline-block; margin-left:.6rem; font:inherit; font-weight:700; font-size:1.1rem; color:var(--rod); background:transparent; border:2px solid var(--rod); border-radius:999px; padding:.6rem 1.4rem; text-decoration:none}
+.home-link:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+.top-home{display:inline-block; font-size:.85rem; color:var(--muted); text-decoration:none; margin-bottom:.6rem}
+.top-home:hover{color:var(--rod)}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="top-home" href="./" data-home>← All trivia games</a>
+  <header>
+    <div class="logo" aria-hidden="true">📖</div>
+    <div>
+      <h1>Lit Lead-ins</h1>
+      <p class="sub">Quiz bowl lead-in clues appear word by word, hardest first. Name the work as soon as you know it.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How it works</summary>
+    <ul>
+      <li>Clues come from the MSNCT literature deck, about 190 novels, plays, poems and stories.</li>
+      <li>Words appear five per second, with a short pause before each new clue. Clues start hard and get easier.</li>
+      <li>Buzz in any time by picking one of the six titles. The wrong choices are the same kind of work.</li>
+      <li><strong>Clue order:</strong> “Hardest first” shows each work’s clues in the deck’s order. “Random” shuffles them, so an easy giveaway can come up early.</li>
+      <li>Each round is a race of 10 questions: the most right answers wins, and ties go to the faster time.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="orderLbl">Clue order</span>
+      <div class="seg-btns" role="group" aria-labelledby="orderLbl" data-setting="order">
+        <button type="button" data-v="hard" aria-pressed="true">Hardest first</button>
+        <button type="button" data-v="random" aria-pressed="false">Random</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small><span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Works to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button><a class="home-link" href="./" data-home>All trivia games</a></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script src="scores-config.js"></script>
+<script>
+/*GEN*/
+var LeadGen = (function(){
+  var W = [["1984", "novel", "novel", ["A man in this novel buys a diary from Mr. Charrington's antique shop.", "In this novel, the word \"plusgood\" means \"great\" and is part of the \"Newspeak\" language.", "A man in this novel is employed to alter historical documents for the Ministry of Truth.", "This novel's protagonist is forced to confront his fear of rats after being taken to Room 101.", "Winston Smith ultimately comes to love Big Brother in this novel."]], ["A Christmas Carol", "novella", "novel", ["This novella begins by noting that the partner of a \"covetous old sinner\" was as \"dead as a door-nail.\"", "After this novella's protagonist recalls the death of his sister, Fan, he recalls a party hosted by his former boss, Mr. Fezziwig.", "The protagonist of this novella sees a grim future in which Bob Cratchit's son, Tiny Tim, has died.", "This novella's protagonist is named Ebenezer Scrooge."]], ["A Doll's House", "play", "play", ["As this play begins, the maid Helen is told to hide a new Christmas tree.", "Torvald is deserted by his wife Nora Helmer at the end of what play?"]], ["A Midsummer Night's Dream", "play", "play", ["A speech to the audience at the end of this play begins \"if we shadows have offended.\"", "Theseus and Hippolyta's wedding forms the backdrop of this play.", "In this play, Peter Quince's amateur cast for Pyramus and Thisbe rehearses in the same forest where four Athenian youths flee.", "In this play, Nick Bottom is given a donkey's head through the schemes of Puck.", "In this play, flower juice is rubbed onto the wrong boy's eyelids, making him instantly fall in love with Helena."]], ["A Tale of Two Cities", "novel", "novel", ["In this novel, the empty grave of Roger Cly is discovered by the \"Resurrection-Man\" Jerry Cruncher.", "Monsieur Defarge storms the Bastille in this novel.", "At the start of this novel, Lucie reunites with her father, Dr. Manette.", "At this novel's end, Sydney Carton takes the place of Charles Darnay and is executed during the French Revolution."]], ["The Aeneid", "epic poem", "poem", ["After the hero of this work's hip was crushed by Diomedes, he was saved by his mother Aphrodite.", "In this work, a character wins Lavinia's hand by killing Turnus.", "Before journeying to Italy, a character in this work abandons Dido, the queen of Carthage."]], ["Alice's Adventures in Wonderland", "novel", "novel", ["A character in this novel complains \"it's always six o'clock\" because he offended Time by badly singing \"twinkle, twinkle, little bat.\"", "A character in this novel asks the nonsensical riddle \"why is a raven like a writing-desk?\"", "The main character of this novel rapidly grows and shrinks after consuming the contents of bottles labeled \"DRINK ME.\"", "In this novel, the main character pursues a character who frets \"I shall be late\", the White Rabbit."]], ["All Quiet on the Western Front", "novel", "novel", ["In this novel, Kropp defies the cruel Corporal Himmelstoss, who causes the suffering of Tjaden.", "German soldier Paul Baumer narrates what novel about World War I trench warfare?"]], ["Animal Farm", "novel", "novel", ["A flag in this book that features a white horn and hoof on a green background was designed by a character who rejects beds and alcohol in seven \"commandments.\"", "Moses the raven tells people about Sugarcandy Mountain in this novel.", "At the start of this novella, Old Major helps inspire a rebellion by singing \"Beasts of England.\"", "Two pigs named Snowball and Napoleon take charge in what allegorical novel about the Russian Revolution?"]], ["Anna Karenina", "novel", "novel", ["In this novel, a lightning storm causes Konstantin Levin to realize how much he loves his family.", "This novel portrays Count Vronsky's affair with the title woman, who ultimately kills herself by jumping under a train."]], ["Antigone", "play", "play", ["The main character of this play's siblings include Eteocles and Polynices.", "The main character of this play's sister, Ismene, follows Creon’s order, while the main character does not."]], ["As You Like It", "play", "play", ["The main character of this play gives a necklace to a man who defeats the wrestler Charles, and later faints after seeing his blood on a handkerchief after a fight with a lion.", "In this play, a character who disguises herself as the shepherd Ganymede is accompanied by her cousin Celia after being exiled.", "Rosalind marries Orlando at the end of this Shakespearean play, in which the exiled Duke Senior and his court live as outcasts."]], ["Beowulf", "epic poem", "poem", ["After a golden cup is stolen, two characters in this epic poem battle a rampaging dragon.", "This character is attacked by sea monsters called nicoras during a swimming contest, causing him to finish behind Breca.", "A character in this work vows not to use weapons against an unarmed foe while defending Heorot, the mead-hall of King Hrothgar.", "A dragon and Grendel battle the title warrior of what epic written in Old English?"]], ["Bhagavad Gita", "epic poem", "poem", ["One figure in this text states “Now I am become death, destroyer of worlds” after revealing his universal form to another character.", "One character in this text struggles with the morality of fighting his relatives in the Kurukshetra War, but is advised to uphold his dharma, or duty.", "This portion of the Mahabharata is a dialogue between Arjuna and a charioteer."]], ["Brave New World", "novel", "novel", ["In this novel, Bernard Marx takes a trip to New Mexico, where he meets a \"savage\" named John.", "A character in this novel arranges to send Helmholz Watson to an island.", "In this novel, Linda imagines that her son is Popé while she dies in a hospital where children are being “death-conditioned.”", "Lenina Crowne and Bernard Marx bring John the Savage from a reservation to a world ruled by Mustapha Mond in this novel.", "The drug soma is used to placate a society made of genetically-modified alphas and betas in this novel."]], ["The Brothers Karamazov", "novel", "novel", ["“The Speech at the Stone” is given by a character in this novel at the funeral of a boy who had earlier bitten his finger.", "Dmitri, Ivan, and Alyosha are the title siblings of what novel?"]], ["Candide", "novella", "novel", ["In this novella, Dr. Pangloss proclaims that we live in \"the best of all possible worlds.\"", "This novella concludes \"we must cultivate our garden.\"", "The title character is naïve in this satire."]], ["The Canterbury Tales", "poem", "poem", ["In a story in this work, three men find gold coins under an oak tree while on a journey to kill death.", "This work opens by describing the \"sweet showers\" of April in its \"General Prologue.\"", "In one part of this work that includes the Wife of Bath, an Arthurian knight must learn what women most want.", "A free meal at the Tabard Inn is offered to the pilgrim who tells the best story en route to the title city in what medieval collection?"]], ["The Charge of the Light Brigade", "poem", "poem", ["This poem's title group \"flashed all their sabres bare\" while riding into battle.", "This poem's speaker notes \"theirs not to reason why, theirs but to do and die.\"", "This poem praises 600 men who rode \"half a league, half a league onward.\""]], ["The Count of Monte Cristo", "novel", "novel", ["In this novel, Jacopo and other Genoese smugglers rescue a man who was stranded in the sea after cutting himself out of a burial sack.", "Mercedes marries Fernand Mondego after this novel's protagonist is framed for treason.", "Edmond Dantes plots revenge in what novel?"]], ["Crime and Punishment", "novel", "novel", ["A biblical passage about the resurrection of Lazarus is read aloud by Sonya in this novel.", "While delirious with fever, the protagonist of this novel is tended by his friend Razumikhin.", "Porfiry Petrovich uses psychological tactics to convince the main character to confess in this novel.", "The pawnbroker Alyona is murdered by Raskolnikov in this novel."]], ["David Copperfield", "novel", "novel", ["After his mother dies, the title orphan of this novel is sent to work in the rat-infested Murdstone and Grinby wine-bottling factory.", "Uriah Heep blackmails Mr. Wickfield and gains control of his business in this novel.", "The title orphan of this novel runs away to live with his great-aunt Betsey Trotwood."]], ["The Divine Comedy", "epic poem", "poem", ["This poem opens on Good Friday in 1300, when the main character is attacked by a lion, a leopard, and a she-wolf in the woods.", "In this work, the narrator meets his lover, Beatrice, and reads the inscription \"Abandon all hope, ye who enter here\" while being guided by Virgil.", "This poem is composed of segments named Inferno, Purgatory, and Paradise."]], ["Don Juan", "epic poem", "poem", ["In this epic poem, a character who falls in love with Aurora and Donna Julia is enslaved and sold to a seraglio after being captured by Haider's father.", "In this epic written in ottava rima, the title character flirts with Catherine the Great after fleeing Spain for being discovered in Donna Julia’s bed.", "The title character of this epic satire is a legendary Spanish womanizer who is actually easily seduced by women."]], ["Don Quixote", "novel", "novel", ["In this novel, the main character’s library is burned by a priest and a barber.", "The title character of this novel battles the Knight of Mirrors, who later defeats him disguised as the Knight of the White Moon.", "This novel's title character attacks wineskins and windmills thinking the latter are giants.", "In this book, a character rides Rocinante the horse and is accompanied by Sancho Panza."]], ["Dracula", "novel", "novel", ["This novel includes excerpts from the logbook of the Demeter as it sails from Varna to Whitby.", "The title character of this novel takes 50 boxes of dirt to England, where he terrorizes Lucy Westenra and Mina Murray.", "Van Helsing leads a group of vampire hunters, including Quincy Morris, who pursue the title count in this novel."]], ["Faust", "play", "play", ["In this play, the title character stands on a mountain and watches clouds shaped like two women diverge.", "This play has both a prelude set “in the Theatre” and a prologue set in Heaven.", "The title character of this play and a being who earlier disguised himself as a poodle watch a performance on Walpurgis Night.", "In this play, Helen of Troy is summoned for the Emperor.", "The title scholar of this play signs a pact in blood with the demon Mephistopheles."]], ["Frankenstein", "novella", "novel", ["A character in this novel reads C.F. Volney’s The Ruins of Empires to mirror the education of Safie.", "Henry Clerval’s father does not allow him to accompany another character in this novel to Ingolstadt.", "This novel begins with letters from the explorer Robert Walton, who rescues its title character in the Arctic.", "The title character of this novel, subtitled “The Modern Prometheus,” studies a process inspired by galvanism in which life is created in inanimate tissue."]], ["Great Expectations", "novel", "novel", ["A character in this novel who is described as having a post office of a mouth eats biscuits “as if he were posting them.”", "In the marshes, Compeyson fights with a character in this novel who is given a file and meat pie by the protagonist.", "A character in this novel takes on the name Provis after escaping his imprisonment in Australia.", "This novel’s protagonist is put under the guardianship of the lawyer Mr. Jaggers by his benefactor, an escaped convict.", "In this novel, the Satis House’s clocks are stopped at 8:40 by Miss Havisham, who remains in her wedding dress after getting jilted.", "Abel Magwitch is the father of Estella in this novel."]], ["Gulliver's Travels", "novel", "novel", ["In this novel, four towers topped with magnets protect a place from being crushed.", "Heel height separates the Tramecksan faction from the Slamecksan in this novel, where a character is afraid of being arrested for urinating on a fire.", "A project to extract light from cucumbers is executed at the Grand Academy on Laputa in this novel.", "In this novel, the Little and Big Endians fight a war over the right way to crack an egg.", "Six-inch-tall humans are found on an island in this novel across from Blefuscu."]], ["Hamlet", "play", "play", ["In this play, a character compares “that was, to this, Hyperion to a Satyr.”", "In a later speech, that character declares, “my thoughts be bloody, or be nothing worth” after being inspired by a passing army.", "A soliloquy in this play begins, “O that this too too solid flesh would melt.”", "In this play, a character remarks that “conscience does make cowards of us all” after musing, “to die, to sleep; to sleep, perchance to dream.”", "In this play, Fortinbras becomes king when the title character dies after killing Laertes and Claudius."]], ["Heart of Darkness", "novella", "novel", ["The only thing reported about the fate of this novel’s Eldorado Expedition is that “all the donkeys were dead.”", "This novel’s protagonist encounters a painting of a blindfolded woman with a torch.", "This novel depicts its setting as “the other world” according to an essay that calls its author “a thoroughgoing racist.”", "The protagonist of this novel hands out a pamphlet on the “Suppression of Savage Customs” after tearing off the handwritten postscript reading “exterminate all the brutes!”", "A dying man in this novel cries out “The horror! The horror!” on a steamer on the Congo river."]], ["The Hunchback of Notre Dame", "novel", "novel", ["This novel ends with the discovery of two intertwined skeletons crumbling to dust.", "One character in this novel, Sister Gudule, believes her daughter to be dead when in reality she has married the struggling playwright Pierre Gringoire.", "The protagonist of this novel becomes crowned the Pope of Fools during a festival.", "Men such as the protagonist, Captain Phoebus, and Claude Frollo are all infatuated with the Romani dancer Esmeralda."]], ["The Iliad", "epic poem", "poem", ["This work begins by invoking the Muse Calliope to sing of one character’s rage.", "The funeral games of Patroclus are at the end of this work between the death and burial of Hector.", "This epic is about a war that started when Paris abducted Menelaus’s wife, the most beautiful woman in the world.", "Achilles helps siege Troy in revenge for the abduction of Helen in this work."]], ["The Importance of Being Earnest", "play", "play", ["A woman in this play who rings a doorbell in a “Wagnerian manner” is pleased to learn that another character smokes and knows nothing.", "A character in this play attributes an inscription in his cigarette case to his aunt, who lives in Tunbridge Wells.", "In this play, a character who was found in a hand-bag in Victoria Station as a baby has his marriage proposal rejected by Lady Bracknell.", "A character in this play creates a fictional invalid friend, Bunbury, to escape social obligations and wishes to marry Cecily Cardew."]], ["Inferno", "poem", "poem", ["Characters in this poem stuff the mouth of a dog with mud in order to pass by him safely.", "In this poem, the Wood of the Suicides is surrounded by a river of blood, which was created by the Old Man of Crete.", "This poem’s “canto of the queens” describes the adultery of Paolo and Francesca da Rimini.", "A gate in this poem is inscribed with “abandon all hope, ye who enter here.”"]], ["Ivanhoe", "novel", "novel", ["In this novel, the physician Rebecca is captured by Maurice de Bracy and taken to Torquilstone Castle."]], ["Jane Eyre", "novel", "novel", ["A chapter in this novel opens with the statement \"reader, I married him.\"", "A fire at Thornfield Hall kills Bertha Mason, a woman who was kept in the attic, in this novel.", "In this novel a woman becomes a governess at Thornfield Hall and falls in love with its owner, Mr. Rochester."]], ["Julius Caesar", "play", "play", ["A character in this play dismisses his wife's fears by saying \"cowards die many times before their deaths.\"", "After a murder in this play, a young statesman shouts, \"Friends, Romans, countrymen, lend me your ears.\"", "A man in this play who says \"the fault...is not in our stars\" helps formulate a plot on \"the ides of March.\"", "In what play do Cassius and Brutus kill the title character?"]], ["The Jungle Book", "novel", "novel", ["Bagheera is in charge of taking care of the main character of this book.", "The bear Baloo educates Mowgli in this book."]], ["King Lear", "play", "play", ["In this play, a character declares “as flies to wanton boys are we to the gods; they kill us for their sport.\"", "A character disguised as Tom O’Bedlam leads Gloucester off an imaginary cliff in this play.", "This play opens with the flattering of the title character by his daughters Regan and Goneril.", "In this play, the title monarch exiles his daughter Cordelia."]], ["Kubla Khan", "poem", "poem", ["This poem imagines an \"Abyssinian maid\" who plays a dulcimer while \"singing of Mount Abora.\"", "This poem ends with the title character \"[drinking] the milk of paradise.\"", "The title character decrees a “stately pleasure-dome” where “Alph, the sacred river, ran.”"]], ["Les Miserables", "novel", "novel", ["In this novel, a man falsely assumes a girl's name is Ursula when he finds a handkerchief embroidered with the letter U.", "A character in this novel's hair suddenly turns white after witnessing the death of a woman who previously sold her teeth and hair.", "A group of revolutionaries in this novel who call themselves the Friends of the ABC all die except for Marius, who is carried through the Parisian sewer system by this novel's protagonist."]], ["Lolita", "novel", "novel", ["The protagonist of this novel shoots the playwright of The Enchanted Hunters and pursues the title character due to the death of his childhood love Annabel Leigh.", "Charlotte is run over by a car after realizing her husband's infatuation with her daughter, Dolores Haze.", "Name this novel about Humbert Humbert’s obsession with the title nymphet."]], ["Lord of the Flies", "novel", "novel", ["After seeing a dead parachutist in this novel, Simon is killed.", "In this novel, the twins Sam and Eric are captured after a conch is shattered.", "Roger uses a giant boulder to kill Piggy in this novel, which prominently features a feud between Jack and Ralph.", "Name this book about a group of boys on an isolated island."]], ["Macbeth", "play", "play", ["Near this play's climax, a rightful heir leads soldiers who have camouflaged themselves with tree branches.", "An insane woman in this play frets that she cannot wash her hands, even with \"all the perfumes of Arabia.\"", "In this play, Donalbain and Malcolm flee Inverness Castle after a friend of Banquo murders his own king.", "Malcolm, the eldest son of King Duncan, becomes king after the title character of this play is beheaded by Macduff.", "In this play, the refrain \"fair is foul, and foul is fair\" is chanted on a heath by a trio of prophecy-issuing witches."]], ["Madame Bovary", "novel", "novel", ["After reuniting with a former love interest at a performance of Lucia di Lammermoor, the main character of this novel fakes weekly piano lessons in Rouen.", "In this novel, a character whose husband botches an operation on Hippolyte’s clubfoot has affairs with Rodolphe Boulanger and Léon Dupuis after moving to Yonville.", "In this work, the wife of the doctor Charles swallows arsenic when she is unable to repay her debts."]], ["The Merchant of Venice", "play", "play", ["In a subplot of this play, Nerissa and her lady trick their husbands into giving away their wedding rings.", "In this play, Antonio agrees to a 3,000-ducat loan whose collateral is a pound of flesh.", "What play features the moneylender Shylock?"]], ["The Metamorphosis", "novella", "novel", ["After a man in this work gets a job as a bank attendant, his uniform grows dirty because he insists on always wearing it.", "A cleaning lady in this work uses a chair to threaten a character who treasures a picture of a lady in furs and hopes to send his sister Grete to a violin conservatory through the money he makes as a travelling salesman.", "The protagonist of this work dies of an injury caused by an apple lodged in his back."]], ["Middlemarch", "novel", "novel", ["A doctor’s wife in this novel defies her husband’s warning of horseback riding and suffers a miscarriage.", "In this novel, Featherstone attempts to convince Mary to destroy one of his two wills.", "One character in this novel is unable to read German, stalling his research on The Key to All Mythologies.", "The protagonist of this novel marries the poor Will Ladislaw, renouncing the fortune of her dead husband Casaubon.", "Name this “study of provincial life” about residents of the title town, like Dorothea Brooke."]], ["No Exit", "play", "play", ["A character in this play says that he goes to “[his] uncle’s place… on the third floor” on his days off before informing another character of the lack of a light-switch.", "After repeatedly trying to ring an electric bell, a character in this play is told that “Florence was a tiresome little fool,” so his supposed plan of “torture by separation” would be unsuccessful.", "A character in this play who asks a valet “where are the instruments of torture?” later realizes that “there’s no need for red-hot pokers” before Estelle repeatedly stabs Inez.", "Garcin declares that “hell is other people” in this play."]], ["Ode on a Grecian Urn", "poem", "poem", ["In the fourth stanza of this poem, the phrase “Cold Pastoral” presents the paradox of the events described as being both stoic and passionate.", "In this ekphrastic poem, love “leaves a heart high-sorrowful and cloy’d, a burning forehead, and a parching tongue.”", "In the first stanza of this poem, the speaker tells soft pipes to “play on” because “Heard melodies are sweet, but those unheard are sweeter.”", "This poem describes a priest making a sacrifice, a musician under a green tree, and a pursuant lover, all of whom will never die.", "Name this poem which declares, “Beauty is truth, truth beauty.”"]], ["Ode to Joy", "poem", "poem", ["This poem's title concept is a \"beautiful spark of divinity\" and a \"daughter of Elysium.\""]], ["The Odyssey", "epic poem", "poem", ["The maid Eurycleia recognizes the main character of this work by a scar on his foot.", "The main character of this work has a dog Argos who still recognizes him after 20 years.", "The title character alone is able to shoot an arrow through twelve axe heads in this work.", "A character in this work spends seven years with Calypso before returning to Ithaca and reuniting with Penelope."]], ["Oedipus Rex", "play", "play", ["At the start of this play, a crowd carries branches wrapped with wool to seek relief from plague.", "This play's theme of anagnorisis, or \"recognition,\" develops as the protagonist asks Tiresias about the death of Laius.", "In this tragedy about a Theban ruler, he weds his own mother."]], ["Oliver Twist", "novel", "novel", ["A villain in this novel named Monks bribes a workhouse manager named Mr. Bumble for information.", "This novel's protagonist and his friend the \"Artful Dodger\" are mentored by a criminal named Fagin.", "The title character of this novel is an orphan who becomes a pickpocket."]], ["One Hundred Years of Solitude", "novel", "novel", ["One character in this novel, who spends time making golden fish, has seventeen sons that share his name.", "At the end of this novel, a baby with a pig’s tail is eaten by ants, and the parchments of Melquiades are deciphered by Aureliano before a storm destroys the town of Macondo.", "Name this novel about the Buendia family, titled for a century of isolation."]], ["Othello", "play", "play", ["The title general of this work kills his wife under the mistaken belief that she is having an affair with his lieutenant Cassio.", "Iago warns the title character about jealousy, the \"green-eyed monster,\" in this play.", "The main character of this play is known as the Moor of Venice."]], ["Paradise Lost", "epic poem", "poem", ["This poem ends with two figures walking \"hand in hand, with wandering steps\" after the archangel Michael gives them a vision.", "The first line of this poem promises to tell the reader about \"man's first disobedience.\"", "Belial and Moloch aid a character in this poem who turns into a snake while visiting the Garden of Eden.", "A character declares that it is \"better to reign in Hell than serve in Heaven\" in this epic."]], ["The Picture of Dorian Gray", "novel", "novel", ["Lord Henry Wotton begins to corrupt this book's protagonist during a \"sitting\" in an art studio.", "The main character of this novel is called \"Prince Charming\" by his lover, Sibyl Vane.", "After a man in this novel stabs an object, he dies after abruptly growing old.", "This novel centers on a decaying portrait painted by Basil Hallward."]], ["Pilgrim's Progress", "novel", "novel", ["The main character of this work's original name is Graceless.", "Pliable briefly accompanies the main character of this work, but abandons him in the Slough of Despond.", "The main character of this work flees the City of Destruction to journey to the Celestial City."]], ["Pride and Prejudice", "novel", "novel", ["This novel opens with the claim that \"a single man in possession of a good fortune, must be in want of a wife.\"", "At the end of this novel, Lady Catherine de Bourgh eventually agrees to visit the Pemberley estate.", "In this novel, a soldier named George Wickham seduces Lydia, who is the protagonist's youngest sister.", "At one of several balls in this novel, Jane falls in love with her wealthy neighbor, Charles Bingley.", "Elizabeth Bennet ultimately marries Mr. Darcy in what novel?"]], ["Pygmalion", "play", "play", ["In this play's first scene, a man is suspected of being a \"copper's nark,\" or police informant, because he is jotting down a nearby conversation.", "In the postscript essay \"What Happened Afterwards,\" a woman in this play opens a flower shop with Freddy Eynsford-Hill and does not marry a professor of phonetics.", "Henry Higgins teaches upper-class speech to flower girl Eliza in this play."]], ["The Rime of the Ancient Mariner", "poem", "poem", ["This poem's frame narrative features an old man seizing a Wedding-Guest to tell his story and ends with the Wedding-Guest “a sadder and a wiser man.”", "The narrator of this poem laments \"Water, water everywhere, and not a drop to drink!\"", "The curse of the albatross afflicts the title figure of this poem, who must wear the bird's carcass around his neck."]], ["Robinson Crusoe", "novel", "novel", ["A character in this book escapes captivity with a boy named Xury, whom he later sells to a Portuguese captain.", "While living near the mouth of the Orinoco, a character in this novel rescues a man he re-names \"Friday.\"", "The title character spends 28 years stranded on an island in this novel."]], ["Romeo and Juliet", "play", "play", ["A character in this play says that his friend's dreams have been infected by the fairy Queen Mab.", "One character in this play is mockingly referred to as the \"Prince of Cats.\"", "In this play, Abraham is offended when Sampson bites his thumb.", "Tybalt kills Mercutio in a duel in this play, in which he shouts \"a plague o' both your houses.\"", "Name this play about two lovers from the Montagues and Capulets."]], ["The Second Coming", "poem", "poem", ["This poem invokes “Spiritus Mundi” and describes a sphinx-like creature with a gaze “blank and pitiless as the sun.”", "The speaker of this poem declares that “the best lack all conviction, while the worst are full of passionate intensity.”", "A falcon that “cannot hear the falconer” and the line “Things fall apart; the centre cannot hold” appear in this poem, which ends with a “rough beast” slouching towards Bethlehem to be born."]], ["Sense and Sensibility", "novel", "novel", ["Lady Middleton is vain of her elegant home in this novel, whose title refers to the differing personalities of the Dashwood sisters."]], ["The Stranger", "novella", "novel", ["In this novel, an Arab is killed on a beach after the sun blinds Meursault."]], ["The Tempest", "play", "play", ["Two lovers in this play are blessed and entertained by Iris, Ceres, and Juno.", "A creature in this play plots with Stephano to steal his master's magic books.", "The monster Caliban and the spirit Ariel appear in what play in which Prospero conjures the title storm?"]], ["Things Fall Apart", "novel", "novel", ["A girl in this novel, whose mother allows her to eat eggs despite her father forbidding it, is revealed to be a type of being that continually re-enters their mothers' womb to be reborn called an ogbanje.", "This novel's protagonist, who is exiled after his gun explodes at a funeral, kills his own adopted son Ikemefuna.", "Umuofia clan leader Okonkwo is the protagonist of this novel."]], ["The Thousand and One Nights", "story collection", "story", ["In one part of this work, a crew eats the contents of a large egg, prompting a roc to destroy their ship.", "In this work's frame story, cliffhangers dissuade King Shahryar from executing Scheherazade.", "What Middle Eastern story collection includes tales about Sinbad and Ali Baba?"]], ["The Three Musketeers", "novel", "novel", ["At the end of this novel, several characters reject the offer of a blank commission for a lieutenancy.", "The seamstress Constance is poisoned by Milady de Winter in this novel.", "A man in this novel discovers a fleur-de-lis branded on his wife's shoulder.", "While pursuing Rochefort, this novel's protagonist offends men named Athos, Porthos, and Aramis."]], ["Treasure Island", "novel", "novel", ["In this novel, an echo in a ghostly voice crying out for \"Darby M'Graw\" to \"fetch aft the rum\" exposes a trick being played by the marooned Ben Gunn.", "Early in this novel, a man at the Admiral Benbow Inn dies after the beggar Blind Pew gives him \"the black spot.\"", "Much of this novel is set on the ship Hispaniola, where Jim Hawkins befriends a peg-legged cook named Long John Silver."]], ["The Tyger", "poem", "poem", ["This poem asks \"in what furnace was thy brain\" to the title character.", "This poem's speaker asks “what shoulder” and “what art” “could twist the sinews of thy heart?”", "This poem asks \"did he who made the lamb make thee?\"", "This poem and its counterpart “The Lamb” are found in its author’s Songs of Experience.", "This poem asks “What immortal hand or eye could frame thy fearful symmetry?”", "This poem describes the title animal \"burning bright\" in \"the forests of the night.\""]], ["Ulysses", "novel", "novel", ["In this novel, the words \"yes I said yes I will Yes\" end a stream-of-consciousness \"soliloquy\" by Molly Bloom, who has an affair with Blazes Boylan."]], ["Vanity Fair", "novel", "novel", ["In this novel, Becky Sharp, a cunning, amoral, poor young woman, sets out to climb the ladder of society."]], ["Waiting for Godot", "play", "play", ["A character in this play goes on a rambling monologue beginning with “Given the existence as uttered forth in the public works of Puncher and Wattmann” and repeats the phrase “quaquaquaqua” after putting on his “thinking cap.”", "At the end of each of the two acts in this play, the Boy arrives and tells the two central characters that the title figure will not be coming this “evening, but surely tomorrow.”", "Pozzo goes blind and Lucky becomes mute at the end of what play in which Vladimir and Estragon never see the title character?"]], ["War and Peace", "novel", "novel", ["This novel depicts a cheerful conversation between Napoleon Bonaparte and the Cossack serf Lavrushka, who pretends not to recognize the French emperor.", "In this novel, a stomach wound sustained at the Battle of Borodino slowly kills Prince Andrei.", "Name this novel in which Pierre Bezukhov carries ammunition during the Battle of Borodino."]], ["Wuthering Heights", "novel", "novel", ["In this novel, a boy tells Nelly Dean that he saw this man walking the moors with the woman he loved.", "In this novel, Heathcliff spent his childhood with the Earnshaw family, during which time he fell in love with Catherine Earnshaw."]], ["A Farewell to Arms", "novel", "novel", ["The main character of this novel is introduced to his future lover by his roommate, a surgeon named Rinaldi.", "A nurse named Catherine Barkley gives a St. Anthony medal to the protagonist of this novel before he is wounded on the Italian front.", "An American ambulance driver named Frederic Henry deserts the army during World War I in this novel."]], ["A Raisin in the Sun", "play", "play", ["Walter Lee Younger loses his family's investment money to a shady business partner after trying to open a liquor store in this play.", "Mama Lena Younger uses a ten-thousand-dollar insurance check to buy a house in a white Chicago neighborhood for her family, including her grandson Travis, in this play."]], ["A Streetcar Named Desire", "play", "play", ["A sensitive man named Mitch courts the main character of this play until he uncovers the truth about her past at the Flamingo Hotel.", "Stella tries to keep the peace in her small New Orleans apartment between herself, her aggressive husband, and her visiting sister in this play.", "Blanche DuBois depends on the kindness of strangers after being pushed to a mental breakdown by her brother-in-law Stanley Kowalski in this play."]], ["The Adventures of Huckleberry Finn", "novel", "novel", ["Two con artists known as the Duke and the King try to scam three sisters, including Mary Jane Wilks, out of their deceased uncle's fortune in this novel.", "Sophia Grangerford elopes with Harney Shepherdson in this novel, reigniting a deadly family feud along the river.", "The protagonist fakes his own murder to escape his abusive, alcoholic father Pap before hiding out on Jackson's Island in this novel."]], ["The Adventures of Tom Sawyer", "novel", "novel", ["This novel’s protagonist declares himself the Black Avenger of the Spanish Main, causing his sweetheart to mourn for the andiron knob he had used to propose to her.", "In an attempt to impress the father of his love interest, the main character of this work trades trinkets for blue, red, and yellow tickets, which he uses to acquire a Bible; the scheme backfires when he names David and Goliath as the first two disciples.", "After running away to Jackson’s Island with his friends, a character in this work returns to St. Petersburg to attend his own funeral.", "In this novel, Muff Potter believes he is guilty of a murder committed by Injun Joe.", "The main character of this work tricks boys in town into whitewashing his fence."]], ["As I Lay Dying", "novel", "novel", ["In this novel, the mother of a poor family dies shortly after two of her children, Darl and Jewel, leave to make a delivery for a neighbor, Vernon Tull.", "In this novel, Cora recalls how a character had her \"head propped up\" so she could watch her son Cash building her coffin.", "A child in this novel, Vardaman, drills holes in a coffin and states \"my mother is a fish.\"", "In this novel, the Bundren family takes Addie's body back to her hometown of Jefferson for burial."]], ["Beloved", "novel", "novel", ["This novel's protagonist attacks Mr. Bodwin after mistaking him for a plantation manager called Schoolteacher.", "Name this novel about a formerly enslaved woman who is haunted by the ghost of her dead infant at 124 Bluestone Road.", "The protagonist of this novel is named Sethe."]], ["The Call of the Wild", "novella", "novel", ["In this novel, Pete and Hans follow the Stewart River to find a \"Lost Cabin.\"", "A man in this novel wins a wager against Matthewson after his companion pulls a load for 100 yards.", "Two men named Francois and Perrault purchase this novel's protagonist, who kills Spitz to become leader of their pack.", "This novel's protagonist attacks a group of Yeehats after they kill his friend John Thornton.", "Name this novel set during the Klondike Gold Rush and centering on a dog named Buck."]], ["Catch-22", "novel", "novel", ["A man in this novel runs a black market syndicate called M&M Enterprises.", "This novel's protagonist identifies the idea that \"man was matter\" as \"Snowden's secret.\"", "In this novel, a maid named Michaela is killed in Rome by Aardvark, an incompetent navigator.", "This novel's protagonist, who is stationed on Pianosa, becomes desperate to avoid combat missions.", "This book's protagonist clashes with his superiors like Major Major Major.", "In this novel, Colonel Cathcart constantly raises the number of missions that men such as John Yossarian must fly."]], ["The Catcher in the Rye", "novel", "novel", ["While staying at the Edmont Hotel, the protagonist of this novel gets into a physical altercation with an elevator operator and pimp named Maurice over five dollars.", "After sneaking back into his parents' apartment, the protagonist of this novel gives his iconic red hunting cap to his younger sister, Phoebe.", "This novel begins with the protagonist leaving Pencey Prep after failing four of his five classes, including history with Mr. Spencer.", "The central teenager of this novel wanders around New York City, complaining about \"phonies\" and worrying about where the ducks in Central Park go during the winter."]], ["The Crucible", "play", "play", ["In this play, a prisoner refuses to give a signed confession to Judge Danforth because he won’t soil his name.", "A young girl in this play faints after dancing in the forest with her cousin Abigail and her father’s slave, Tituba.", "At the end of this play, Giles Corey asks for “more weight” while being pressed to death, and John Proctor is hanged for refusing to admit to false claims of witchcraft.", "Name this play focusing on the Proctors in the Salem Witch Trials."]], ["Death of a Salesman", "play", "play", ["A fountain pen is stolen by former high school football star Biff in this play.", "Despite Linda's efforts, a man in this play crashes his car to provide a $20,000 insurance payment.", "This play depicts the fall of Willy Loman."]], ["Fahrenheit 451", "novel", "novel", ["A retired English professor named Faber helps the main character of this novel by communicating with him through a two-way green earpiece.", "The protagonist of this novel is forced to burn his own house down after his wife Mildred reports him for reading poetry to her friends.", "The main character of this novel meets the teenage girl Clarisse McClellan before joining a group of book-memorizing wanderers led by Granger.", "Fire captain Beatty lectures the protagonist of this novel on why books were banned before the protagonist kills him with a flamethrower."]], ["For Whom the Bell Tolls", "novel", "novel", ["This novel features Maria, the lover of the protagonist.", "This novel, whose title derives from a work by John Donne, depicts Robert Jordan's mission to blow up a bridge during a war."]], ["The Gift of the Magi", "short story", "story", ["A character in this story is told to \"take your hat off\" so that Mme. Sofronie can look at her hair.", "As this story ends, a man tells his wife to \"put the chops on\" after revealing that he sold his prized watch.", "As this story opens, a woman cries when she realizes that she only has $1.87 and \"the next day would be Christmas.\""]], ["The Glass Menagerie", "play", "play", ["This play features a character who suffers from pleurosis and a severe inferiority complex due to a leg brace, causing her to spend most of her time polishing her collection of figurines.", "The gentleman caller Jim O'Connor visits the Wingfield apartment in this play and accidentally snaps the horn off a fragile unicorn.", "Name this play featuring the characters Tom, Laura, and Amanda Wingfield."]], ["The Grapes of Wrath", "novel", "novel", ["A tragic death occurs early in this novel when the family's dog is struck by a car along Route 66, foreshadowing the hardships of their journey west.", "This novel's final scene features Rose of Sharon breastfeeding a starving stranger in a barn to keep him alive after a torrential flood ruins their makeshift camp.", "Name this novel about the Joad family migrating from the Dust Bowl of Oklahoma to California in search of work."]], ["The Great Gatsby", "novel", "novel", ["A drunk man called \"Owl Eyes\" is amazed that the books in a library are real.", "Meyer Wolfsheim, who fixed the 1919 World Series, wears cufflinks made of human molars.", "The eyes of Doctor T. J. Eckleburg on a billboard watch over the valley of ashes.", "Myrtle Wilson is struck and killed by a yellow car that Daisy was driving.", "The narrator watches the green light at the end of Daisy's dock across the bay from West Egg."]], ["Howl", "poem", "poem", ["The opening section of this poem famously laments, \"I saw the best minds of my generation destroyed by madness, starving hysterical naked,\" and denounces a cold, mechanical society it calls \"Moloch.\"", "This monumental 1956 free-verse poem became a touchstone of the Beat Generation and was the subject of a famous obscenity trial won by publisher Lawrence Ferlinghetti."]], ["The Jungle", "novel", "novel", ["Characters in this novel face horrific industrial hazards, including a boy who drowns in a rendering tank and a worker who becomes crippled after falling into a vat of boiling lard.", "In this novel, the bride Ona is described as \"too excited to eat\" at her wedding.", "Name this muckraking novel centered on the Lithuanian immigrant Jurgis Rudkus."]], ["Leaves of Grass", "poetry collection", "poem", ["A poem in this collection's speaker describes himself as standing with a \"side-curved head curious what will come next.\"", "A poem in this collection asks \"if the body were not the soul, what is the soul?\" and states \"the armies of those I love engirth me.\"", "A speaker says \"I loafe and invite my soul\" in a poem from this collection.", "This collection includes \"I Sing the Body Electric\" and \"Song of Myself.\""]], ["Little Women", "novel", "novel", ["This novel opens with the complaint \"Christmas won't be Christmas without any presents.\"", "Several characters in this novel are the children of a Civil War chaplain and his wife \"Marmee.\"", "A character in this novel eventually marries the bookish professor Friedrich Bhaer after rejecting a proposal from Laurie.", "Scarlet fever afflicts one of the main characters of this novel.", "Beth, Jo, Amy, and Meg are the March sisters in this novel."]], ["Main Street", "novel", "novel", ["This novel's primary setting was inspired by the author's hometown of Sauk Centre.", "This novel depicted Carol Kennicott's struggle with the residents of Gopher Prairie."]], ["Moby Dick", "novel", "novel", ["In this novel, a black boy named Pip goes insane after briefly being left adrift during a hunt.", "A blacksmith makes a weapon from horseshoe stubs to kill this novel's title figure, as requested by a man with a prosthetic leg.", "In this novel, a man is told that \"hemp only can kill thee,\" which is one of the prophecies of Fedallah.", "In this novel, a coffin shaped like a canoe is made for a cannibal from the Polynesian island of Kokovoko.", "The first man to see this novel's title figure is offered a doubloon by the leader of a ship.", "By the end of this novel, Starbuck and Queequeg are dead but the narrator, Ishmael, survives a sinking."]], ["My Antonia", "novel", "novel", ["This novel is set in Great Plains Nebraska and narrated by Jim."]], ["Of Mice and Men", "novella", "novel", ["Near the beginning of this book, a man is warned not to \"drink so much\" out of a river.", "In this novella, a man who wears a glove filled with vaseline has his hand crushed in a fight.", "Characters in this novella include an African-American stable-hand named Crooks who is forced to live in a barn.", "A man in this novella reluctantly allows Carlson to kill an animal beloved by the elderly Candy.", "In this novella, a man is shot by his best friend after that man accidentally kills Curley's wife.", "The itinerant workers George Milton and Lennie Small appear in this novella."]], ["The Old Man and the Sea", "novella", "novel", ["A man in this book says that a \"bone spur\" is painful for the baseball star Joe DiMaggio.", "The protagonist of this book won an arm wrestling match in Casablanca, which earned him the nickname \"the champion.\"", "A boy named Manolin helps this book's protagonist, whose 84-day streak of bad luck continues after sharks consume his prize."]], ["Our Town", "play", "play", ["A mother in this play admits she cried just from watching her daughter eat breakfast on the morning of her wedding.", "George Gibbs grows up to marry Emily Webb in this play, which is narrated by the Stage Manager.", "Name this play set in Grover's Corners."]], ["The Raven", "poem", "poem", ["This poem's speaker notes a \"stillness\" that \"gave no token\" while \"dreaming dreams no mortal ever dared to dream.\"", "The title figure of this poem is asked to return to \"the night's Plutonian shore.\"", "The speaker of this poem poses the question \"is there balm in Gilead?\" to a creature that sits on a \"pallid bust of Pallas.\"", "This poem is set \"upon a midnight dreary\" and laments the loss of a \"radiant maiden\" named Lenore.", "The word \"nevermore\" is repeated in this poem in which a midnight visitor taps at a \"chamber door.\""]], ["The Red Badge of Courage", "novel", "novel", ["This novel's sequel, the story \"The Veteran,\" reveals that it is set during the Battle of Chancellorsville.", "At the end of this novel, the protagonist recalls a man \"faint of blood\" who repeatedly asked him \"where yeh hit?\"", "Characters in this novel become angry after being called \"mud diggers\" and \"mule drivers\" by an officer.", "A \"tattered man\" and this novel's protagonist watch a character die after he is shot.", "The 304th New York Infantry Regiment fights an unnamed battle in this novel.", "Jim Conklin is killed in this novel, in which Henry Fleming fights in the Civil War."]], ["Rip Van Winkle", "short story", "story", ["The title character of this story eventually reaches the age \"when a man can be idle with impunity.\"", "People in this story say that thunder is caused by nine-pins being played by Henry Hudson's men.", "Its protagonist enters a town inn and is surprised to see that George III's face was repainted.", "The title character sleeps in the Catskills for 20 years in this story."]], ["The Scarlet Letter", "novel", "novel", ["A character in this novel stares with \"naughty merriment\" at a breastplate that distorts reflections in Governor Bellingham's mansion.", "This novel's frame story describes a manuscript by Jonathan Pue that is found in a custom-house.", "In this novel, Roger Chillingworth suspects that Arthur Dimmesdale is Pearl's father.", "Hester Prynne is forced to wear the title mark in this novel."]], ["Slaughterhouse-Five", "novel", "novel", ["This novel's protagonist becomes \"unstuck in time\" and is held in a zoo on the planet Tralfamadore.", "The main character of this novel is named Billy Pilgrim."]], ["The Sound and the Fury", "novel", "novel", ["Characters in this novel include the family cook Dilsey and the banker Herbert Head.", "The first three chapters of this stream of consciousness novel consist of the thoughts of Benjy, Jason, and Quentin Compson."]], ["The Sun Also Rises", "novel", "novel", ["This novel popularized the running of the bulls in Pamplona.", "Pedro Romero and the boxer Robert Cohn fight over Lady Brett Ashley in this novel."]], ["Their Eyes Were Watching God", "novel", "novel", ["A character in this novel kisses Johnny Taylor after lying under a pear tree in her backyard.", "The main character of this novel is forced to shoot her husband Tea Cake after he is bitten by a rabid dog during a hurricane.", "In this novel, Jody's death leaves Janie Crawford free to marry before she returns to Eatonville."]], ["To Kill a Mockingbird", "novel", "novel", ["In this novel, a character whose childhood nickname was \"Ol' One-Shot\" kills Tim Johnson, a rabid dog, after the sheriff reveals he can't shoot.", "One character in this novel is forced to read to the morphine addict Mrs. Dubose.", "In this novel, soap dolls and pennies found in a tree are revealed to be gifts.", "A family of \"poor white trash\" in this novel includes Mayella, who is revealed to have lied about Tom Robinson raping her.", "At the end of this novel, the reclusive Boo Radley saves Jem and Scout.", "Name this novel about the lawyer Atticus Finch set in Maycomb, Alabama."]], ["Uncle Tom's Cabin", "novel", "novel", ["In this novel, Emily de Thoux meets Cassy and Emmeline after they scare a wealthy landowner to death.", "Eliza leaves Emily Shelby’s home to save her son, Harry, in this novel.", "George helps search for Chloe’s husband, who is purchased from the family of Augustine St. Clare in this novel, and who is beaten to death on the orders of Simon Legree.", "Name this anti-slavery novel where a long-suffering slave dutifully serves his master."]], ["The Waste Land", "poem", "poem", ["In this poem, the death of Phlebas the Phoenician is foretold by one of Madame Sosostris' tarot cards.", "Ezra Pound edited this poem, which ends with the mantra “Shantih shantih shantih” in the section “What the Thunder Said.”", "Another section of this poem entitled “The Burial of the Dead” begins with the line “April is the cruellest month.”", "Name this poem with a title that evokes a barren setting."]], ["Araby", "short story", "story", ["This story from Dubliners is named for a church bazaar with a Middle Eastern theme, where the protagonist goes to buy a present for Mangan’s sister only to discover he does not have enough money."]], ["Auld Lang Syne", "poem", "poem", ["This poem’s original form notes that the speaker and his addressee have “rin about the braes” and “paidl’t i' the burn.”", "The speaker of this poem written in Scottish dialect claims that they will “take a cup of kindness yet” and asks, “Should auld acquaintance be forgot, and never brought to min’?”"]], ["The Decameron", "story collection", "story", ["In this work, Fiammetta describes the courtship of Federigo, who offers to cook his last possession, a falcon, for his unrequited love.", "A story in this work sees Gualtieri test the patience of his wife, Griselda, by ordering their children killed; that story is told by Dioneo, one of ten young adults avoiding the Black Death in a villa outside Florence."]], ["Dulce et Decorum Est", "poem", "poem", ["Blood gargles out of \"froth-corrupted lungs\" in this poem, which uses the phrase \"the old Lie\" to condemn a patriotic Latin motto."]], ["Gunga Din", "poem", "poem", ["This poem describes the title water-carrier as “a better man than I am,” although the speaker earlier called him a “squidgy-nosed old idol.”"]], ["The Hound of the Baskervilles", "novel", "novel", ["In this novel, Hugo has his throat ripped out after trying to imprison a girl, resulting in a family curse.", "In this novel, heirs to a family fortune succumb to death after encountering a demonic dog covered in phosphorescent paint.", "This novel is set in Dartmoor. It was Sherlock Holmes' first appearance after his death."]], ["How Do I Love Thee? (Sonnet 43)", "poem", "poem", ["This poem answers \"to the depth and breadth and height my soul can reach.\"", "This poem is part of a collection that is \"from the Portuguese.\""]], ["I Wandered Lonely as a Cloud", "poem", "poem", ["The narrator describes an outing with his sister Dorothy and the sight of “a host of golden\" flowers in this poem.", "Daffodils appear “fluttering and dancing in the breeze” while the narrator does the title action in this poem."]], ["If—", "poem", "poem", ["This poem begins by talking about keeping your head when others are losing theirs.", "This poem encourages the reader on the premise that if he can do many things, “Yours is the Earth and everything that's in it.”", "In this poem, the narrator declares “you’ll be a Man, my son!” after giving his child advice on how to be a well-balanced adult."]], ["In Flanders Fields", "poem", "poem", ["In this poem, the reader is told “to you from failing hands we throw the torch” and warns that “if ye break faith [...] we shall not sleep.”", "Poppies sit over “the Dead,” who now lie in the title location of this poem."]], ["Jabberwocky", "poem", "poem", ["\"Borogoves\" are described as \"mimsy\" in this poem.", "In this poem, a \"beamish boy\" seeks out a monster, which is killed with a \"vorpal blade.\"", "The jubjub bird and bandersnatch are imaginary creatures in this poem."]], ["The Lady of Shalott", "poem", "poem", ["This poem depicts a character who “hath no loyal knight and true.”", "This poem declares, “The willowy hills and fields among, they heard her singing her last song.”", "The protagonist of this poem dies after looking toward Camelot."]], ["The Monkey's Paw", "short story", "story", ["A well-dressed stranger in this short story represents a firm named Maw and Meggins.", "A man insists that the title object of this story \"twisted in my hand like a snake.\"", "In this story, Mr. White makes three wishes; the first kills his son Herbert and the second reanimates Herbert’s mangled body."]], ["My Last Duchess", "poem", "poem", ["In this poem, a character’s violent nature is revealed after he “gave commands” and “all smiles stopped together.”", "The speaker of this poem laments that its subject did not appreciate his “nine-hundred-years-old name.”", "This poem’s title character is described as having a “heart too soon made glad,” which enrages her husband."]], ["The Necklace", "short story", "story", ["The title object of this short story comes in a \"black satin box,\" marked with the name of a jeweler who has no record of selling it.", "A woman and her husband take out loans of 18,000 francs to avoid being suspected of theft by Madame Forestier in this short story.", "The title object of this story is lost by Mathilde Loisel, whose household descends into poverty to pay for this item's replacement."]], ["The Old Pond (haiku)", "poem", "poem", ["This poem ends by saying the title place is \"silent again.\"", "This poem describes a frog jumping into the title location."]], ["The Open Window", "short story", "story", ["This short story was written by Saki."]], ["Ozymandias", "poem", "poem", ["This poem depicts a figure whose \"visage\" displays a \"sneer of cold command\" and a \"wrinkled lip.\"", "A \"traveller from an antique land\" describes the \"colossal wreck\" of a statue of a pharaoh who proclaims \"look on my works, ye mighty, and despair\" in this sonnet."]], ["Sonnet 18", "poem", "poem", ["This poem states “so long as men can breathe, or eyes can see, so long lives this” in the final couplet.", "This poem is addressed to a “Fair Youth.”", "This poem describes the “rough winds” that “shake the darling buds of May” and mentions that the title season has “all too short a date.”", "An extended simile in this poem proclaims that its subject is \"more lovely and more temperate.\""]], ["To a Mouse", "poem", "poem", ["This poem calls the title “fellow-mortal” creature a “wee, sleeket, cowran, tim’rous beastie.”", "This poem states that “Man’s dominion has broken Nature’s social union.”", "This poem is addressed to a small mammal when he “[Turned] Her Up in Her Nest With the Plough.”"]], ["Ulysses (poem)", "poem", "poem", ["This poem's speaker states his son is the one \"to whom I leave the sceptre and the isle.\"", "This poem depicts an “idle king” who resolves “to strive, to seek, to find, and not to yield.”"]], ["\"Hope\" is the thing with feathers", "poem", "poem", ["The speaker of this poem describes the title feeling as a “little bird that kept so many warm.”", "This poem also states that \"sore must be the storm\" that abashes a bird representing the title concept.", "This poem describes a feeling “that perches in the soul and sings the tune without the words.”"]], ["A Good Man Is Hard to Find", "short story", "story", ["At the beginning of this story, a woman feeds apricots from a jar to her baby while her husband reads the sports section of a newspaper.", "A child named John Wesley complains that \"Georgia is a lousy state\" as he and his family drive to Florida in this story.", "This story ends with an elderly woman being shot \"three times through the chest\" by a criminal known as \"the Misfit.\""]], ["A Sound of Thunder", "short story", "story", ["The hunter Eckels goes on a safari after using a time machine in this story."]], ["All Summer in a Day", "short story", "story", ["Children in this story enjoy two hours of sunlight after stuffing Margot in a closet."]], ["An Occurrence at Owl Creek Bridge", "short story", "story", ["While traveling at night, this story's narrator observes the \"secret and malign\" order of unfamiliar constellations above him.", "This story was collected with \"Chickamauga\" in its author's Tales of Soldiers and Civilians.", "This story's protagonist feels a \"stunning blow\" after imagining an escape through a river below the title structure.", "Peyton Farquhar is executed by Union troops in this Civil War story."]], ["Annabel Lee", "poem", "poem", ["This poem mentions the “wingèd seraphs of Heaven” after stating that “I was a child and she was a child.”", "“A wind blew out of a cloud” and killed the title character of this poem, leading a kinsman to “shut her up in a sepulchre.”", "This poem ends by describing a woman lying in a \"tomb by the sounding sea\" after being \"chill[ed] and kill[ed].\"", "This poem is set in \"a kingdom by the sea\" \"many and many a year ago.\""]], ["Bartleby, the Scrivener", "short story", "story", ["The main character of this story shows passive-aggressiveness by responding \"I would prefer not to.\""]], ["Because I could not stop for Death", "poem", "poem", ["The speaker of this poem goes past a “School, where Children strove at Recess, in the Ring.”", "In this poem, the speaker stops with a figure “before a House that seemed a Swelling of the Ground.”", "In this poem, the narrator surmises that “the Horses’ Heads were toward Eternity” during a carriage ride.", "This poem describes a carriage ride to a grave with the personification of a concept and “Immortality.”"]], ["Casey at the Bat", "poem", "poem", ["This poem is captioned \"A Ballad of the Republic, Sung in the Year 1888.\"", "An unofficial sequel to this poem was called \"[the title character]'s Revenge.\"", "In this poem, the speaker states \"there is no joy in Mudville\" because the title person \"has struck out.\""]], ["The Cask of Amontillado", "short story", "story", ["This story is set in Italy during what its narrator describes as \"the supreme madness of the carnival season.\"", "This story ends as Montresor lures Fortunato to his death in a damp catacomb."]], ["The Celebrated Jumping Frog of Calaveras County", "short story", "story", ["Simon Wheeler tells a story about the title animal of this story when the narrator asks for information about Leonidas W. Smiley.", "This short story sees Daniel Webster’s mouth stuffed with lead bullets when Jim Smiley is not looking so that he loses the bet about that animal’s purported athletic prowess."]], ["Evangeline", "epic poem", "poem", ["In this work, a woman working as a Sister of Mercy finally finds her lover, and he dies in her arms.", "In this epic poem, an Acadian woman is separated from her beloved Gabriel, who later searches America for her."]], ["The Fall of the House of Usher", "short story", "story", ["The bookshelves of this work’s protagonist include the Vigiliae Mortuorum of a “forgotten church,” and the protagonist plays “The Haunted Palace” on his guitar for this story’s narrator.", "The narrator hears the shriek of a dragon while reading a story to Roderick, but the sound turns out to be Madeline, who escapes from her tomb to die with her brother in this story."]], ["Fire and Ice", "poem", "poem", ["This poem states “from what I've tasted of desire I hold with those who favor” one of the title phenomena, yet admits that “I think I know enough of hate to say that for destruction” the other “is also great and would suffice.”", "This poem's speaker ponders the end of the world at the hands of the two title concepts, which are personified as “desire” and “hate.”"]], ["Flowers for Algernon", "short story", "story", ["At the end of this story, its protagonist writes \"Good-bye Miss Kinnian and Dr. Strauss\" and asks them to put the title objects on the \"grave in the back yard.\"", "Charlie Gordon and the title mouse rapidly gain then lose intelligence in this story."]], ["Harrison Bergeron", "short story", "story", ["Kurt Vonnegut wrote this short story, in which the 211th, 212th, and 213th amendments to the US Constitution make everyone equal “every which way,” even if it means using handicaps."]], ["The House of the Seven Gables", "novel", "novel", ["At the end of this novel, Holgrave is revealed to be a descendant of Matthew Maule, and thus the rightful heir of the title building.", "Name this novel about Hepzibah Pyncheon and her brother Clifford, who live in the title New England mansion."]], ["I'm Nobody! Who are you?", "poem", "poem", ["This poem declares “then there’s a pair of us! Don’t tell! they’d advertise,” and compares living publicly with being “like a Frog.”", "The speaker of this poem laments, “How dreary to be somebody!”"]], ["The Legend of Sleepy Hollow", "short story", "story", ["After his marriage proposal is rejected, the protagonist of this story leaves a harvest party and is harassed by the so-called “Galloping Hessian,” who throws his head at the protagonist and knocks him off his horse.", "A character in this story rides past a tree haunted by Major Andre on his horse Gunpowder after having his marriage proposal rejected at a harvest party.", "Katrina van Tassel, the daughter of a wealthy farmer, ends up marrying Brom Bones over a local school teacher in this story."]], ["The Lottery", "short story", "story", ["In this story people give Dickie's last name the Americanized pronunciation \"Dellacroy.\"", "In this story, Clyde Dunbar misses the title event due to a broken leg, which Old Man Warner has attended for 77 years.", "In this story, the operator of a coal business named Mr. Summers is accused of being unfair in how he runs an event with a black box.", "At the end of this story, the phrase \"it isn't fair, it isn't right\" is shouted by Tessie Hutchinson before her fellow townspeople attack her with stones."]], ["The Love Song of J. Alfred Prufrock", "poem", "poem", ["This poem states that \"human voices wake us\" and asks \"do I dare to eat a peach?\"", "This poem features the lines \"in the room the women come and go, talking of Michelangelo.\""]], ["The Masque of the Red Death", "short story", "story", ["This story takes place at a masquerade ball hosted by Prince Prospero in order to hide from the title plague.", "A mysterious figure dressed as a victim of the disease arrives at the ball and kills the guests in this story."]], ["Mending Wall", "poem", "poem", ["Trees cannot “get across and eat the cones” in this poem.", "In this poem, a character is said to be “all pine” while the narrator is “all apple orchard.”", "In this poem, the speaker's neighbor repeatedly remarks that \"good fences make good neighbors\" as they work on the title barrier between their properties."]], ["The Most Dangerous Game", "short story", "story", ["This story’s protagonist declines to be whipped by Ivan, thus setting up a contest with Zaroff, whose motto is “life is for the strong.”", "Rainsford finds himself on a deserted Caribbean island in this story on which he eludes being killed due to his knowledge of the habits of big game."]], ["Mother to Son", "poem", "poem", ["The speaker of this poem claims that “Life for me ain’t been no crystal stair.”"]], ["The Murders in the Rue Morgue", "short story", "story", ["Name this first modern detective story in which C. Auguste Dupin determines that the murders were committed by an orangutan."]], ["The Negro Speaks of Rivers", "poem", "poem", ["In this poem, the speaker has \"built his hut near the Congo\" and \"raised the pyramids above [the Nile],\" and he has \"heard the singing of the Mississippi.\"", "Identify this poem, which concludes “my soul has grown deep like” the title objects."]], ["The New Colossus", "poem", "poem", ["This poem opens by stating the title object is \"Not like the brazen giant of Greek fame.\"", "This poem's character says to “give me your tired, your poor, your huddled masses yearning to breathe free.”"]], ["Nothing Gold Can Stay", "poem", "poem", ["This poem laments how nature's \"early leaf's a flower, but only so an hour.\"", "\"Eden sank to grief\" and \"dawn goes down to day\" precede the title of this poem."]], ["O Captain! My Captain!", "poem", "poem", ["The narrator of this poem encourages the title figure to “rise up and hear the bells.”", "In this poem, the narrator tells the bells to ring because \"the ship has weather'd every rack, the prize we sought is won\" and their \"fearful trip is done.\"", "In this poem, the title character \"lies fallen, cold, and dead\" on the deck of a ship.", "This poem is an allegory for Abraham Lincoln."]], ["The Open Boat", "short story", "story", ["The correspondent, the captain, and the cook struggle in the title object of this story.", "This story that opens \"none of them knew the color of the sky\" depicts the death of an \"oiler\" named Billie."]], ["Paul Revere's Ride", "poem", "poem", ["After seeing a signal, the main character of this poem was \"ready to ... spread the alarm through every Middlesex village and farm.\"", "The title event of this poem takes place on “the eighteenth of April, in Seventy-Five.”", "The main character of this poem looks up to the Old North Church and sees that the belfry put two lights up, knowing that if one lantern is up, the British are coming by land, and if two are up, they are coming by sea."]], ["The Ransom of Red Chief", "short story", "story", ["This story is about Bill and Sam, two crooks who abduct Ebenezer Dorset’s red-haired son for ransom, but pay Ebenezer to take him back because the kid is so bratty."]], ["The Red Wheelbarrow", "poem", "poem", ["This poem describes an object “glazed with rain water beside the white chickens.\"", "\"So much depends upon\" the title object of this poem."]], ["The Road Not Taken", "poem", "poem", ["This poem describes locations \"equally\" covered in \"leaves no step had trodden black,\" one of which \"was grassy and wanted wear.\"", "The speaker of this poem admits \"I shall be telling this with a sigh somewhere ages and ages hence.\"", "This poem describes a choice \"that has made all the difference.\"", "This poem's narrator is \"sorry I could not travel both\" of a pair of routes that \"diverged in a yellow wood.\""]], ["The Secret Life of Walter Mitty", "short story", "story", ["In the beginning of this short story, the protagonist's wife chastises him for driving too fast after he envisions himself in a “Navy hydroplane.”", "While smoking against a wall, the protagonist imagines facing a firing squad."]], ["The Song of Hiawatha", "epic poem", "poem", ["The protagonist of this work wins a struggle against a figure whose tail “swept the sand floor,” and in another encounter kills the “king of all beavers” named Pau-Puk-Keewis.", "This poem’s title character is born to the West Wind.", "This poem, which uses the same trochaic tetrameter as the Kalevala, takes place “on the shores of Gitche Gumee.”", "The protagonist of this poem falls in love with Minnehaha, who dies in a harsh winter."]], ["Still I Rise", "poem", "poem", ["This poem titles a collection whose poem “Junkie Monkey Reel” describes how “Shoulders sag, the pull of weighted needling.”", "This poem's speaker laughs “like I've got gold mines diggin’ in my own backyard.”", "This poem's speaker describes “a past that’s rooted in pain” before noting, “I'm a black ocean, leaping and wide.”", "Questions in this poem ask the reader, “Does my haughtiness offend you?” and “Does my sassiness upset you?”", "A collection titled for this poem preceded by the word “And” includes its author's poem “Phenomenal Woman.”"]], ["Stopping by Woods on a Snowy Evening", "poem", "poem", ["In this poem, which is set on the \"darkest evening of the year,\" a horse \"gives his harness bells a shake to ask if there is some mistake.\"", "The line \"and miles to go before I sleep\" is repeated at the end of what poem about pausing to watch a forest \"fill up with snow\"?"]], ["The Story of an Hour", "short story", "story", ["Louise Mallard has a heart attack after discovering her husband is alive in this short story."]], ["The Tell-Tale Heart", "short story", "story", ["The narrator of this story stalks a man for eight nights until he hears a “groan of mortal terror” after standing perfectly still for an hour.", "This story’s narrator claims that he has an “acuteness of the senses” and sensitivity to an old man’s “vulture eye.”", "This work’s narrator commands his guests to “tear up the planks” when they fail to notice the crime scene around them.", "The narrator claims that his nervous “disease” has sharpened his senses, and he visits his sleeping victim for a week before smothering him with his bed."]], ["This Is Just to Say", "poem", "poem", ["This poem says \"Forgive me\" in a 28-word note describing some \"sweet\" and \"cold\" objects.", "The speaker of this poem confesses to eating \"the plums that were in the icebox.\""]], ["To Build a Fire", "short story", "story", ["“Day had broken cold and gray, exceedingly cold and gray” in this work.", "In this short story set in the Yukon, “the man” freezes to death after failing to complete the title action."]], ["Trees", "poem", "poem", ["The speaker remarks, “only God can make” these objects after claiming, “Poems are made by fools like me.”", "This poem's speaker states “I think that I shall never see a poem lovely as\" the title object."]], ["The Yellow Wallpaper", "short story", "story", ["In this story, the physician John claims his wife has “a slight hysterical tendency” and confines her to a “rest-cure.”", "The title decoration drives the narrator mad in this story."]], ["Young Goodman Brown", "short story", "story", ["In this story, the protagonist sees his wife being baptized by the Devil but wakes up and realizes it was only a dream.", "In this story, Faith loses her pink ribbon and she attends a witches' sabbath."]]];
+  // pairs that shouldn't appear as each other's wrong answers
+  var CLASH = {"The Divine Comedy":"Inferno", "Inferno":"The Divine Comedy", "Ulysses":"Ulysses (poem)", "Ulysses (poem)":"Ulysses", "The Jungle":"The Jungle Book", "The Jungle Book":"The Jungle"};
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  var decks = {};
+  function make(level, order){
+    if (!decks[level] || !decks[level].length) decks[level] = shuffle(W.filter(function(w){ return level === "all" || w[2] === level; }));
+    var w = decks[level].pop(), title = w[0];
+    var same = shuffle(W.filter(function(x){ return x[2] === w[2] && x[0] !== title && CLASH[title] !== x[0]; }));
+    var opts = shuffle([title].concat(same.slice(0, 5).map(function(x){ return x[0]; })));
+    var html = "";
+    (order === "random" ? shuffle(w[3].slice()) : w[3]).forEach(function(seg, si){
+      seg.split(/\s+/).forEach(function(word, wi){
+        html += "<span class=\"w" + (si > 0 && wi === 0 ? " pause" : "") + "\">" + (si > 0 && wi === 0 ? "<span class=\"slash\">/</span> " : "") + esc(word) + " </span>";
+      });
+    });
+    var kind = {novel:"novel", novella:"novella", play:"play", poem:"poem", "epic poem":"epic poem", "poetry collection":"poetry collection", "short story":"short story", "story collection":"story collection"}[w[1]];
+    return { id: title, probH: esc(title), ansH: esc(title),
+      bigH: "<div class=\"ask\">Name the " + esc(kind) + "</div><div class=\"clue\">" + html + "</div>",
+      optH: opts.map(esc), answer: opts.indexOf(title), steps: "Answer: " + esc(title) + " (" + esc(w[1]) + ")." };
+  }
+  return { make: make };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {all:"All works", novel:"Novels", play:"Plays", poem:"Poems", story:"Stories"};
+
+  var level = "all", clueOrder = "hard", dur = 0, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = LeadGen.make(level, clueOrder); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "litleadins:race" + (clueOrder === "random" ? ":random" : ""); }
+  function lbLabel(){ return "10-question race" + (clueOrder === "random" ? ", random clue order" : ""); }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  // Race scoring: the most right answers wins; ties go to the faster time.
+  function rawSecs(){ return Math.max(1, Math.round(((overAt || performance.now()) - startedAt) / 1000)); }
+  function timeScore(){ return rawSecs(); }
+  function fmtTime(sec){ sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return ((y.c || 0) - (x.c || 0)) || (x.s - y.s) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, c: correct, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + (r.c || 0) + "/" + QN + " <small>in " + fmtTime(r.s) + "</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "lit-leadins";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = "time-" + (clueOrder === "random" ? "random" : level) + ":" + QN, round = {score: timeScore(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + (r.right == null ? "" : r.right + "/" + QN + " ") + "<small>in " + fmtTime(r.score) + "</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            show(d.top, d.id);
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+  }
+  function afterRound(){
+    classBoard();
+    var title = document.getElementById("overTitle");
+    title.textContent = "Done!";
+    var miss = attempted - correct, ts = timeScore();
+    els.best.className = "";
+    els.best.textContent = correct + " of " + QN + " right in " + fmtTime(ts) + ".";
+    var entry = {s: ts, c: correct, a: attempted, t: Date.now()};
+    if (lbQualifies(ts, attempted)){
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent += rank === 0 ? " New personal best!" : " That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false;
+    correct = 0; attempted = 0; misses = new Map();
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  // Words appear 5 per second, with a 1 second pause before each new clue (at each "/")
+  function startReveal(){
+    clearTimeout(revealTimer);
+    var items = els.prob.querySelectorAll(".clue .w"), shown = 0;
+    function next(){
+      if (shown >= items.length) return;
+      items[shown].classList.add("on"); shown++;
+      if (shown < items.length) revealTimer = setTimeout(next, items[shown].classList.contains("pause") ? 1000 : 200);
+    }
+    next();
+  }
+  function revealAll(){
+    clearTimeout(revealTimer);
+    els.prob.querySelectorAll(".clue .w").forEach(function(w){ w.classList.add("on"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    attempted++;
+    if (ok) correct++;
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (!dur && attempted >= QN){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, ok ? 300 : 1200);
+  }
+
+  function finish(){
+    state = "over"; overAt = performance.now();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = correct + "/" + QN;
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = list.length === 0;
+    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else if (setting === "order") clueOrder = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+<script>if (/claude/.test(location.hostname) || location.protocol === "blob:") document.querySelectorAll("[data-home]").forEach(function(a){ a.hidden = true; });</script>
+</body>
+</html>
