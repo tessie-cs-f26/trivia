@@ -84,6 +84,9 @@ button:focus-visible, a:focus-visible{outline:3px solid var(--gold); outline-off
 [hidden]{display:none !important}
 footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
 @media (prefers-reduced-motion: reduce){ .card.new{animation:none} }
+.cb-toggle{text-align:center; margin:.5rem 0 0}
+.cb-tbtn{font:inherit; font-size:.85rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer; padding:.2rem .4rem}
+.cb-tbtn:hover{color:inherit}
 </style>
 </head>
 <body>
@@ -294,12 +297,23 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
     box.innerHTML = "<h3>Class top 10</h3>" + (score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div><p class=\"note\">Anyone with the game link can see names on this list.</p>" : "") +
       "<div class=\"cbmsg\" id=\"cbMsg\"></div><div id=\"cbList\"><p class=\"note\">Loading the class list…</p></div>";
     var list = $("cbList"), msg = $("cbMsg"), posted = false;
+    // Teacher scores are hidden by default; a button below the list shows them.
+    var cbData = null, cbMine = null, cbAll = false;
+    function cbRender(){
+      show(cbData ? (cbAll && cbData.topAll ? cbData.topAll : cbData.top) : null, cbMine);
+      if (cbData && cbData.teachers > 0){
+        var p = document.createElement("p"); p.className = "cb-toggle";
+        p.innerHTML = "<button type=\"button\" class=\"cb-tbtn\">" + (cbAll ? "Hide teacher scores" : "Show teacher scores") + "</button>";
+        list.appendChild(p);
+        p.firstChild.addEventListener("click", function(){ cbAll = !cbAll; cbRender(); });
+      }
+    }
     function show(top, myId){
       if (!top){ list.innerHTML = "<p class=\"note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
       if (!top.length){ list.innerHTML = "<p class=\"note\">No class scores yet.</p>"; return; }
       list.innerHTML = "<ol>" + top.map(function(r){ return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"n\">" + esc(r.name) + "</span><span class=\"s\">" + esc(r.score) + " / 25</span></li>"; }).join("") + "</ol>";
     }
-    cbCall({action: "top", game: "chronology", setting: "all:25"}).then(function(d){ show(d && d.ok ? d.top : null); }).catch(function(){ show(null); });
+    cbCall({action: "top", game: "chronology", setting: "all:25"}).then(function(d){ cbData = d && d.ok ? d : null; cbRender(); }).catch(function(){ show(null); });
     var input = $("cbName"), btn = $("cbPost");
     if (!input) return;
     try { input.value = localStorage.getItem("trivia:name") || ""; } catch(e){}
@@ -311,7 +325,7 @@ footer{margin-top:1.8rem; padding-top:.8rem; border-top:1px solid var(--line); c
         .then(function(d){
           if (d && d.ok){ posted = true; try { localStorage.setItem("trivia:name", name); } catch(e){}
             box.querySelector(".save-row").remove(); box.querySelector(".note").remove();
-            msg.className = "cbmsg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!"; show(d.top, d.id); }
+            msg.className = "cbmsg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!"; cbData = d; cbMine = d.id; cbRender(); }
           else { btn.disabled = false; msg.className = "cbmsg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again."; }
         }).catch(function(){ btn.disabled = false; msg.className = "cbmsg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
     }

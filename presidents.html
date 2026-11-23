@@ -187,6 +187,9 @@ footer p{margin:.25rem 0}
 @media (prefers-reduced-motion: reduce){
   .row.fresh,.choice.wrong{animation:none}
 }
+.cb-toggle{text-align:center; margin:.5rem 0 0}
+.cb-tbtn{font:inherit; font-size:.85rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer; padding:.2rem .4rem}
+.cb-tbtn:hover{color:inherit}
 </style>
 </head>
 <body>
@@ -396,6 +399,17 @@ var PresGen = (function(){
         "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
       "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
     var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    // Teacher scores are hidden by default; a button below the list shows them.
+    var cbData = null, cbMine = null, cbAll = false;
+    function cbRender(){
+      show(cbData ? (cbAll && cbData.topAll ? cbData.topAll : cbData.top) : null, cbMine);
+      if (cbData && cbData.teachers > 0){
+        var p = document.createElement("p"); p.className = "cb-toggle";
+        p.innerHTML = "<button type=\"button\" class=\"cb-tbtn\">" + (cbAll ? "Hide teacher scores" : "Show teacher scores") + "</button>";
+        list.appendChild(p);
+        p.firstChild.addEventListener("click", function(){ cbAll = !cbAll; cbRender(); });
+      }
+    }
     function show(top, myId){
       if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
       if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
@@ -404,7 +418,7 @@ var PresGen = (function(){
       }).join("") + "</ol>";
     }
     cbCall({action: "top", game: GAME_ID, setting: setting})
-      .then(function(d){ show(d && d.ok ? d.top : null); })
+      .then(function(d){ cbData = d && d.ok ? d : null; cbRender(); })
       .catch(function(){ show(null); });
     var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
     if (!input) return;
@@ -420,7 +434,7 @@ var PresGen = (function(){
             posted = true; cbSaveName(name);
             box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
             msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
-            show(d.top, d.id);
+            cbData = d; cbMine = d.id; cbRender();
           } else {
             btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
           }
