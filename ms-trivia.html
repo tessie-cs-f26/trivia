@@ -56,7 +56,6 @@ details.rules li{margin:.25rem 0}
 .seg{display:flex; align-items:center; gap:.5rem}
 .seg-name{font-size:.85rem; color:var(--muted)}
 .seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
-.seg-btns{flex-wrap:wrap; border-radius:18px !important}
 .seg-btns button{
   font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
   padding:.35rem .8rem; border-radius:999px; cursor:pointer;
@@ -110,11 +109,13 @@ button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
 .prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
 .prob .issue{font-size:1.1rem; margin-top:.4rem}
 .prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
-.prob .mq-q{font-size:clamp(1.25rem, 5vw, 1.6rem); font-weight:600; line-height:1.35; margin-top:.2rem}
-.prob .wt{font-size:clamp(1.8rem, 7vw, 2.6rem); font-weight:700; line-height:1.15}
-.prob .kind{color:var(--muted); margin-top:.3rem}
-.prob .au{font-size:clamp(1.5rem, 6vw, 2.1rem); font-weight:700; line-height:1.2}
 .chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.prob .mq-q{font-size:clamp(1.25rem, 5vw, 1.6rem); font-weight:600; line-height:1.35; margin-top:.2rem}
+.clue{max-width:34rem; margin:.4rem auto 0; text-align:left; font-size:1.08rem; line-height:1.6; min-height:7.5em}
+.clue .w{visibility:hidden}
+.clue .w.on{visibility:visible}
+.clue .slash{color:var(--muted); font-weight:700}
+.seg-btns{flex-wrap:wrap}
 .chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
 .chars li.on{visibility:visible; animation:popg .3s ease-out}
 .chars li.new{border-color:var(--rod)}
@@ -125,7 +126,7 @@ button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
 .choice .math{white-space:normal; text-align:center}
 .choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
 .choice{
-  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-weight:500; color:var(--ink); line-height:1.25;
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-style:italic; font-weight:500; color:var(--ink); line-height:1.25;
   background:var(--field); border:2px solid var(--line); border-radius:14px;
   min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
   display:flex; align-items:center; justify-content:center;
@@ -192,6 +193,15 @@ footer p{margin:.25rem 0}
 .cb-toggle{text-align:center; margin:.5rem 0 0}
 .cb-tbtn{font:inherit; font-size:.85rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer; padding:.2rem .4rem}
 .cb-tbtn:hover{color:inherit}
+.recap{margin:1rem auto 0; max-width:34rem; text-align:left}
+.recap h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.recap-list{margin:0; padding:0 0 0 1.6rem; border:1.5px solid var(--line); border-radius:12px; background:var(--field)}
+.recap-list li{padding:.35rem .6rem .35rem .2rem; border-top:1px solid var(--line); font-size:.92rem; line-height:1.4}
+.recap-list li:first-child{border-top:0}
+.rc-q{color:var(--muted)}
+.rc-ok{color:var(--good); font-weight:700}
+.rc-bad{color:var(--bad); font-weight:700}
+.rc-fix{color:var(--good); font-weight:700}
 </style>
 </head>
 <body>
@@ -201,36 +211,20 @@ footer p{margin:.25rem 0}
     <div class="logo" aria-hidden="true">💡</div>
     <div>
       <h1>Middle School Trivia</h1>
-      <p class="sub">Quick-fire general knowledge, weighted like NAQT middle school quiz bowl: science, history, literature, geography, the arts, pop culture, current events, and more.</p>
+      <p class="sub">Race through 20 quick-fire questions, weighted like NAQT middle school quiz bowl: science, history, literature, geography, the arts, pop culture, current events, and more.</p>
     </div>
   </header>
 
   <details class="rules">
     <summary>How it works</summary>
     <ul>
-      <li>100 questions, split across topics the way NAQT middle school tournaments are. Pick one topic or play them all.</li>
-      <li>Each round goes through every question in the topic you picked, once each, at your own pace. Each right answer is worth 1 point, and you can post your score to the class leaderboard at the end.</li>
+      <li>200 questions at a middle school and early high school level, split across topics the way NAQT middle school tournaments are.</li>
+      <li>Each round is a race of 20 random questions with six choices each: the most right answers wins, and ties go to the faster time.</li>
       <li>Current events questions were last checked in November 2026.</li>
-      <li>Each question has six choices, and the wrong ones are close calls on purpose, like Durmstrang for Hogwarts or Daedalus for Icarus.</li>
     </ul>
   </details>
 
   <div class="settings">
-    <div class="seg"><span class="seg-name" id="lvlLbl">Topic</span>
-      <div class="seg-btns" role="group" aria-labelledby="lvlLbl" data-setting="level">
-        <button type="button" data-v="all" aria-pressed="true">All</button>
-        <button type="button" data-v="sci" aria-pressed="false">Science</button>
-        <button type="button" data-v="math" aria-pressed="false">Math</button>
-        <button type="button" data-v="his" aria-pressed="false">History</button>
-        <button type="button" data-v="lit" aria-pressed="false">Literature</button>
-        <button type="button" data-v="geo" aria-pressed="false">Geography</button>
-        <button type="button" data-v="art" aria-pressed="false">Fine arts</button>
-        <button type="button" data-v="pop" aria-pressed="false">Pop culture and sports</button>
-        <button type="button" data-v="ce" aria-pressed="false">Current events</button>
-        <button type="button" data-v="soc" aria-pressed="false">Social science</button>
-        <button type="button" data-v="misc" aria-pressed="false">Everything else</button>
-      </div>
-    </div>
   </div>
 
   <div class="stats">
@@ -256,12 +250,12 @@ footer p{margin:.25rem 0}
 
     <section class="over" id="overView" hidden>
       <h2 id="overTitle">Time’s up</h2>
-      <p class="final"><span id="fRight">0</span><small>points · <span id="fTried"></span></small></p>
+      <p class="final"><span id="fRight">0</span><small><span id="fTried"></span></small></p>
       <p id="bestLine"></p>
       <div class="lb cb" id="classBoard" hidden></div>
       <div class="lb" id="lbOver"></div>
       <div class="misses" id="missWrap" hidden>
-        <h3>Questions to review</h3>
+        <h3>Works to review</h3>
         <ul id="missList"></ul>
       </div>
       <p class="clean" id="cleanLine" hidden>No misses this round.</p>
@@ -279,33 +273,32 @@ footer p{margin:.25rem 0}
 <script>
 /*GEN*/
 var MSGen = (function(){
-  var QS = [["sci", "What is the chemical symbol for gold?", "Au", ["Ag", "Gd", "Go", "Gl", "Pb"]], ["sci", "Which planet has the most known moons?", "Saturn", ["Jupiter", "Uranus", "Neptune", "Mars", "Earth"]], ["sci", "Which organelle is known as the powerhouse of the cell?", "Mitochondrion", ["Nucleus", "Ribosome", "Chloroplast", "Golgi apparatus", "Vacuole"]], ["sci", "What gas do plants take in from the air for photosynthesis?", "Carbon dioxide", ["Oxygen", "Nitrogen", "Hydrogen", "Methane", "Helium"]], ["sci", "What is the hardest natural mineral?", "Diamond", ["Quartz", "Topaz", "Corundum", "Talc", "Feldspar"]], ["sci", "Which scientist stated the three laws of motion?", "Isaac Newton", ["Galileo Galilei", "Albert Einstein", "Johannes Kepler", "Nicolaus Copernicus", "Robert Hooke"]], ["sci", "Which element has atomic number 1?", "Hydrogen", ["Helium", "Lithium", "Oxygen", "Carbon", "Nitrogen"]], ["sci", "What is the closest star to Earth?", "The Sun", ["Proxima Centauri", "Sirius", "Alpha Centauri A", "Betelgeuse", "Polaris"]], ["sci", "Which blood cells carry oxygen through the body?", "Red blood cells", ["White blood cells", "Platelets", "Plasma cells", "Stem cells", "Neurons"]], ["sci", "What is the most abundant gas in Earth’s atmosphere?", "Nitrogen", ["Oxygen", "Carbon dioxide", "Argon", "Hydrogen", "Water vapor"]], ["sci", "Who described evolution by natural selection in On the Origin of Species?", "Charles Darwin", ["Gregor Mendel", "Alfred Wegener", "Louis Pasteur", "Carl Linnaeus", "Jean-Baptiste Lamarck"]], ["sci", "Which scientist is called the father of genetics for his experiments with pea plants?", "Gregor Mendel", ["Charles Darwin", "James Watson", "Louis Pasteur", "Carl Linnaeus", "Dmitri Mendeleev"]], ["sci", "Which pigment makes plants green?", "Chlorophyll", ["Melanin", "Hemoglobin", "Carotene", "Keratin", "Xanthophyll"]], ["sci", "What is the largest planet in our solar system?", "Jupiter", ["Saturn", "Neptune", "Uranus", "Earth", "Venus"]], ["sci", "Which unit measures electrical resistance?", "Ohm", ["Volt", "Ampere", "Watt", "Joule", "Newton"]], ["sci", "Which layer of Earth lies directly beneath the crust?", "Mantle", ["Outer core", "Inner core", "Troposphere", "Bedrock", "Ozone layer"]], ["his", "In what year did Christopher Columbus first reach the Americas?", "1492", ["1488", "1500", "1513", "1519", "1607"]], ["his", "Who was the main author of the Declaration of Independence?", "Thomas Jefferson", ["John Adams", "Benjamin Franklin", "George Washington", "James Madison", "Alexander Hamilton"]], ["his", "Which founding document begins with the words “We the People”?", "The U.S. Constitution", ["The Declaration of Independence", "The Bill of Rights", "The Articles of Confederation", "The Mayflower Compact", "The Emancipation Proclamation"]], ["his", "Which of the Seven Wonders of the Ancient World is still standing?", "The Great Pyramid of Giza", ["The Hanging Gardens of Babylon", "The Colossus of Rhodes", "The Lighthouse of Alexandria", "The Temple of Artemis", "The Statue of Zeus"]], ["his", "Augustus was the first emperor of which empire?", "The Roman Empire", ["The Byzantine Empire", "The Ottoman Empire", "The Persian Empire", "The Macedonian Empire", "The Holy Roman Empire"]], ["his", "Which English king agreed to the Magna Carta in 1215?", "King John", ["Richard I", "Henry VIII", "William the Conqueror", "Edward I", "Henry II"]], ["his", "Which wall fell in 1989, a symbol of the end of the Cold War?", "The Berlin Wall", ["The Great Wall of China", "Hadrian’s Wall", "The Western Wall", "The Walls of Constantinople", "The Atlantic Wall"]], ["his", "Who was Britain’s prime minister for most of World War II?", "Winston Churchill", ["Neville Chamberlain", "Clement Attlee", "Margaret Thatcher", "David Lloyd George", "Anthony Eden"]], ["his", "Who led India’s independence movement using nonviolent resistance?", "Mahatma Gandhi", ["Jawaharlal Nehru", "Muhammad Ali Jinnah", "Subhas Chandra Bose", "B. R. Ambedkar", "Indira Gandhi"]], ["his", "Which ship carried the Pilgrims to Plymouth in 1620?", "The Mayflower", ["The Santa María", "The Endeavour", "The Speedwell", "The Discovery", "The Golden Hind"]], ["his", "Which civilization built Machu Picchu?", "The Inca", ["The Maya", "The Aztecs", "The Olmecs", "The Toltecs", "The Moche"]], ["his", "Who was the first woman to win a Nobel Prize?", "Marie Curie", ["Mother Teresa", "Jane Addams", "Rosalind Franklin", "Florence Nightingale", "Dorothy Hodgkin"]], ["his", "In which city was President John F. Kennedy assassinated?", "Dallas", ["Houston", "Washington, D.C.", "Chicago", "Los Angeles", "Memphis"]], ["his", "Who gave the “I Have a Dream” speech in 1963?", "Martin Luther King Jr.", ["Malcolm X", "John Lewis", "Frederick Douglass", "Thurgood Marshall", "Medgar Evers"]], ["his", "Who was the first person to walk on the Moon?", "Neil Armstrong", ["Buzz Aldrin", "Yuri Gagarin", "John Glenn", "Michael Collins", "Alan Shepard"]], ["his", "In what year did the French Revolution begin?", "1789", ["1776", "1804", "1815", "1848", "1688"]], ["his", "Which Mongol leader founded the largest connected land empire in history?", "Genghis Khan", ["Kublai Khan", "Attila", "Tamerlane", "Ögedei Khan", "Batu Khan"]], ["his", "Which president issued the Emancipation Proclamation?", "Abraham Lincoln", ["Andrew Johnson", "Ulysses S. Grant", "James Buchanan", "Lyndon B. Johnson", "Theodore Roosevelt"]], ["his", "What was the first artificial satellite, launched by the Soviet Union in 1957?", "Sputnik 1", ["Vostok 1", "Explorer 1", "Luna 2", "Mir", "Apollo 1"]], ["his", "Howard Carter found which pharaoh’s nearly intact tomb in 1922?", "Tutankhamun", ["Ramses II", "Khufu", "Cleopatra VII", "Akhenaten", "Hatshepsut"]], ["geo", "What is the longest river in Africa?", "The Nile", ["The Congo", "The Niger", "The Zambezi", "The Orange", "The Limpopo"]], ["geo", "What is the largest ocean on Earth?", "The Pacific Ocean", ["The Atlantic Ocean", "The Indian Ocean", "The Arctic Ocean", "The Southern Ocean", "The Mediterranean Sea"]], ["geo", "What is the smallest country in the world by area?", "Vatican City", ["Monaco", "San Marino", "Liechtenstein", "Malta", "Nauru"]], ["geo", "Which country has the largest population?", "India", ["China", "United States", "Indonesia", "Pakistan", "Brazil"]], ["geo", "Mount Everest sits on the border of Nepal and which other country?", "China", ["India", "Bhutan", "Pakistan", "Bangladesh", "Afghanistan"]], ["geo", "What is the largest hot desert in the world?", "The Sahara", ["The Arabian Desert", "The Gobi", "The Kalahari", "The Mojave", "The Atacama"]], ["geo", "Which U.S. state has the most people?", "California", ["Texas", "Florida", "New York", "Pennsylvania", "Illinois"]], ["geo", "What is the largest country in South America by area?", "Brazil", ["Argentina", "Peru", "Colombia", "Bolivia", "Venezuela"]], ["geo", "Which line of latitude divides Earth into the Northern and Southern Hemispheres?", "The Equator", ["The Prime Meridian", "The Tropic of Cancer", "The Tropic of Capricorn", "The International Date Line", "The Arctic Circle"]], ["geo", "What is the largest of the Great Lakes?", "Lake Superior", ["Lake Michigan", "Lake Huron", "Lake Erie", "Lake Ontario", "Great Salt Lake"]], ["lit", "Which Shakespeare play includes the line “To be, or not to be”?", "Hamlet", ["Macbeth", "King Lear", "Othello", "Romeo and Juliet", "Julius Caesar"]], ["lit", "In The Hobbit, what is the dragon’s name?", "Smaug", ["Glaurung", "Ancalagon", "Fafnir", "Norbert", "Toothless"]], ["lit", "Who wrote the poem “The Raven”?", "Edgar Allan Poe", ["Walt Whitman", "Emily Dickinson", "Robert Frost", "Henry Wadsworth Longfellow", "Nathaniel Hawthorne"]], ["lit", "In Charlotte’s Web, what kind of animal is Wilbur?", "A pig", ["A sheep", "A goose", "A rat", "A horse", "A cow"]], ["lit", "Which Greek poet is credited with the Iliad and the Odyssey?", "Homer", ["Hesiod", "Sophocles", "Virgil", "Sappho", "Aesop"]], ["lit", "What is the name of the wizarding school in the Harry Potter books?", "Hogwarts", ["Durmstrang", "Beauxbatons", "Brakebills", "Camp Half-Blood", "Nevermore"]], ["lit", "Who wrote Pride and Prejudice?", "Jane Austen", ["Charlotte Brontë", "Emily Brontë", "George Eliot", "Mary Shelley", "Louisa May Alcott"]], ["lit", "In which novel does Captain Ahab hunt a white whale?", "Moby-Dick", ["Treasure Island", "The Old Man and the Sea", "Twenty Thousand Leagues Under the Seas", "Robinson Crusoe", "Kidnapped"]], ["lit", "Which poet wrote “The Road Not Taken”?", "Robert Frost", ["Langston Hughes", "Emily Dickinson", "Carl Sandburg", "Walt Whitman", "E. E. Cummings"]], ["lit", "Who wrote The Adventures of Tom Sawyer?", "Mark Twain", ["Jack London", "Charles Dickens", "Louisa May Alcott", "Herman Melville", "Washington Irving"]], ["lit", "In the original Wonderful Wizard of Oz book, what color are Dorothy’s magic shoes?", "Silver", ["Ruby", "Gold", "Emerald", "Black", "Blue"]], ["lit", "Which author created the detective Sherlock Holmes?", "Arthur Conan Doyle", ["Agatha Christie", "Edgar Allan Poe", "Dorothy L. Sayers", "G. K. Chesterton", "Wilkie Collins"]], ["math", "What is the only even prime number?", "2", ["0", "4", "6", "1", "8"]], ["math", "The interior angles of a triangle add up to how many degrees?", "180", ["90", "270", "360", "120", "540"]], ["math", "What is pi rounded to two decimal places?", "3.14", ["3.41", "3.16", "3.12", "2.72", "3.15"]], ["math", "What is the square root of 144?", "12", ["11", "13", "14", "72", "16"]], ["math", "What is a polygon with eight sides called?", "Octagon", ["Hexagon", "Heptagon", "Nonagon", "Decagon", "Pentagon"]], ["math", "What is the next prime number after 13?", "17", ["15", "19", "14", "21", "23"]], ["math", "What is 2 to the 10th power?", "1024", ["512", "2048", "1000", "100", "20"]], ["math", "Which theorem says a² + b² = c² for a right triangle?", "The Pythagorean theorem", ["Fermat’s Last Theorem", "Euclid’s theorem", "Thales’s theorem", "The binomial theorem", "The law of sines"]], ["math", "How many sides does a dodecagon have?", "12", ["10", "11", "14", "20", "8"]], ["art", "Who painted the Mona Lisa?", "Leonardo da Vinci", ["Michelangelo", "Raphael", "Sandro Botticelli", "Titian", "Rembrandt"]], ["art", "Which Dutch painter of The Starry Night cut off part of his own ear?", "Vincent van Gogh", ["Rembrandt", "Johannes Vermeer", "Piet Mondrian", "Hieronymus Bosch", "Frans Hals"]], ["art", "Which composer kept writing music after going deaf, including his Ninth Symphony?", "Ludwig van Beethoven", ["Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Joseph Haydn", "Johannes Brahms", "Franz Schubert"]], ["art", "How many keys are on a standard piano?", "88", ["76", "61", "92", "100", "72"]], ["art", "Who composed The Four Seasons?", "Antonio Vivaldi", ["Johann Sebastian Bach", "George Frideric Handel", "Wolfgang Amadeus Mozart", "Pyotr Ilyich Tchaikovsky", "Joseph Haydn"]], ["art", "Which artist is famous for paintings of Campbell’s soup cans?", "Andy Warhol", ["Roy Lichtenstein", "Jackson Pollock", "Keith Haring", "Jasper Johns", "Salvador Dalí"]], ["art", "Which Spanish artist helped invent Cubism?", "Pablo Picasso", ["Salvador Dalí", "Francisco Goya", "Joan Miró", "Diego Velázquez", "El Greco"]], ["lit", "Who is the king of the Greek gods?", "Zeus", ["Poseidon", "Hades", "Apollo", "Ares", "Cronus"]], ["lit", "In Norse mythology, what is the name of Thor’s hammer?", "Mjölnir", ["Gungnir", "Excalibur", "Gram", "Durendal", "Brisingamen"]], ["lit", "Which Greek hero performed twelve labors?", "Heracles", ["Perseus", "Theseus", "Jason", "Achilles", "Odysseus"]], ["lit", "Which Egyptian god of the dead is shown with the head of a jackal?", "Anubis", ["Ra", "Horus", "Thoth", "Set", "Osiris"]], ["misc", "Which language has the most native speakers?", "Mandarin Chinese", ["Spanish", "English", "Hindi", "Arabic", "Bengali"]], ["pop", "How many players does one soccer team have on the field?", "11", ["9", "10", "12", "7", "15"]], ["pop", "In which sport is the Stanley Cup awarded?", "Ice hockey", ["Basketball", "Baseball", "American football", "Soccer", "Golf"]], ["misc", "What is the currency of Japan?", "The yen", ["The yuan", "The won", "The ringgit", "The baht", "The rupee"]], ["misc", "What do you call a word that reads the same forward and backward, like “racecar”?", "A palindrome", ["An anagram", "A homophone", "An acronym", "An oxymoron", "An onomatopoeia"]], ["pop", "In which country did the ancient Olympic Games begin?", "Greece", ["Italy", "France", "Egypt", "Turkey", "England"]], ["misc", "Which organization’s flag shows a world map surrounded by olive branches?", "The United Nations", ["NATO", "The Red Cross", "The European Union", "The World Health Organization", "The International Olympic Committee"]], ["soc", "How many justices sit on the U.S. Supreme Court?", "9", ["7", "11", "12", "5", "13"]], ["misc", "What do you call a word formed from the first letters of other words, like NASA?", "An acronym", ["An anagram", "A synonym", "A homonym", "A palindrome", "A metaphor"]], ["misc", "How many amendments make up the Bill of Rights?", "10", ["5", "12", "13", "15", "27"]], ["pop", "In Minecraft, what green creature explodes when it gets close to players?", "The Creeper", ["The Enderman", "The Zombie", "The Skeleton", "The Ghast", "The Slime"]], ["pop", "Which Pixar film follows a rat named Remy who dreams of cooking in Paris?", "Ratatouille", ["Up", "Coco", "Luca", "Toy Story", "Inside Out"]], ["pop", "Which sport uses the scoring terms “love” and “deuce”?", "Tennis", ["Golf", "Baseball", "Bowling", "Cricket", "Volleyball"]], ["pop", "Which Lin-Manuel Miranda musical tells the story of a Founding Father?", "Hamilton", ["In the Heights", "Rent", "Wicked", "Les Misérables", "1776"]], ["soc", "Which Greek philosopher was a tutor to Alexander the Great?", "Aristotle", ["Plato", "Socrates", "Pythagoras", "Diogenes", "Epicurus"]], ["soc", "If demand for a product rises while the supply stays the same, what usually happens to its price?", "It goes up", ["It goes down", "It stays the same", "It drops to zero", "It is set by the government", "It changes only for imports"]], ["ce", "Who became prime minister of the United Kingdom in July 2026?", "Andy Burnham", ["Keir Starmer", "Rishi Sunak", "Kemi Badenoch", "Angela Rayner", "Nigel Farage"]], ["ce", "Pope Leo XIV, elected in 2025, is the first pope from which country?", "The United States", ["Italy", "Argentina", "Poland", "Mexico", "Brazil"]], ["ce", "Who became Japan’s first woman prime minister in 2025?", "Sanae Takaichi", ["Yuriko Koike", "Shigeru Ishiba", "Fumio Kishida", "Seiko Noda", "Taro Kono"]], ["ce", "Which party won control of the U.S. Senate in the November 2026 midterm elections?", "The Democratic Party", ["The Republican Party", "The Libertarian Party", "The Green Party", "Neither (a 50-50 tie)", "Independent senators"]], ["ce", "Which Venezuelan leader was captured by the United States in January 2026?", "Nicolás Maduro", ["Hugo Chávez", "Delcy Rodríguez", "Juan Guaidó", "Diosdado Cabello", "María Corina Machado"]], ["ce", "On July 4, 2026, the United States celebrated which anniversary of the Declaration of Independence?", "The 250th", ["The 200th", "The 225th", "The 300th", "The 175th", "The 150th"]]];
+  var QS = [["sci", "What is the chemical symbol for gold?", "Au", ["Ag", "Gd", "Go", "Gl", "Pb"]], ["sci", "Which planet has the most known moons?", "Saturn", ["Jupiter", "Uranus", "Neptune", "Mars", "Earth"]], ["sci", "Which organelle is known as the powerhouse of the cell?", "Mitochondrion", ["Nucleus", "Ribosome", "Chloroplast", "Golgi apparatus", "Vacuole"]], ["sci", "What gas do plants take in from the air for photosynthesis?", "Carbon dioxide", ["Oxygen", "Nitrogen", "Hydrogen", "Methane", "Helium"]], ["sci", "What is the hardest natural mineral?", "Diamond", ["Quartz", "Topaz", "Corundum", "Talc", "Feldspar"]], ["sci", "Which scientist stated the three laws of motion?", "Isaac Newton", ["Galileo Galilei", "Albert Einstein", "Johannes Kepler", "Nicolaus Copernicus", "Robert Hooke"]], ["sci", "Which element has atomic number 1?", "Hydrogen", ["Helium", "Lithium", "Oxygen", "Carbon", "Nitrogen"]], ["sci", "What is the closest star to Earth?", "The Sun", ["Proxima Centauri", "Sirius", "Alpha Centauri A", "Betelgeuse", "Polaris"]], ["sci", "Which blood cells carry oxygen through the body?", "Red blood cells", ["White blood cells", "Platelets", "Plasma cells", "Stem cells", "Neurons"]], ["sci", "What is the most abundant gas in Earth’s atmosphere?", "Nitrogen", ["Oxygen", "Carbon dioxide", "Argon", "Hydrogen", "Water vapor"]], ["sci", "Who described evolution by natural selection in On the Origin of Species?", "Charles Darwin", ["Gregor Mendel", "Alfred Wegener", "Louis Pasteur", "Carl Linnaeus", "Jean-Baptiste Lamarck"]], ["sci", "Which scientist is called the father of genetics for his experiments with pea plants?", "Gregor Mendel", ["Charles Darwin", "James Watson", "Louis Pasteur", "Carl Linnaeus", "Dmitri Mendeleev"]], ["sci", "Which pigment makes plants green?", "Chlorophyll", ["Melanin", "Hemoglobin", "Carotene", "Keratin", "Xanthophyll"]], ["sci", "What is the largest planet in our solar system?", "Jupiter", ["Saturn", "Neptune", "Uranus", "Earth", "Venus"]], ["sci", "Which unit measures electrical resistance?", "Ohm", ["Volt", "Ampere", "Watt", "Joule", "Newton"]], ["sci", "Which layer of Earth lies directly beneath the crust?", "Mantle", ["Outer core", "Inner core", "Troposphere", "Bedrock", "Ozone layer"]], ["his", "In what year did Christopher Columbus first reach the Americas?", "1492", ["1488", "1500", "1513", "1519", "1607"]], ["his", "Who was the main author of the Declaration of Independence?", "Thomas Jefferson", ["John Adams", "Benjamin Franklin", "George Washington", "James Madison", "Alexander Hamilton"]], ["his", "Which founding document begins with the words “We the People”?", "The U.S. Constitution", ["The Declaration of Independence", "The Bill of Rights", "The Articles of Confederation", "The Mayflower Compact", "The Emancipation Proclamation"]], ["his", "Which of the Seven Wonders of the Ancient World is still standing?", "The Great Pyramid of Giza", ["The Hanging Gardens of Babylon", "The Colossus of Rhodes", "The Lighthouse of Alexandria", "The Temple of Artemis", "The Statue of Zeus"]], ["his", "Augustus was the first emperor of which empire?", "The Roman Empire", ["The Byzantine Empire", "The Ottoman Empire", "The Persian Empire", "The Macedonian Empire", "The Holy Roman Empire"]], ["his", "Which English king agreed to the Magna Carta in 1215?", "King John", ["Richard I", "Henry VIII", "William the Conqueror", "Edward I", "Henry II"]], ["his", "Which wall fell in 1989, a symbol of the end of the Cold War?", "The Berlin Wall", ["The Great Wall of China", "Hadrian’s Wall", "The Western Wall", "The Walls of Constantinople", "The Atlantic Wall"]], ["his", "Who was Britain’s prime minister for most of World War II?", "Winston Churchill", ["Neville Chamberlain", "Clement Attlee", "Margaret Thatcher", "David Lloyd George", "Anthony Eden"]], ["his", "Who led India’s independence movement using nonviolent resistance?", "Mahatma Gandhi", ["Jawaharlal Nehru", "Muhammad Ali Jinnah", "Subhas Chandra Bose", "B. R. Ambedkar", "Indira Gandhi"]], ["his", "Which ship carried the Pilgrims to Plymouth in 1620?", "The Mayflower", ["The Santa María", "The Endeavour", "The Speedwell", "The Discovery", "The Golden Hind"]], ["his", "Which civilization built Machu Picchu?", "The Inca", ["The Maya", "The Aztecs", "The Olmecs", "The Toltecs", "The Moche"]], ["his", "Who was the first woman to win a Nobel Prize?", "Marie Curie", ["Mother Teresa", "Jane Addams", "Rosalind Franklin", "Florence Nightingale", "Dorothy Hodgkin"]], ["his", "In which city was President John F. Kennedy assassinated?", "Dallas", ["Houston", "Washington, D.C.", "Chicago", "Los Angeles", "Memphis"]], ["his", "Who gave the “I Have a Dream” speech in 1963?", "Martin Luther King Jr.", ["Malcolm X", "John Lewis", "Frederick Douglass", "Thurgood Marshall", "Medgar Evers"]], ["his", "Who was the first person to walk on the Moon?", "Neil Armstrong", ["Buzz Aldrin", "Yuri Gagarin", "John Glenn", "Michael Collins", "Alan Shepard"]], ["his", "In what year did the French Revolution begin?", "1789", ["1776", "1804", "1815", "1848", "1688"]], ["his", "Which Mongol leader founded the largest connected land empire in history?", "Genghis Khan", ["Kublai Khan", "Attila", "Tamerlane", "Ögedei Khan", "Batu Khan"]], ["his", "Which president issued the Emancipation Proclamation?", "Abraham Lincoln", ["Andrew Johnson", "Ulysses S. Grant", "James Buchanan", "Lyndon B. Johnson", "Theodore Roosevelt"]], ["his", "What was the first artificial satellite, launched by the Soviet Union in 1957?", "Sputnik 1", ["Vostok 1", "Explorer 1", "Luna 2", "Mir", "Apollo 1"]], ["his", "Howard Carter found which pharaoh’s nearly intact tomb in 1922?", "Tutankhamun", ["Ramses II", "Khufu", "Cleopatra VII", "Akhenaten", "Hatshepsut"]], ["geo", "What is the longest river in Africa?", "The Nile", ["The Congo", "The Niger", "The Zambezi", "The Orange", "The Limpopo"]], ["geo", "What is the largest ocean on Earth?", "The Pacific Ocean", ["The Atlantic Ocean", "The Indian Ocean", "The Arctic Ocean", "The Southern Ocean", "The Mediterranean Sea"]], ["geo", "What is the smallest country in the world by area?", "Vatican City", ["Monaco", "San Marino", "Liechtenstein", "Malta", "Nauru"]], ["geo", "Which country has the largest population?", "India", ["China", "United States", "Indonesia", "Pakistan", "Brazil"]], ["geo", "Mount Everest sits on the border of Nepal and which other country?", "China", ["India", "Bhutan", "Pakistan", "Bangladesh", "Afghanistan"]], ["geo", "What is the largest hot desert in the world?", "The Sahara", ["The Arabian Desert", "The Gobi", "The Kalahari", "The Mojave", "The Atacama"]], ["geo", "Which U.S. state has the most people?", "California", ["Texas", "Florida", "New York", "Pennsylvania", "Illinois"]], ["geo", "What is the largest country in South America by area?", "Brazil", ["Argentina", "Peru", "Colombia", "Bolivia", "Venezuela"]], ["geo", "Which line of latitude divides Earth into the Northern and Southern Hemispheres?", "The Equator", ["The Prime Meridian", "The Tropic of Cancer", "The Tropic of Capricorn", "The International Date Line", "The Arctic Circle"]], ["geo", "What is the largest of the Great Lakes?", "Lake Superior", ["Lake Michigan", "Lake Huron", "Lake Erie", "Lake Ontario", "Great Salt Lake"]], ["lit", "Which Shakespeare play includes the line “To be, or not to be”?", "Hamlet", ["Macbeth", "King Lear", "Othello", "Romeo and Juliet", "Julius Caesar"]], ["lit", "In The Hobbit, what is the dragon’s name?", "Smaug", ["Glaurung", "Ancalagon", "Fafnir", "Norbert", "Toothless"]], ["lit", "Who wrote the poem “The Raven”?", "Edgar Allan Poe", ["Walt Whitman", "Emily Dickinson", "Robert Frost", "Henry Wadsworth Longfellow", "Nathaniel Hawthorne"]], ["lit", "In Charlotte’s Web, what kind of animal is Wilbur?", "A pig", ["A sheep", "A goose", "A rat", "A horse", "A cow"]], ["lit", "Which Greek poet is credited with the Iliad and the Odyssey?", "Homer", ["Hesiod", "Sophocles", "Virgil", "Sappho", "Aesop"]], ["lit", "What is the name of the wizarding school in the Harry Potter books?", "Hogwarts", ["Durmstrang", "Beauxbatons", "Brakebills", "Camp Half-Blood", "Nevermore"]], ["lit", "Who wrote Pride and Prejudice?", "Jane Austen", ["Charlotte Brontë", "Emily Brontë", "George Eliot", "Mary Shelley", "Louisa May Alcott"]], ["lit", "In which novel does Captain Ahab hunt a white whale?", "Moby-Dick", ["Treasure Island", "The Old Man and the Sea", "Twenty Thousand Leagues Under the Seas", "Robinson Crusoe", "Kidnapped"]], ["lit", "Which poet wrote “The Road Not Taken”?", "Robert Frost", ["Langston Hughes", "Emily Dickinson", "Carl Sandburg", "Walt Whitman", "E. E. Cummings"]], ["lit", "Who wrote The Adventures of Tom Sawyer?", "Mark Twain", ["Jack London", "Charles Dickens", "Louisa May Alcott", "Herman Melville", "Washington Irving"]], ["lit", "In the original Wonderful Wizard of Oz book, what color are Dorothy’s magic shoes?", "Silver", ["Ruby", "Gold", "Emerald", "Black", "Blue"]], ["lit", "Which author created the detective Sherlock Holmes?", "Arthur Conan Doyle", ["Agatha Christie", "Edgar Allan Poe", "Dorothy L. Sayers", "G. K. Chesterton", "Wilkie Collins"]], ["math", "What is the only even prime number?", "2", ["0", "4", "6", "1", "8"]], ["math", "The interior angles of a triangle add up to how many degrees?", "180", ["90", "270", "360", "120", "540"]], ["math", "What is pi rounded to two decimal places?", "3.14", ["3.41", "3.16", "3.12", "2.72", "3.15"]], ["math", "What is the square root of 144?", "12", ["11", "13", "14", "72", "16"]], ["math", "What is a polygon with eight sides called?", "Octagon", ["Hexagon", "Heptagon", "Nonagon", "Decagon", "Pentagon"]], ["math", "What is the next prime number after 13?", "17", ["15", "19", "14", "21", "23"]], ["math", "What is 2 to the 10th power?", "1024", ["512", "2048", "1000", "100", "20"]], ["math", "Which theorem says a² + b² = c² for a right triangle?", "The Pythagorean theorem", ["Fermat’s Last Theorem", "Euclid’s theorem", "Thales’s theorem", "The binomial theorem", "The law of sines"]], ["math", "How many sides does a dodecagon have?", "12", ["10", "11", "14", "20", "8"]], ["art", "Who painted the Mona Lisa?", "Leonardo da Vinci", ["Michelangelo", "Raphael", "Sandro Botticelli", "Titian", "Rembrandt"]], ["art", "Which Dutch painter of The Starry Night cut off part of his own ear?", "Vincent van Gogh", ["Rembrandt", "Johannes Vermeer", "Piet Mondrian", "Hieronymus Bosch", "Frans Hals"]], ["art", "Which composer kept writing music after going deaf, including his Ninth Symphony?", "Ludwig van Beethoven", ["Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Joseph Haydn", "Johannes Brahms", "Franz Schubert"]], ["art", "How many keys are on a standard piano?", "88", ["76", "61", "92", "100", "72"]], ["art", "Who composed The Four Seasons?", "Antonio Vivaldi", ["Johann Sebastian Bach", "George Frideric Handel", "Wolfgang Amadeus Mozart", "Pyotr Ilyich Tchaikovsky", "Joseph Haydn"]], ["art", "Which artist is famous for paintings of Campbell’s soup cans?", "Andy Warhol", ["Roy Lichtenstein", "Jackson Pollock", "Keith Haring", "Jasper Johns", "Salvador Dalí"]], ["art", "Which Spanish artist helped invent Cubism?", "Pablo Picasso", ["Salvador Dalí", "Francisco Goya", "Joan Miró", "Diego Velázquez", "El Greco"]], ["lit", "Who is the king of the Greek gods?", "Zeus", ["Poseidon", "Hades", "Apollo", "Ares", "Cronus"]], ["lit", "In Norse mythology, what is the name of Thor’s hammer?", "Mjölnir", ["Gungnir", "Excalibur", "Gram", "Durendal", "Brisingamen"]], ["lit", "Which Greek hero performed twelve labors?", "Heracles", ["Perseus", "Theseus", "Jason", "Achilles", "Odysseus"]], ["lit", "Which Egyptian god of the dead is shown with the head of a jackal?", "Anubis", ["Ra", "Horus", "Thoth", "Set", "Osiris"]], ["misc", "Which language has the most native speakers?", "Mandarin Chinese", ["Spanish", "English", "Hindi", "Arabic", "Bengali"]], ["pop", "How many players does one soccer team have on the field?", "11", ["9", "10", "12", "7", "15"]], ["pop", "In which sport is the Stanley Cup awarded?", "Ice hockey", ["Basketball", "Baseball", "American football", "Soccer", "Golf"]], ["misc", "What is the currency of Japan?", "The yen", ["The yuan", "The won", "The ringgit", "The baht", "The rupee"]], ["misc", "What do you call a word that reads the same forward and backward, like “racecar”?", "A palindrome", ["An anagram", "A homophone", "An acronym", "An oxymoron", "An onomatopoeia"]], ["pop", "In which country did the ancient Olympic Games begin?", "Greece", ["Italy", "France", "Egypt", "Turkey", "England"]], ["misc", "Which organization’s flag shows a world map surrounded by olive branches?", "The United Nations", ["NATO", "The Red Cross", "The European Union", "The World Health Organization", "The International Olympic Committee"]], ["soc", "How many justices sit on the U.S. Supreme Court?", "9", ["7", "11", "12", "5", "13"]], ["misc", "What do you call a word formed from the first letters of other words, like NASA?", "An acronym", ["An anagram", "A synonym", "A homonym", "A palindrome", "A metaphor"]], ["misc", "How many amendments make up the Bill of Rights?", "10", ["5", "12", "13", "15", "27"]], ["pop", "In Minecraft, what green creature explodes when it gets close to players?", "The Creeper", ["The Enderman", "The Zombie", "The Skeleton", "The Ghast", "The Slime"]], ["pop", "Which Pixar film follows a rat named Remy who dreams of cooking in Paris?", "Ratatouille", ["Up", "Coco", "Luca", "Toy Story", "Inside Out"]], ["pop", "Which sport uses the scoring terms “love” and “deuce”?", "Tennis", ["Golf", "Baseball", "Bowling", "Cricket", "Volleyball"]], ["pop", "Which Lin-Manuel Miranda musical tells the story of a Founding Father?", "Hamilton", ["In the Heights", "Rent", "Wicked", "Les Misérables", "1776"]], ["soc", "Which Greek philosopher was a tutor to Alexander the Great?", "Aristotle", ["Plato", "Socrates", "Pythagoras", "Diogenes", "Epicurus"]], ["soc", "If demand for a product rises while the supply stays the same, what usually happens to its price?", "It goes up", ["It goes down", "It stays the same", "It drops to zero", "It is set by the government", "It changes only for imports"]], ["ce", "Who became prime minister of the United Kingdom in July 2026?", "Andy Burnham", ["Keir Starmer", "Rishi Sunak", "Kemi Badenoch", "Angela Rayner", "Nigel Farage"]], ["ce", "Pope Leo XIV, elected in 2025, is the first pope from which country?", "The United States", ["Italy", "Argentina", "Poland", "Mexico", "Brazil"]], ["ce", "Who became Japan’s first woman prime minister in 2025?", "Sanae Takaichi", ["Yuriko Koike", "Shigeru Ishiba", "Fumio Kishida", "Seiko Noda", "Taro Kono"]], ["ce", "Which party won control of the U.S. Senate in the November 2026 midterm elections?", "The Democratic Party", ["The Republican Party", "The Libertarian Party", "The Green Party", "Neither (a 50-50 tie)", "Independent senators"]], ["ce", "Which Venezuelan leader was captured by the United States in January 2026?", "Nicolás Maduro", ["Hugo Chávez", "Delcy Rodríguez", "Juan Guaidó", "Diosdado Cabello", "María Corina Machado"]], ["ce", "On July 4, 2026, the United States celebrated which anniversary of the Declaration of Independence?", "The 250th", ["The 200th", "The 225th", "The 300th", "The 175th", "The 150th"]], ["sci", "What is the chemical symbol for sodium?", "Na", ["So", "Sd", "S", "N", "Nm"]], ["sci", "Which planet is closest to the Sun?", "Mercury", ["Venus", "Mars", "Earth", "Pluto", "Jupiter"]], ["sci", "Where is most of a plant or animal cell’s DNA found?", "The nucleus", ["The ribosomes", "The cell wall", "The cytoplasm", "The vacuole", "The cell membrane"]], ["sci", "About how fast does light travel?", "300,000 km per second", ["30,000 km per second", "3,000 km per second", "300 km per second", "3 million km per second", "343 meters per second"]], ["sci", "What kind of energy is stored in a stretched rubber band?", "Elastic potential energy", ["Kinetic energy", "Thermal energy", "Chemical energy", "Nuclear energy", "Sound energy"]], ["sci", "What is the pH of pure water?", "7", ["0", "1", "5", "10", "14"]], ["sci", "Which gas makes up most of the Sun?", "Hydrogen", ["Helium", "Oxygen", "Carbon", "Nitrogen", "Neon"]], ["sci", "What is the longest bone in the human body?", "The femur", ["The tibia", "The humerus", "The spine", "The pelvis", "The radius"]], ["sci", "What process divides one cell into two identical cells?", "Mitosis", ["Meiosis", "Osmosis", "Photosynthesis", "Fermentation", "Respiration"]], ["sci", "Who discovered the elements polonium and radium with her husband?", "Marie Curie", ["Lise Meitner", "Rosalind Franklin", "Ada Lovelace", "Dorothy Hodgkin", "Irène Joliot-Curie"]], ["sci", "What do we call animals that eat only plants?", "Herbivores", ["Carnivores", "Omnivores", "Decomposers", "Producers", "Scavengers"]], ["sci", "Which planet has a giant storm called the Great Red Spot?", "Jupiter", ["Mars", "Saturn", "Neptune", "Venus", "Uranus"]], ["sci", "What type of rock forms when lava cools?", "Igneous", ["Sedimentary", "Metamorphic", "Limestone", "Sandstone", "Marble"]], ["sci", "What unit measures electric current?", "The ampere", ["The volt", "The ohm", "The watt", "The joule", "The coulomb"]], ["sci", "Which organ makes insulin?", "The pancreas", ["The liver", "The kidneys", "The stomach", "The heart", "The gallbladder"]], ["sci", "What is the boundary between two tectonic plates moving apart called?", "A divergent boundary", ["A convergent boundary", "A transform boundary", "A fault line", "A subduction zone", "A hot spot"]], ["math", "What is 7 × 8?", "56", ["54", "48", "63", "64", "58"]], ["math", "What is the area of a rectangle that is 6 by 9?", "54", ["30", "15", "45", "63", "48"]], ["math", "How many degrees are in a right angle?", "90", ["45", "180", "60", "100", "360"]], ["math", "What is 25% of 80?", "20", ["25", "16", "40", "8", "32"]], ["math", "What is 3² + 4²?", "25", ["49", "14", "7", "24", "12"]], ["math", "What is a polygon with five sides called?", "A pentagon", ["A hexagon", "An octagon", "A heptagon", "A quadrilateral", "A decagon"]], ["math", "What is the least common multiple of 4 and 6?", "12", ["24", "2", "10", "6", "18"]], ["math", "If 2x + 3 = 11, what is x?", "4", ["7", "5", "3", "8", "6"]], ["math", "How many faces does a cube have?", "6", ["4", "8", "12", "5", "10"]], ["his", "Who was the first emperor of the French?", "Napoleon Bonaparte", ["Louis XIV", "Charlemagne", "Napoleon III", "Louis XVI", "Clovis"]], ["his", "Which civilization built the city of Tenochtitlan?", "The Aztecs", ["The Maya", "The Inca", "The Olmecs", "The Toltecs", "The Zapotecs"]], ["his", "In what year did World War I begin?", "1914", ["1912", "1916", "1918", "1939", "1905"]], ["his", "Who was the first woman to serve as prime minister of the United Kingdom?", "Margaret Thatcher", ["Theresa May", "Queen Victoria", "Liz Truss", "Indira Gandhi", "Golda Meir"]], ["his", "Which president gave the Gettysburg Address?", "Abraham Lincoln", ["Ulysses S. Grant", "Andrew Johnson", "James Buchanan", "Jefferson Davis", "Frederick Douglass"]], ["his", "The Great Wall was built mainly to protect which country?", "China", ["Mongolia", "Japan", "Korea", "India", "Russia"]], ["his", "Which Greek city-state was famous for its warrior culture?", "Sparta", ["Athens", "Corinth", "Thebes", "Troy", "Rome"]], ["his", "Which ship sank in 1912 after hitting an iceberg?", "The Titanic", ["The Lusitania", "The Britannic", "The Mayflower", "The Bismarck", "The Olympic"]], ["his", "Suleiman the Magnificent ruled which empire?", "The Ottoman Empire", ["The Mughal Empire", "The Persian Empire", "The Byzantine Empire", "The Mongol Empire", "The Holy Roman Empire"]], ["his", "Who became South Africa’s first president elected in a fully democratic election?", "Nelson Mandela", ["Desmond Tutu", "F. W. de Klerk", "Thabo Mbeki", "Steve Biko", "Jacob Zuma"]], ["his", "What was the economic crisis that began in 1929 called?", "The Great Depression", ["The Panic of 1907", "The Great Recession", "The Dust Bowl", "The Gilded Age", "The New Deal"]], ["his", "Whose expedition was the first to sail all the way around the world?", "Ferdinand Magellan’s", ["Christopher Columbus’s", "Vasco da Gama’s", "James Cook’s", "John Cabot’s", "Henry Hudson’s"]], ["his", "Who co-wrote The Communist Manifesto with Friedrich Engels?", "Karl Marx", ["Vladimir Lenin", "Joseph Stalin", "Leon Trotsky", "Mao Zedong", "Adam Smith"]], ["his", "Which state became the 50th U.S. state in 1959?", "Hawaii", ["Alaska", "Arizona", "New Mexico", "Oklahoma", "Utah"]], ["his", "Who was known as the Maid of Orléans?", "Joan of Arc", ["Marie Antoinette", "Catherine de’ Medici", "Eleanor of Aquitaine", "Isabella of Castile", "Elizabeth I"]], ["his", "What was the ancient trade route linking China to the Mediterranean called?", "The Silk Road", ["The Spice Route", "The Amber Road", "The Royal Road", "The Appian Way", "The Trans-Saharan Route"]], ["his", "Which amendment abolished slavery in the United States?", "The 13th", ["The 14th", "The 15th", "The 1st", "The 19th", "The 10th"]], ["his", "Whose arrest in 1955 sparked the Montgomery Bus Boycott?", "Rosa Parks", ["Ruby Bridges", "Coretta Scott King", "Harriet Tubman", "Sojourner Truth", "Fannie Lou Hamer"]], ["his", "Which of the Seven Wonders of the Ancient World was in Babylon?", "The Hanging Gardens", ["The Colossus of Rhodes", "The Lighthouse of Alexandria", "The Great Pyramid", "The Temple of Artemis", "The Statue of Zeus"]], ["his", "Which country gave the Statue of Liberty to the United States?", "France", ["Britain", "Spain", "Italy", "The Netherlands", "Germany"]], ["lit", "Who wrote The Cat in the Hat?", "Dr. Seuss", ["Roald Dahl", "Shel Silverstein", "Maurice Sendak", "E. B. White", "Beverly Cleary"]], ["lit", "In The Lion, the Witch and the Wardrobe, what is the lion’s name?", "Aslan", ["Simba", "Mufasa", "Reepicheep", "Tumnus", "Caspian"]], ["lit", "Who wrote Charlie and the Chocolate Factory?", "Roald Dahl", ["E. B. White", "C. S. Lewis", "Lewis Carroll", "J. K. Rowling", "Dr. Seuss"]], ["lit", "In which Shakespeare play do witches chant “Double, double toil and trouble”?", "Macbeth", ["Hamlet", "The Tempest", "King Lear", "Othello", "A Midsummer Night’s Dream"]], ["lit", "Who wrote The Hunger Games?", "Suzanne Collins", ["Veronica Roth", "Lois Lowry", "Rick Riordan", "Stephenie Meyer", "Madeleine L’Engle"]], ["lit", "In To Kill a Mockingbird, who is Scout’s father, a lawyer?", "Atticus Finch", ["Boo Radley", "Tom Robinson", "Bob Ewell", "Jem Finch", "Heck Tate"]], ["lit", "What is the name of Harry Potter’s owl?", "Hedwig", ["Errol", "Scabbers", "Crookshanks", "Fawkes", "Buckbeak"]], ["lit", "Who wrote The Giver?", "Lois Lowry", ["Suzanne Collins", "Katherine Paterson", "Louis Sachar", "Jerry Spinelli", "Gary Paulsen"]], ["lit", "In Greek myth, who opened a jar that let evils loose into the world?", "Pandora", ["Persephone", "Medusa", "Athena", "Hera", "Psyche"]], ["lit", "Who is the king of the gods in Roman mythology?", "Jupiter", ["Mars", "Neptune", "Saturn", "Apollo", "Mercury"]], ["lit", "Who is the trickster god of Norse mythology?", "Loki", ["Odin", "Thor", "Baldur", "Freyr", "Heimdall"]], ["lit", "Who wrote Little Women?", "Louisa May Alcott", ["Jane Austen", "Harriet Beecher Stowe", "Emily Dickinson", "Laura Ingalls Wilder", "Charlotte Brontë"]], ["lit", "Who wrote The Old Man and the Sea?", "Ernest Hemingway", ["John Steinbeck", "F. Scott Fitzgerald", "Herman Melville", "Mark Twain", "William Faulkner"]], ["lit", "Which author created Percy Jackson?", "Rick Riordan", ["Suzanne Collins", "J. K. Rowling", "Christopher Paolini", "Jeff Kinney", "Lemony Snicket"]], ["lit", "Who wrote “Stopping by Woods on a Snowy Evening”?", "Robert Frost", ["Walt Whitman", "Emily Dickinson", "Langston Hughes", "Carl Sandburg", "Edgar Allan Poe"]], ["lit", "In Beowulf, what monster attacks the mead hall?", "Grendel", ["Smaug", "Fafnir", "The Cyclops", "The Minotaur", "The Kraken"]], ["geo", "What is the capital of Canada?", "Ottawa", ["Toronto", "Montreal", "Vancouver", "Quebec City", "Calgary"]], ["geo", "Which river flows through Paris?", "The Seine", ["The Rhine", "The Loire", "The Thames", "The Danube", "The Rhône"]], ["geo", "What is the tallest mountain in Africa?", "Kilimanjaro", ["Mount Kenya", "Mount Toubkal", "Mount Stanley", "Table Mountain", "Mount Elgon"]], ["geo", "Which African country has the most people?", "Nigeria", ["Egypt", "Ethiopia", "South Africa", "DR Congo", "Kenya"]], ["geo", "What is the capital of Australia?", "Canberra", ["Sydney", "Melbourne", "Perth", "Brisbane", "Adelaide"]], ["geo", "Which ocean lies between Africa and Australia?", "The Indian Ocean", ["The Pacific Ocean", "The Atlantic Ocean", "The Arctic Ocean", "The Southern Ocean", "The Mediterranean Sea"]], ["geo", "Which U.S. state is the largest by area?", "Alaska", ["Texas", "California", "Montana", "Nevada", "New Mexico"]], ["geo", "In which country is the city of Istanbul?", "Turkey", ["Greece", "Egypt", "Iran", "Bulgaria", "Syria"]], ["geo", "What is the longest river in South America?", "The Amazon", ["The Paraná", "The Orinoco", "The Magdalena", "The Rio Grande", "The São Francisco"]], ["geo", "Which country is the largest in the world by area?", "Russia", ["Canada", "China", "United States", "Brazil", "Australia"]], ["art", "Who painted The Persistence of Memory, with its melting clocks?", "Salvador Dalí", ["René Magritte", "Pablo Picasso", "Joan Miró", "Henri Matisse", "Claude Monet"]], ["art", "Who composed the opera The Magic Flute?", "Wolfgang Amadeus Mozart", ["Ludwig van Beethoven", "Johann Sebastian Bach", "Joseph Haydn", "George Frideric Handel", "Giuseppe Verdi"]], ["art", "Which French painter is famous for his Water Lilies?", "Claude Monet", ["Édouard Manet", "Pierre-Auguste Renoir", "Edgar Degas", "Paul Cézanne", "Georges Seurat"]], ["art", "How many lines does a music staff have?", "5", ["4", "6", "7", "3", "8"]], ["art", "Which instrument family includes the cello?", "Strings", ["Woodwinds", "Brass", "Percussion", "Keyboards", "Voices"]], ["art", "Who painted The Last Supper?", "Leonardo da Vinci", ["Michelangelo", "Raphael", "Caravaggio", "Titian", "Sandro Botticelli"]], ["art", "Who composed the music for the ballet The Nutcracker?", "Pyotr Ilyich Tchaikovsky", ["Igor Stravinsky", "Sergei Prokofiev", "Sergei Rachmaninoff", "Nikolai Rimsky-Korsakov", "Claude Debussy"]], ["pop", "How many points is a touchdown worth, before the extra point?", "6", ["3", "7", "2", "5", "1"]], ["pop", "In which sport would you see a slam dunk?", "Basketball", ["Volleyball", "Tennis", "Football", "Baseball", "Hockey"]], ["pop", "What is the name of the cowboy toy in Toy Story?", "Woody", ["Buzz", "Rex", "Hamm", "Slinky", "Andy"]], ["pop", "Which city will host the 2028 Summer Olympics?", "Los Angeles", ["Paris", "Brisbane", "Tokyo", "Rome", "Chicago"]], ["pop", "How many players does a basketball team have on the court?", "5", ["6", "7", "9", "11", "4"]], ["pop", "In the Super Mario games, which princess does Mario usually rescue?", "Princess Peach", ["Princess Zelda", "Princess Daisy", "Princess Rosalina", "Princess Elsa", "Princess Leia"]], ["pop", "How many holes are in a standard round of golf?", "18", ["9", "12", "16", "20", "24"]], ["ce", "Which city hosted the 2024 Summer Olympics?", "Paris", ["London", "Tokyo", "Los Angeles", "Rome", "Madrid"]], ["ce", "Which country hosted the 2026 Winter Olympics?", "Italy", ["France", "Switzerland", "Austria", "Norway", "Canada"]], ["ce", "Who won the 2024 U.S. presidential election?", "Donald Trump", ["Kamala Harris", "Joe Biden", "Ron DeSantis", "Nikki Haley", "Robert F. Kennedy Jr."]], ["ce", "Which three countries hosted the 2026 FIFA World Cup?", "The United States, Canada and Mexico", ["Brazil, Argentina and Chile", "Spain, Portugal and Morocco", "England, Scotland and Wales", "Japan, South Korea and China", "Germany, France and Italy"]], ["ce", "Who became prime minister of Canada in 2025?", "Mark Carney", ["Justin Trudeau", "Pierre Poilievre", "Chrystia Freeland", "Jagmeet Singh", "Stephen Harper"]], ["ce", "Who became chancellor of Germany in 2025?", "Friedrich Merz", ["Olaf Scholz", "Angela Merkel", "Annalena Baerbock", "Christian Lindner", "Markus Söder"]], ["soc", "What is the study of how people use scarce resources called?", "Economics", ["Psychology", "Sociology", "Anthropology", "Geography", "Philosophy"]], ["soc", "Which branch of the U.S. government makes laws?", "The legislative branch", ["The executive branch", "The judicial branch", "The military", "The cabinet", "The Electoral College"]], ["soc", "Which philosopher was Plato’s teacher?", "Socrates", ["Aristotle", "Pythagoras", "Homer", "Confucius", "Epicurus"]], ["misc", "What is the opposite of a synonym?", "An antonym", ["A homonym", "An acronym", "A pseudonym", "A homophone", "An anagram"]], ["misc", "How many days are in a leap year?", "366", ["365", "364", "360", "367", "370"]], ["misc", "What is the plural of “mouse” (the animal)?", "Mice", ["Mouses", "Meese", "Mices", "Mousen", "Mouse"]], ["misc", "What does the abbreviation “e.g.” mean?", "For example", ["That is", "And so on", "Note well", "In other words", "About"]], ["misc", "What language is mainly spoken in Brazil?", "Portuguese", ["Spanish", "English", "French", "Italian", "Guarani"]], ["misc", "What is the main ingredient in guacamole?", "Avocado", ["Tomato", "Lime", "Onion", "Pepper", "Beans"]]];
   var CATS = {"sci": "Science", "math": "Math", "his": "History", "lit": "Literature", "geo": "Geography", "art": "Fine arts", "pop": "Pop culture and sports", "ce": "Current events", "soc": "Social science", "misc": "Everything else"};
   function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
-  var decks = {};
-  function make(cat){
-    var pool = cat === "all" ? QS : QS.filter(function(x){ return x[0] === cat; });
-    if (!decks[cat] || !decks[cat].length) decks[cat] = shuffle(pool.slice());
-    var r = decks[cat].pop(), opts = shuffle([r[2]].concat(r[3]));
+  var deck = [];
+  function make(){
+    if (!deck.length) deck = shuffle(QS.slice());
+    var r = deck.pop(), opts = shuffle([r[2]].concat(r[3]));
     return { id: r[1], probH: esc(r[1]), ansH: esc(r[2]),
       bigH: "<div class=\"ask\">" + esc(CATS[r[0]]) + "</div><div class=\"issue mq-q\">" + esc(r[1]) + "</div>",
       optH: opts.map(esc), answer: opts.indexOf(r[2]), steps: "Answer: " + esc(r[2]) + "." };
   }
-  function count(cat){ return cat === "all" ? QS.length : QS.filter(function(x){ return x[0] === cat; }).length; }
-  function resetDeck(cat){ decks[cat] = []; }
-  return { make: make, count: count, resetDeck: resetDeck };
+  function resetDeck(){ deck = []; }
+  return { make: make, resetDeck: resetDeck };
 })();
 /*ENDGEN*/
 
 
 (function(){
   var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
-  var LVL_NAMES = {"all": "All topics", "sci": "Science", "math": "Math", "his": "History", "lit": "Literature", "geo": "Geography", "art": "Fine arts", "pop": "Pop culture and sports", "ce": "Current events", "soc": "Social science", "misc": "Everything else"};
+  var LVL_NAMES = {all:"All works", novel:"Novels", play:"Plays", poem:"Poems", story:"Stories"};
 
-  var level = "all", dur = 0, state = "ready";
+  var level = "all", clueOrder = "hard", dur = 0, state = "ready";
   var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
   var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+  var roundLog = [];
 
   var $ = function(id){ return document.getElementById(id); };
   var els = {
@@ -334,25 +327,28 @@ var MSGen = (function(){
 
   function newProblem(){
     var p;
-    do { p = MSGen.make(level); } while (p.id === lastId);
+    do { p = MSGen.make(); } while (p.id === lastId);
     lastId = p.id;
     return p;
   }
 
-  var QN = 10, startedAt = 0;
-  function lbKey(){ return "mstrivia:score:" + level; }
-  function lbLabel(){ return LVL_NAMES[level] + ", " + QN + " questions"; }
+  var QN = 20, startedAt = 0;
+  function lbKey(){ return "mstrivia:race20"; }
+  function lbLabel(){ return "20-question race"; }
   function score(){ return dur ? 2 * correct - attempted : correct; }
+  // Race scoring: the most right answers wins; ties go to the faster time.
+  function rawSecs(){ return Math.max(1, Math.round(((overAt || performance.now()) - startedAt) / 1000)); }
+  function timeScore(){ return rawSecs(); }
+  function fmtTime(sec){ sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
   function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
   function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
   function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
   function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
   function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
-  function lbCmp(x, y){ return (y.s - x.s) || ((y.s / Math.max(1, y.a)) - (x.s / Math.max(1, x.a))) || (x.t - y.t); }
+  function lbCmp(x, y){ return ((y.c || 0) - (x.c || 0)) || (x.s - y.s) || (x.t - y.t); }
   function lbQualifies(s, a){
-    if (s <= 0) return false;
     var l = lbGet();
-    return l.length < 10 || lbCmp({s: s, a: a, t: Date.now()}, l[l.length - 1]) < 0;
+    return l.length < 10 || lbCmp({s: s, c: correct, t: Date.now()}, l[l.length - 1]) < 0;
   }
   function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
   function renderLB(box, hi){
@@ -361,7 +357,7 @@ var MSGen = (function(){
     if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
     else {
       h += "<ol>" + l.map(function(r, i){
-        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + r.s + "<small> pts</small></span></li>";
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + (r.c || 0) + "/" + QN + " <small>in " + fmtTime(r.s) + "</small></span></li>";
       }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
     }
     box.innerHTML = h;
@@ -385,7 +381,7 @@ var MSGen = (function(){
     var box = els.classBoard;
     if (!SCORE_URL){ box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
-    var setting = level + ":" + QN, round = {score: score(), right: correct, wrong: attempted - correct}, posted = false;
+    var setting = "time-all:" + QN, round = {score: timeScore(), right: correct, wrong: attempted - correct}, posted = false;
     box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
       (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
         "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
@@ -406,7 +402,7 @@ var MSGen = (function(){
       if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
       if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
       list.innerHTML = "<ol>" + top.map(function(r){
-        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + lbEsc(r.score) + "<small> pts</small></span></li>";
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + (r.right == null ? "" : r.right + "/" + QN + " ") + "<small>in " + fmtTime(r.score) + "</small></span></li>";
       }).join("") + "</ol>";
     }
     cbCall({action: "top", game: GAME_ID, setting: setting})
@@ -439,21 +435,23 @@ var MSGen = (function(){
   function afterRound(){
     classBoard();
     var title = document.getElementById("overTitle");
-    els.best.className = "";
-    els.best.textContent = "";
     title.textContent = "Done!";
-    if (lbQualifies(score(), attempted)){
-      var entry = {s: score(), a: attempted, t: Date.now()};
+    var miss = attempted - correct, ts = timeScore();
+    els.best.className = "";
+    els.best.textContent = correct + " of " + QN + " right in " + fmtTime(ts) + ".";
+    var entry = {s: ts, c: correct, a: attempted, t: Date.now()};
+    if (lbQualifies(ts, attempted)){
       var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
       lbSet(l);
       var rank = l.indexOf(entry);
-      els.best.textContent = rank === 0 ? "New personal best!" : "That’s #" + (rank + 1) + " on your list.";
+      els.best.textContent += rank === 0 ? " New personal best!" : " That’s #" + (rank + 1) + " on your list.";
       els.best.className = "new";
       renderLB(els.lbOver, rank);
       return;
     }
     renderLB(els.lbOver, -1);
   }
+
   window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
 
   function show(which){
@@ -478,10 +476,9 @@ var MSGen = (function(){
   function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
 
   function reset(){
-    QN = MSGen.count(level); MSGen.resetDeck(level);
     cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
-    state = "ready"; cur = null; done = []; locked = false;
-    correct = 0; attempted = 0; misses = new Map();
+    state = "ready"; cur = null; done = []; locked = false; overAt = 0;
+    correct = 0; attempted = 0; misses = new Map(); roundLog = [];
     updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
   }
 
@@ -520,26 +517,27 @@ var MSGen = (function(){
   }
 
   var revealTimer = 0;
+  // Words appear 5 per second, with a 1 second pause before each new clue (at each "/")
   function startReveal(){
-    clearInterval(revealTimer);
-    var items = els.prob.querySelectorAll(".chars li"), shown = 0;
+    clearTimeout(revealTimer);
+    var items = els.prob.querySelectorAll(".clue .w"), shown = 0;
     function next(){
-      if (shown > 0) items[shown - 1].classList.remove("new");
-      if (shown < items.length){ items[shown].classList.add("on", "new"); shown++; }
-      if (shown >= items.length) clearInterval(revealTimer);
+      if (shown >= items.length) return;
+      items[shown].classList.add("on"); shown++;
+      if (shown < items.length) revealTimer = setTimeout(next, items[shown].classList.contains("pause") ? 1000 : 200);
     }
     next();
-    revealTimer = setInterval(next, 1000);
   }
   function revealAll(){
-    clearInterval(revealTimer);
-    els.prob.querySelectorAll(".chars li").forEach(function(li){ li.classList.add("on"); li.classList.remove("new"); });
+    clearTimeout(revealTimer);
+    els.prob.querySelectorAll(".clue .w").forEach(function(w){ w.classList.add("on"); });
   }
   function choose(i){
     if (state !== "playing" || locked || i < 0 || i > 5) return;
     locked = true;
     revealAll();
     var ok = i === cur.answer;
+    roundLog.push({p: cur, ok: ok, pick: i});
     attempted++;
     if (ok) correct++;
     else {
@@ -550,29 +548,39 @@ var MSGen = (function(){
     var btns = els.choices.querySelectorAll(".choice");
     btns[cur.answer].classList.add("right");
     if (!ok) btns[i].classList.add("wrong");
+    var last = !dur && attempted >= QN;
+    if (last) overAt = performance.now(); // the race clock stops at the last answer
     lockTimer = setTimeout(function(){
       if (state !== "playing") return;
-      if (!dur && attempted >= QN){ finish(); return; }
+      if (last){ finish(); return; }
       done.push({p: cur, ok: ok});
       if (done.length > 3) done.shift();
       cur = newProblem();
       locked = false;
       render(true);
-    }, ok ? 300 : 1200);
+    }, last ? 2000 : (ok ? 300 : 1200)); // pause 2 seconds on the last question so the result can be seen
   }
 
+  function renderRecap(){
+    var box = document.getElementById("recap"); if (!box) return; // (no recap in trivia races)
+    box.innerHTML = "<h3>Your round</h3><ol class=\"recap-list\">" + roundLog.map(function(d){
+      return "<li>" + (d.ok ? "<span class=\"rc-ok\">✓ " + d.p.ansH + "</span>"
+        : "<span class=\"rc-bad\">✗ <s>" + d.p.optH[d.pick] + "</s></span> <span class=\"rc-fix\">" + d.p.ansH + "</span>") + "</li>";
+    }).join("") + "</ol>";
+  }
   function finish(){
-    state = "over"; overAt = performance.now();
+    state = "over"; overAt = overAt || performance.now();
+    renderRecap();
     cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
-    els.fRight.textContent = fmtScore(score());
+    els.fRight.textContent = correct + "/" + QN;
     els.fTried.textContent = tally();
     afterRound();
-    var list = Array.from(misses.values());
+    var list = Array.from(misses.values()).slice(0, 12);
     els.missList.innerHTML = list.map(function(m){
       return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
     }).join("");
-    els.missWrap.hidden = list.length === 0;
-    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    els.missWrap.hidden = true; // trivia races show only the leaderboards, no review list
+    els.clean.hidden = true;
     show("over");
   }
 
@@ -581,7 +589,7 @@ var MSGen = (function(){
       var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
       var setting = group.getAttribute("data-setting");
       var v = btn.getAttribute("data-v");
-      if (setting === "level") level = v; else dur = parseInt(v, 10);
+      if (setting === "level") level = v; else if (setting === "order") clueOrder = v; else dur = parseInt(v, 10);
       group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
       btn.blur();
       reset();
