@@ -192,6 +192,15 @@ footer p{margin:.25rem 0}
 .cb-toggle{text-align:center; margin:.5rem 0 0}
 .cb-tbtn{font:inherit; font-size:.85rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer; padding:.2rem .4rem}
 .cb-tbtn:hover{color:inherit}
+.recap{margin:1rem auto 0; max-width:34rem; text-align:left}
+.recap h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.recap-list{margin:0; padding:0 0 0 1.6rem; border:1.5px solid var(--line); border-radius:12px; background:var(--field)}
+.recap-list li{padding:.35rem .6rem .35rem .2rem; border-top:1px solid var(--line); font-size:.92rem; line-height:1.4}
+.recap-list li:first-child{border-top:0}
+.rc-q{color:var(--muted)}
+.rc-ok{color:var(--good); font-weight:700}
+.rc-bad{color:var(--bad); font-weight:700}
+.rc-fix{color:var(--good); font-weight:700}
 </style>
 </head>
 <body>
@@ -297,6 +306,7 @@ var PeopleGen = (function(){
   var level = "all", clueOrder = "hard", dur = 0, state = "ready";
   var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
   var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+  var roundLog = [];
 
   var $ = function(id){ return document.getElementById(id); };
   var els = {
@@ -475,8 +485,8 @@ var PeopleGen = (function(){
 
   function reset(){
     cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
-    state = "ready"; cur = null; done = []; locked = false;
-    correct = 0; attempted = 0; misses = new Map();
+    state = "ready"; cur = null; done = []; locked = false; overAt = 0;
+    correct = 0; attempted = 0; misses = new Map(); roundLog = [];
     updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
   }
 
@@ -535,6 +545,7 @@ var PeopleGen = (function(){
     locked = true;
     revealAll();
     var ok = i === cur.answer;
+    roundLog.push({p: cur, ok: ok, pick: i});
     attempted++;
     if (ok) correct++;
     else {
@@ -545,19 +556,29 @@ var PeopleGen = (function(){
     var btns = els.choices.querySelectorAll(".choice");
     btns[cur.answer].classList.add("right");
     if (!ok) btns[i].classList.add("wrong");
+    var last = !dur && attempted >= QN;
+    if (last) overAt = performance.now(); // the race clock stops at the last answer
     lockTimer = setTimeout(function(){
       if (state !== "playing") return;
-      if (!dur && attempted >= QN){ finish(); return; }
+      if (last){ finish(); return; }
       done.push({p: cur, ok: ok});
       if (done.length > 3) done.shift();
       cur = newProblem();
       locked = false;
       render(true);
-    }, ok ? 300 : 1200);
+    }, last ? 2000 : (ok ? 300 : 1200)); // pause 2 seconds on the last question so the result can be seen
   }
 
+  function renderRecap(){
+    var box = document.getElementById("recap"); if (!box) return; // (no recap in trivia races)
+    box.innerHTML = "<h3>Your round</h3><ol class=\"recap-list\">" + roundLog.map(function(d){
+      return "<li>" + (d.ok ? "<span class=\"rc-ok\">✓ " + d.p.ansH + "</span>"
+        : "<span class=\"rc-bad\">✗ <s>" + d.p.optH[d.pick] + "</s></span> <span class=\"rc-fix\">" + d.p.ansH + "</span>") + "</li>";
+    }).join("") + "</ol>";
+  }
   function finish(){
-    state = "over"; overAt = performance.now();
+    state = "over"; overAt = overAt || performance.now();
+    renderRecap();
     cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
     els.fRight.textContent = correct + "/" + QN;
     els.fTried.textContent = tally();
@@ -566,8 +587,8 @@ var PeopleGen = (function(){
     els.missList.innerHTML = list.map(function(m){
       return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
     }).join("");
-    els.missWrap.hidden = list.length === 0;
-    els.clean.hidden = !(list.length === 0 && attempted > 0);
+    els.missWrap.hidden = true; // trivia races show only the leaderboards, no review list
+    els.clean.hidden = true;
     show("over");
   }
 
