@@ -70,6 +70,7 @@ h1 span{color:var(--gold)}
 .soon{margin:1.25rem 0 0; color:var(--muted); font-size:.9rem; text-align:center}
 footer{margin-top:2rem; padding-top:.9rem; border-top:1px solid var(--line); font-size:.88rem; color:var(--muted); text-align:center}
 footer a{color:inherit}
+.champ{font-size:.85rem; margin:.3rem 0 0; opacity:.9}
 </style>
 </head>
 <body>
@@ -166,5 +167,36 @@ footer a{color:inherit}
 
   <footer><a href="https://tessie-cs-f26.github.io/math/">Looking for math practice? Go to the math games.</a></footer>
 </main>
+<script src="scores-config.js"></script>
+<script>
+(function(){
+  // ----- the current leader of each game (its default setting), from the class leaderboard -----
+  var URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  if (!URL) return;
+  var GAMES = {
+    "who-won.html": ["who-won", "all:120"], "presidents.html": ["presidents", "all:120"],
+    "politicians.html": ["politicians", "all:120"], "amendments.html": ["amendments", "all:120"],
+    "chronology.html": ["chronology", "all:25"], "great-people.html": ["great-people", "time-all:10"],
+    "ms-trivia.html": ["ms-trivia", "time-all:20"], "name-the-work.html": ["name-the-work", "all:120"],
+    "authors-works.html": ["authors-works", "all:120"], "lit-leadins.html": ["lit-leadins", "time-all:10"],
+    "geography.html": ["geography", "world:120"], "art.html": ["art", "all:120"], "music.html": ["music", "all:120"]
+  };
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  document.querySelectorAll("a.game").forEach(function(a){
+    var g = GAMES[a.getAttribute("href")]; if (!g) return;
+    var textBox = a.querySelector("span:not(.icon):not(.arrow)"); if (!textBox) return;
+    var p = document.createElement("p"); p.className = "champ"; textBox.appendChild(p);
+    fetch(URL + "?action=top&game=" + encodeURIComponent(g[0]) + "&setting=" + encodeURIComponent(g[1]))
+      .then(function(r){ return r.json(); }).then(function(d){
+        if (!d || !d.ok || !d.top.length){ p.textContent = "🏆 No leader yet"; return; }
+        var r = d.top[0], n = parseInt(g[1].split(":")[1], 10), sc;
+        if (/^time-/.test(g[1])) sc = (r.right == null ? "" : r.right + "/" + n + " ") + "in " + Math.floor(r.score / 60) + ":" + String(r.score % 60).padStart(2, "0");
+        else if (g[0] === "chronology") sc = r.score + "/25";
+        else sc = r.score + " pts";
+        p.innerHTML = "🏆 Leader: <b>" + esc(r.name) + "</b> · " + sc;
+      }).catch(function(){ p.remove(); });
+  });
+})();
+</script>
 </body>
 </html>
