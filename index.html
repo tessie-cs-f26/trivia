@@ -71,6 +71,12 @@ h1 span{color:var(--gold)}
 footer{margin-top:2rem; padding-top:.9rem; border-top:1px solid var(--line); font-size:.88rem; color:var(--muted); text-align:center}
 footer a{color:inherit}
 .champ{font-size:.85rem; margin:.3rem 0 0; opacity:.9}
+.namebox{border:1.5px solid var(--line, #e2ddcf); border-radius:14px; padding:.8rem 1rem; margin:0 0 1.2rem; background:var(--field, #fff)}
+.namebox label{display:block; font-weight:700; margin-bottom:.4rem}
+.namerow{display:flex; gap:.5rem}
+.namerow input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.5rem .9rem; border:1.5px solid var(--line, #e2ddcf); border-radius:999px; background:transparent; color:inherit}
+.namerow button{font:inherit; font-weight:700; color:#fff; background:#3a6fd0; border:0; border-radius:999px; padding:.5rem 1.2rem; cursor:pointer}
+.namenote{font-size:.85rem; opacity:.75; margin:.4rem 0 0}
 </style>
 </head>
 <body>
@@ -81,6 +87,11 @@ footer a{color:inherit}
 </header>
 
 <main class="app">
+  <div class="namebox">
+    <label for="who">Your name for the class leaderboards</label>
+    <div class="namerow"><input id="who" type="text" maxlength="15" autocomplete="off" placeholder="First name + last initial"><button type="button" id="whoSave">Save</button></div>
+    <p class="namenote" id="whoNote">Saved on this device, so every game fills it in for you.</p>
+  </div>
   <h2 class="section">General knowledge</h2>
   <ul class="games">
     <li><a class="game" href="ms-trivia.html">
@@ -196,6 +207,20 @@ footer a{color:inherit}
         p.innerHTML = "🏆 Leader: <b>" + esc(r.name) + "</b> · " + sc;
       }).catch(function(){ p.remove(); });
   });
+})();
+</script>
+<script>
+(function(){
+  // the student's name, remembered on this device for every game (math, trivia and bridge)
+  var who = document.getElementById("who"), note = document.getElementById("whoNote");
+  try { who.value = localStorage.getItem("trivia:name") || ""; } catch(e){}
+  function save(){
+    var n = who.value.trim().slice(0, 15);
+    try { if (n) localStorage.setItem("trivia:name", n); else localStorage.removeItem("trivia:name"); } catch(e){}
+    note.textContent = n ? "Saved, " + n + "! Every game will fill in your name." : "Name cleared.";
+  }
+  document.getElementById("whoSave").addEventListener("click", save);
+  who.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); save(); } });
 })();
 </script>
 </body>
