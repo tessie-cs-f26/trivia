@@ -192,15 +192,42 @@ footer a{color:inherit}
     "authors-works.html": ["authors-works", "all:120"], "lit-leadins.html": ["lit-leadins", "time-all:10"],
     "geography.html": ["geography", "world:120"], "art.html": ["art", "all:120"], "music.html": ["music", "all:120"]
   };
+  // the leader: the best score; if several tie, the one who got it most recently
+  function leaderOf(top, race){
+    var best = top[0];
+    top.forEach(function(r){
+      // a tie: same right and same time in a race; same score and same accuracy otherwise
+      var acc = function(x){ return x.wrong == null ? 0 : x.right / Math.max(1, x.right + x.wrong); };
+      var tie = r.score === top[0].score && (race ? r.right === top[0].right : acc(r) === acc(top[0]));
+      if (tie && (r.t || 0) > (best.t || 0)) best = r;
+    });
+    return best;
+  }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  // Geography shows a leader for each topic
+  var EXTRA = {"geography.html": [["World capitals", "world:120"], ["State capitals", "states:120"], ["State nicknames", "nicknames:120"]]};
   document.querySelectorAll("a.game").forEach(function(a){
+    var multi = EXTRA[a.getAttribute("href")];
+    if (multi){
+      var tb = a.querySelector("span:not(.icon):not(.arrow)"); if (!tb) return;
+      multi.forEach(function(m){
+        var p = document.createElement("p"); p.className = "champ"; tb.appendChild(p);
+        fetch(URL + "?action=top&game=geography&setting=" + encodeURIComponent(m[1]))
+          .then(function(r){ return r.json(); }).then(function(d){
+            if (!d || !d.ok || !d.top.length){ p.textContent = "🏆 " + m[0] + ": no leader yet"; return; }
+            var r = leaderOf(d.top, false);
+            p.innerHTML = "🏆 " + m[0] + ": <b>" + esc(r.name) + "</b> · " + r.score + " pts";
+          }).catch(function(){ p.remove(); });
+      });
+      return;
+    }
     var g = GAMES[a.getAttribute("href")]; if (!g) return;
     var textBox = a.querySelector("span:not(.icon):not(.arrow)"); if (!textBox) return;
     var p = document.createElement("p"); p.className = "champ"; textBox.appendChild(p);
     fetch(URL + "?action=top&game=" + encodeURIComponent(g[0]) + "&setting=" + encodeURIComponent(g[1]))
       .then(function(r){ return r.json(); }).then(function(d){
         if (!d || !d.ok || !d.top.length){ p.textContent = "🏆 No leader yet"; return; }
-        var r = d.top[0], n = parseInt(g[1].split(":")[1], 10), sc;
+        var r = leaderOf(d.top, /^time-/.test(g[1])), n = parseInt(g[1].split(":")[1], 10), sc;
         if (/^time-/.test(g[1])) sc = (r.right == null ? "" : r.right + "/" + n + " ") + "in " + Math.floor(r.score / 60) + ":" + String(r.score % 60).padStart(2, "0");
         else if (g[0] === "chronology") sc = r.score + "/25";
         else sc = r.score + " pts";
