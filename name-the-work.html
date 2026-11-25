@@ -187,6 +187,8 @@ footer p{margin:.25rem 0}
 .cb-toggle{text-align:center; margin:.5rem 0 0}
 .cb-tbtn{font:inherit; font-size:.85rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer; padding:.2rem .4rem}
 .cb-tbtn:hover{color:inherit}
+.cb-who{font-size:.85rem; color:var(--muted); text-align:center; margin:.2rem 0 .4rem}
+.cb-who b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -381,6 +383,26 @@ var WorkGen = (function(){
     var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
     return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
   }
+  // After posting: show who it was posted as, with a way to change the saved name for the next round
+  function nameChanger(msg, name){
+    var wrap = document.createElement("div"); wrap.className = "cb-who";
+    wrap.innerHTML = "Posted as <b></b> · <button type=\"button\" class=\"cb-tbtn\">Change name</button>";
+    wrap.querySelector("b").textContent = name;
+    msg.parentNode.insertBefore(wrap, msg.nextSibling);
+    wrap.querySelector("button").addEventListener("click", function(){
+      wrap.innerHTML = "<div class=\"save-row\"><input type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\">Save</button></div>";
+      var inp = wrap.querySelector("input"), b = wrap.querySelector("button");
+      inp.value = name; inp.focus(); inp.select();
+      function save(){
+        var n = inp.value.trim().slice(0, 15);
+        try { if (n) localStorage.setItem("trivia:name", n); else localStorage.removeItem("trivia:name"); } catch(e){}
+        wrap.innerHTML = n ? "Next round will post as <b></b>." : "Name cleared. You’ll be asked for a name next time.";
+        if (n) wrap.querySelector("b").textContent = n;
+      }
+      b.addEventListener("click", save);
+      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); save(); } });
+    });
+  }
   function classBoard(){
     var box = els.classBoard;
     if (!SCORE_URL || !dur){ box.hidden = true; box.innerHTML = ""; return; }
@@ -410,7 +432,7 @@ var WorkGen = (function(){
       }).join("") + "</ol>";
     }
     cbCall({action: "top", game: GAME_ID, setting: setting})
-      .then(function(d){ cbData = d && d.ok ? d : null; cbRender(); })
+      .then(function(d){ if (posted) return; cbData = d && d.ok ? d : null; cbRender(); })
       .catch(function(){ show(null); });
     var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
     if (!input) return;
@@ -425,7 +447,7 @@ var WorkGen = (function(){
           if (d && d.ok){
             posted = true; cbSaveName(name);
             box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
-            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!";
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!"; nameChanger(msg, name);
             cbData = d; cbMine = d.id; cbRender();
           } else {
             btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
@@ -435,6 +457,7 @@ var WorkGen = (function(){
     }
     btn.addEventListener("click", post);
     input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+    if (input.value.trim()) post(); // auto-submit with the saved name
   }
   function afterRound(){
     classBoard();
