@@ -192,6 +192,9 @@ footer p{margin:.25rem 0}
 .cb-tbtn:hover{color:inherit}
 .cb-who{font-size:.85rem; color:var(--muted); text-align:center; margin:.2rem 0 .4rem}
 .cb-who b{color:var(--ink)}
+.plus1{position:absolute; font-size:1.6rem; font-weight:700; line-height:1; color:var(--good, #1f8456); pointer-events:none; white-space:nowrap; animation:plusUp .9s ease-out forwards}
+@keyframes plusUp{0%{opacity:0; transform:translateY(.4rem) scale(.8)} 20%{opacity:1; transform:translateY(0) scale(1.15)} 100%{opacity:0; transform:translateY(-1.6rem) scale(1)}}
+@media (prefers-reduced-motion: reduce){ .plus1{animation:none} }
 </style>
 </head>
 <body>
@@ -267,6 +270,20 @@ footer p{margin:.25rem 0}
 
 <script src="scores-config.js"></script>
 <script>
+// a "+1" that floats up beside the score when an answer is right
+function plusOne(text, el){
+  el = el || document.getElementById("right");
+  if (!el) return;
+  var par = el.parentNode;
+  if (getComputedStyle(par).position === "static") par.style.position = "relative";
+  var f = document.createElement("span");
+  f.className = "plus1"; f.textContent = text || "+1";
+  par.appendChild(f);
+  // put it to the left of the score, unless the score sits at the left edge of the screen
+  var left = el.getBoundingClientRect().left > f.offsetWidth + 12 ? el.offsetLeft - f.offsetWidth - 6 : el.offsetLeft + el.offsetWidth + 6;
+  f.style.left = left + "px"; f.style.top = (el.offsetTop - 4) + "px";
+  setTimeout(function(){ f.remove(); }, 900);
+}
 /*GEN*/
 var PresGen = (function(){
   var PRES = ["George Washington", "John Adams", "Thomas Jefferson", "James Madison", "James Monroe", "John Quincy Adams", "Andrew Jackson", "Martin Van Buren", "William Henry Harrison", "John Tyler", "James K. Polk", "Zachary Taylor", "Millard Fillmore", "Franklin Pierce", "James Buchanan", "Abraham Lincoln", "Andrew Johnson", "Ulysses S. Grant", "Rutherford B. Hayes", "James A. Garfield", "Chester A. Arthur", "Grover Cleveland", "Benjamin Harrison", "William McKinley", "Theodore Roosevelt", "William Howard Taft", "Woodrow Wilson", "Warren G. Harding", "Calvin Coolidge", "Herbert Hoover", "Franklin D. Roosevelt", "Harry S. Truman", "Dwight D. Eisenhower", "John F. Kennedy", "Lyndon B. Johnson", "Richard Nixon", "Gerald Ford", "Jimmy Carter", "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump", "Joe Biden"];
@@ -578,7 +595,7 @@ var PresGen = (function(){
     revealAll();
     var ok = i === cur.answer;
     attempted++;
-    if (ok) correct++;
+    if (ok){ correct++; plusOne(); }
     else {
       var m = misses.get(cur.id) || {p: cur, n: 0};
       m.n++; misses.set(cur.id, m);

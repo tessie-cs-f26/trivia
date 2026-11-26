@@ -192,6 +192,9 @@ footer p{margin:.25rem 0}
 .cb-tbtn:hover{color:inherit}
 .cb-who{font-size:.85rem; color:var(--muted); text-align:center; margin:.2rem 0 .4rem}
 .cb-who b{color:var(--ink)}
+.plus1{position:absolute; font-size:1.6rem; font-weight:700; line-height:1; color:var(--good, #1f8456); pointer-events:none; white-space:nowrap; animation:plusUp .9s ease-out forwards}
+@keyframes plusUp{0%{opacity:0; transform:translateY(.4rem) scale(.8)} 20%{opacity:1; transform:translateY(0) scale(1.15)} 100%{opacity:0; transform:translateY(-1.6rem) scale(1)}}
+@media (prefers-reduced-motion: reduce){ .plus1{animation:none} }
 </style>
 </head>
 <body>
@@ -274,6 +277,20 @@ footer p{margin:.25rem 0}
 
 <script src="scores-config.js"></script>
 <script>
+// a "+1" that floats up beside the score when an answer is right
+function plusOne(text, el){
+  el = el || document.getElementById("right");
+  if (!el) return;
+  var par = el.parentNode;
+  if (getComputedStyle(par).position === "static") par.style.position = "relative";
+  var f = document.createElement("span");
+  f.className = "plus1"; f.textContent = text || "+1";
+  par.appendChild(f);
+  // put it to the left of the score, unless the score sits at the left edge of the screen
+  var left = el.getBoundingClientRect().left > f.offsetWidth + 12 ? el.offsetLeft - f.offsetWidth - 6 : el.offsetLeft + el.offsetWidth + 6;
+  f.style.left = left + "px"; f.style.top = (el.offsetTop - 4) + "px";
+  setTimeout(function(){ f.remove(); }, 900);
+}
 /*GEN*/
 var PolGen = (function(){
   var WORLD = [["Prime Minister of the United Kingdom", "Andy Burnham", "eu"], ["Prime Minister of Canada", "Mark Carney", "am"], ["Prime Minister of Australia", "Anthony Albanese", "as"], ["Prime Minister of New Zealand", "Christopher Luxon", "as"], ["Chancellor of Germany", "Friedrich Merz", "eu"], ["President of France", "Emmanuel Macron", "eu"], ["Prime Minister of Italy", "Giorgia Meloni", "eu"], ["Prime Minister of Poland", "Donald Tusk", "eu"], ["Prime Minister of Hungary", "Péter Magyar", "eu"], ["President of Ukraine", "Volodymyr Zelenskyy", "eu"], ["President of Russia", "Vladimir Putin", "eu"], ["Prime Minister of Japan", "Sanae Takaichi", "as"], ["Prime Minister of India", "Narendra Modi", "as"], ["President of China", "Xi Jinping", "as"], ["Supreme Leader of North Korea", "Kim Jong Un", "as"], ["Supreme Leader of Iran", "Mojtaba Khamenei", "as"], ["President of Taiwan", "Lai Ching-te", "as"], ["Acting President of Venezuela", "Delcy Rodríguez", "am"], ["President of the European Commission", "Ursula von der Leyen", "eu"], ["Prime Minister of Israel", "Benjamin Netanyahu", "as"], ["Prime Minister of Saudi Arabia", "Mohammed bin Salman", "as"], ["President of Turkey", "Recep Tayyip Erdoğan", "as"], ["President of South Korea", "Lee Jae Myung", "as"], ["President of Indonesia", "Prabowo Subianto", "as"], ["President of the Philippines", "Bongbong Marcos", "as"], ["President of Brazil", "Luiz Inácio Lula da Silva", "am"], ["President of Mexico", "Claudia Sheinbaum", "am"], ["President of Argentina", "Javier Milei", "am"], ["President of South Africa", "Cyril Ramaphosa", "af"]];
@@ -572,7 +589,7 @@ var PolGen = (function(){
     revealAll();
     var ok = i === cur.answer;
     attempted++;
-    if (ok) correct++;
+    if (ok){ correct++; plusOne(); }
     else {
       var m = misses.get(cur.id) || {p: cur, n: 0};
       m.n++; misses.set(cur.id, m);

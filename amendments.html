@@ -192,6 +192,9 @@ footer p{margin:.25rem 0}
 .cb-tbtn:hover{color:inherit}
 .cb-who{font-size:.85rem; color:var(--muted); text-align:center; margin:.2rem 0 .4rem}
 .cb-who b{color:var(--ink)}
+.plus1{position:absolute; font-size:1.6rem; font-weight:700; line-height:1; color:var(--good, #1f8456); pointer-events:none; white-space:nowrap; animation:plusUp .9s ease-out forwards}
+@keyframes plusUp{0%{opacity:0; transform:translateY(.4rem) scale(.8)} 20%{opacity:1; transform:translateY(0) scale(1.15)} 100%{opacity:0; transform:translateY(-1.6rem) scale(1)}}
+@media (prefers-reduced-motion: reduce){ .plus1{animation:none} }
 </style>
 </head>
 <body>
@@ -275,6 +278,20 @@ footer p{margin:.25rem 0}
 
 <script src="scores-config.js"></script>
 <script>
+// a "+1" that floats up beside the score when an answer is right
+function plusOne(text, el){
+  el = el || document.getElementById("right");
+  if (!el) return;
+  var par = el.parentNode;
+  if (getComputedStyle(par).position === "static") par.style.position = "relative";
+  var f = document.createElement("span");
+  f.className = "plus1"; f.textContent = text || "+1";
+  par.appendChild(f);
+  // put it to the left of the score, unless the score sits at the left edge of the screen
+  var left = el.getBoundingClientRect().left > f.offsetWidth + 12 ? el.offsetLeft - f.offsetWidth - 6 : el.offsetLeft + el.offsetWidth + 6;
+  f.style.left = left + "px"; f.style.top = (el.offsetTop - 4) + "px";
+  setTimeout(function(){ f.remove(); }, 900);
+}
 /*GEN*/
 var AmendGen = (function(){
   var AM = [[1, 1791, "Protects freedom of religion, speech, the press, assembly, and petition"], [2, 1791, "Protects the right to keep and bear arms"], [3, 1791, "Bans forcing people to house soldiers in peacetime"], [4, 1791, "Protects against unreasonable searches and seizures"], [5, 1791, "Guarantees due process and bans self-incrimination and double jeopardy"], [6, 1791, "Guarantees a speedy, public jury trial and a lawyer in criminal cases"], [7, 1791, "Guarantees a jury trial in many civil lawsuits"], [8, 1791, "Bans excessive bail and fines and cruel and unusual punishment"], [9, 1791, "Says rights not listed in the Constitution still belong to the people"], [10, 1791, "Reserves powers not given to the federal government to the states or the people"], [11, 1795, "Limits lawsuits against states in federal court by people from other states or countries"], [12, 1804, "Has electors cast separate votes for president and vice president"], [13, 1865, "Abolishes slavery"], [14, 1868, "Grants citizenship to everyone born or naturalized in the U.S. and guarantees equal protection"], [15, 1870, "Bans denying the vote because of race"], [16, 1913, "Lets Congress collect a federal income tax"], [17, 1913, "Has senators elected directly by the people"], [18, 1919, "Bans making and selling alcohol (Prohibition)"], [19, 1920, "Gives women the right to vote"], [20, 1933, "Moves the start of presidential and congressional terms to January (the “lame duck” amendment)"], [21, 1933, "Repeals Prohibition"], [22, 1951, "Limits presidents to two terms"], [23, 1961, "Gives Washington, D.C., electoral votes for president"], [24, 1964, "Bans poll taxes in federal elections"], [25, 1967, "Sets rules for presidential succession and disability"], [26, 1971, "Lowers the voting age to 18"], [27, 1992, "Delays congressional pay raises until after the next election"]];
@@ -586,7 +603,7 @@ var AmendGen = (function(){
     revealAll();
     var ok = i === cur.answer;
     attempted++;
-    if (ok) correct++;
+    if (ok){ correct++; plusOne(); }
     else {
       var m = misses.get(cur.id) || {p: cur, n: 0};
       m.n++; misses.set(cur.id, m);
