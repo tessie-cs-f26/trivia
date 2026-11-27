@@ -77,6 +77,13 @@ footer a{color:inherit}
 .namerow input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.5rem .9rem; border:1.5px solid var(--line, #e2ddcf); border-radius:999px; background:transparent; color:inherit}
 .namerow button{font:inherit; font-weight:700; color:#fff; background:#3a6fd0; border:0; border-radius:999px; padding:.5rem 1.2rem; cursor:pointer}
 .namenote{font-size:.85rem; opacity:.75; margin:.4rem 0 0}
+.tpbox{border:2px solid var(--line, #e2ddcf); border-radius:16px; padding:.8rem 1rem; margin:0 0 1.2rem; background:var(--field, #fff)}
+.tpbox h2{font-size:1.05rem; margin:0 0 .4rem}
+.tpbox ol{list-style:none; margin:0; padding:0}
+.tpbox li{display:flex; gap:.6rem; align-items:baseline; padding:.25rem 0; border-top:1px solid var(--line, #e2ddcf); font-size:1.05rem}
+.tpbox li:first-child{border-top:0}
+.tpbox .m{width:1.6rem} .tpbox .n{flex:1; font-weight:700} .tpbox .p{font-weight:700}
+.tpnote{font-size:.8rem; opacity:.75; margin:.4rem 0 0}
 </style>
 </head>
 <body>
@@ -87,6 +94,7 @@ footer a{color:inherit}
 </header>
 
 <main class="app">
+  <section class="tpbox" id="tpBox" hidden></section>
   <div class="namebox">
     <label for="who">Your name for the class leaderboards</label>
     <div class="namerow"><input id="who" type="text" maxlength="15" autocomplete="off" placeholder="First name + last initial"><button type="button" id="whoSave">Save</button></div>
@@ -203,6 +211,35 @@ footer a{color:inherit}
     });
     return best;
   }
+  // ----- trivia points: 5 for 1st, 4 for 2nd, 3 for 3rd, 2 for 4th, 1 for 5th on each leaderboard -----
+  var tally = {}, pending = 0;
+  function addBoard(d){
+    if (!d || !d.ok || !d.top) return;
+    d.top.slice(0, 5).forEach(function(r, i){
+      var key = String(r.name).toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+      if (!tally[key]) tally[key] = {name: r.name, pts: 0};
+      tally[key].pts += 5 - i;
+    });
+  }
+  function track(pr){
+    pending++;
+    pr.then(function(){}, function(){}).then(function(){ if (--pending === 0) showPoints(); });
+    return pr;
+  }
+  function showPoints(){
+    var box = document.getElementById("tpBox"); if (!box) return;
+    var list = Object.keys(tally).map(function(k){ return tally[k]; }).sort(function(a, b){ return (b.pts - a.pts) || a.name.localeCompare(b.name); });
+    if (!list.length){ box.hidden = true; return; }
+    // the top three, plus anyone tied with third place
+    var cut = list.length > 3 ? list[2].pts : -1;
+    list = list.filter(function(r, i){ return i < 3 || r.pts === cut; });
+    var medals = ["🥇", "🥈", "🥉"], rank = 0, prev = null;
+    box.innerHTML = "<h2>Trivia points leaders</h2><ol>" + list.map(function(r, i){
+      if (r.pts !== prev){ rank = i; prev = r.pts; }
+      return "<li><span class=\"m\">" + (medals[rank] || "") + "</span><span class=\"n\">" + esc(r.name) + "</span><span class=\"p\">" + r.pts + " pts</span></li>";
+    }).join("") + "</ol><p class=\"tpnote\">Points for placing in each game’s class top 5: 1st 5, 2nd 4, 3rd 3, 4th 2, 5th 1.</p>";
+    box.hidden = false;
+  }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
   // Geography shows a leader for each topic
   var EXTRA = {"geography.html": [["World capitals", "world:120"], ["State capitals", "states:120"], ["State nicknames", "nicknames:120"]]};
@@ -212,27 +249,29 @@ footer a{color:inherit}
       var tb = a.querySelector("span:not(.icon):not(.arrow)"); if (!tb) return;
       multi.forEach(function(m){
         var p = document.createElement("p"); p.className = "champ"; tb.appendChild(p);
-        fetch(URL + "?action=top&game=geography&setting=" + encodeURIComponent(m[1]))
+        track(fetch(URL + "?action=top&game=geography&setting=" + encodeURIComponent(m[1]))
           .then(function(r){ return r.json(); }).then(function(d){
+            addBoard(d);
             if (!d || !d.ok || !d.top.length){ p.textContent = "🏆 " + m[0] + ": no leader yet"; return; }
             var r = leaderOf(d.top, false);
             p.innerHTML = "🏆 " + m[0] + ": <b>" + esc(r.name) + "</b> · " + r.score + " pts";
-          }).catch(function(){ p.remove(); });
+          }).catch(function(){ p.remove(); }));
       });
       return;
     }
     var g = GAMES[a.getAttribute("href")]; if (!g) return;
     var textBox = a.querySelector("span:not(.icon):not(.arrow)"); if (!textBox) return;
     var p = document.createElement("p"); p.className = "champ"; textBox.appendChild(p);
-    fetch(URL + "?action=top&game=" + encodeURIComponent(g[0]) + "&setting=" + encodeURIComponent(g[1]))
+    track(fetch(URL + "?action=top&game=" + encodeURIComponent(g[0]) + "&setting=" + encodeURIComponent(g[1]))
       .then(function(r){ return r.json(); }).then(function(d){
+        addBoard(d);
         if (!d || !d.ok || !d.top.length){ p.textContent = "🏆 No leader yet"; return; }
         var r = leaderOf(d.top, /^time-/.test(g[1])), n = parseInt(g[1].split(":")[1], 10), sc;
         if (/^time-/.test(g[1])) sc = (r.right == null ? "" : r.right + "/" + n + " ") + "in " + Math.floor(r.score / 60) + ":" + String(r.score % 60).padStart(2, "0");
         else if (g[0] === "chronology") sc = r.score + "/25";
         else sc = r.score + " pts";
         p.innerHTML = "🏆 Leader: <b>" + esc(r.name) + "</b> · " + sc;
-      }).catch(function(){ p.remove(); });
+      }).catch(function(){ p.remove(); }));
   });
 })();
 </script>

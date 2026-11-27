@@ -206,6 +206,7 @@ footer p{margin:.25rem 0}
 .plus1{position:absolute; font-size:1.6rem; font-weight:700; line-height:1; color:var(--good, #1f8456); pointer-events:none; white-space:nowrap; animation:plusUp .9s ease-out forwards}
 @keyframes plusUp{0%{opacity:0; transform:translateY(.4rem) scale(.8)} 20%{opacity:1; transform:translateY(0) scale(1.15)} 100%{opacity:0; transform:translateY(-1.6rem) scale(1)}}
 @media (prefers-reduced-motion: reduce){ .plus1{animation:none} }
+.expert{text-align:center; font-size:.9rem; font-weight:500; color:var(--rod); margin:.4rem 0 0}
 </style>
 </head>
 <body>
@@ -231,6 +232,7 @@ footer p{margin:.25rem 0}
 
   <div class="settings">
   </div>
+  <p class="expert" id="expertNote" hidden>⭐ Expert mode: you’ve gone 10 for 10 in 35 seconds or less, so the facts now come in random order.</p>
 
   <div class="stats">
     <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
@@ -296,7 +298,7 @@ var PeopleGen = (function(){
   function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
   var deck = [];
-  function make(){
+  function make(randomOrder){
     if (!deck.length) deck = shuffle(W.slice());
     var w = deck.pop(), name = w[1];
     // wrong choices: people from the same field first (scientists with scientists, rulers with rulers), then anyone
@@ -304,7 +306,7 @@ var PeopleGen = (function(){
     var rest = shuffle(W.filter(function(x){ return x[2] !== w[2]; }));
     var opts = shuffle([name].concat(same.concat(rest).slice(0, 5).map(function(x){ return x[1]; })));
     var html = "";
-    w[3].forEach(function(seg, si){
+    (randomOrder ? shuffle(w[3].slice()) : w[3]).forEach(function(seg, si){
       seg.split(/\s+/).forEach(function(word, wi){
         html += "<span class=\"w" + (si > 0 && wi === 0 ? " pause" : "") + "\">" + (si > 0 && wi === 0 ? "<span class=\"slash\">/</span> " : "") + esc(word) + " </span>";
       });
@@ -354,7 +356,7 @@ var PeopleGen = (function(){
 
   function newProblem(){
     var p;
-    do { p = PeopleGen.make(); } while (p.id === lastId);
+    do { p = PeopleGen.make(expert); } while (p.id === lastId);
     lastId = p.id;
     return p;
   }
@@ -390,7 +392,7 @@ var PeopleGen = (function(){
     box.innerHTML = h;
     var c = box.querySelector(".lb-clear");
     if (c) c.addEventListener("click", function(){
-      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); checkExpert(); renderLB(els.lbOver, -1); }
       else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
     });
   }
@@ -500,7 +502,7 @@ var PeopleGen = (function(){
     renderLB(els.lbOver, -1);
   }
 
-  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); checkExpert(); });
 
   function show(which){
     els.ready.hidden = which !== "ready";
@@ -527,11 +529,18 @@ var PeopleGen = (function(){
     cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
     state = "ready"; cur = null; done = []; locked = false; overAt = 0;
     correct = 0; attempted = 0; misses = new Map(); roundLog = [];
-    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1); checkExpert();
   }
 
+  // Expert mode: once this device has a 10/10 round in 35 seconds or less, the clues come in random order
+  var expert = false;
+  function checkExpert(){
+    expert = lbGet().some(function(e){ return (e.c || 0) >= 10 && e.s <= 35; });
+    var n = document.getElementById("expertNote"); if (n) n.hidden = !expert;
+  }
   function start(){
     reset();
+    checkExpert();
     state = "playing";
     cur = newProblem();
     startedAt = performance.now(); endAt = startedAt + dur * 1000;
