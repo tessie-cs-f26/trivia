@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Young Reader Lit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfbf7; --ink:#1d2a5c; --muted:#6b7394; --line:#d9dcea; --field:#ffffff;
+  --unit:#e9b414; --rod:#3a6fd0; --good:#1f8456; --bad:#c9403a;
+  --goodbg:#e3f4ea; --badbg:#fbe7e5;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+    --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+    --goodbg:#163a2e; --badbg:#47202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131933; --ink:#eef0fa; --muted:#9aa2c4; --line:#2c3560; --field:#1b2347;
+  --unit:#f2c230; --rod:#6f9ef0; --good:#4cc48b; --bad:#ff7a73;
+  --goodbg:#163a2e; --badbg:#47202a;
+  color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100%;
+  background:var(--paper); color:var(--ink);
+  font-family:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric:tabular-nums;
+  line-height:1.45;
+}
+.app{max-width:40rem; margin:0 auto; padding:1.25rem 1.25rem 2rem}
+header{display:flex; align-items:center; gap:.85rem}
+.logo{flex:none; width:3.6rem; height:3.6rem; border-radius:12px; background:var(--rod); color:var(--unit); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.6rem}
+.logo sup{font-size:.55em; color:var(--unit); margin-left:.05em}
+h1{margin:0; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.sub{margin:.35rem 0 0; color:var(--muted); font-size:.95rem; max-width:34rem}
+
+details.rules{margin:.9rem 0 0; font-size:.92rem}
+details.rules summary{cursor:pointer; color:var(--rod); font-weight:500}
+details.rules ul{margin:.4rem 0 0; padding-left:1.2rem}
+details.rules li{margin:.25rem 0}
+
+.settings{display:flex; flex-wrap:wrap; gap:.75rem 1.5rem; margin:1.1rem 0 1rem}
+.seg{display:flex; align-items:center; gap:.5rem}
+.seg-name{font-size:.85rem; color:var(--muted)}
+.seg-btns{display:inline-flex; border:1.5px solid var(--line); border-radius:999px; padding:2px; background:var(--field)}
+.seg-btns button{
+  font:inherit; font-size:.88rem; color:var(--ink); background:transparent; border:0;
+  padding:.35rem .8rem; border-radius:999px; cursor:pointer;
+}
+.seg-btns button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg-btns button:disabled{cursor:not-allowed; opacity:.55}
+button:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+
+.stats{display:flex; justify-content:space-between; align-items:flex-end; margin-top:.5rem}
+.stat{display:flex; flex-direction:column}
+.stat.right{align-items:flex-end}
+.big{font-size:2.4rem; font-weight:700; line-height:1}
+.of{color:var(--muted); font-weight:500}
+.lbl{font-size:.8rem; color:var(--muted)}
+.timebar{height:6px; background:var(--line); border-radius:3px; margin:.6rem 0 0; overflow:hidden}
+#timefill{height:100%; width:100%; background:var(--rod); transform-origin:left center}
+#timefill.low{background:var(--bad)}
+
+.stage{min-height:22rem; display:flex; flex-direction:column; justify-content:center; padding:1.25rem 0}
+[hidden]{display:none !important}
+
+.ready{text-align:center}
+.ready p{font-size:1.3rem; margin:0 0 1rem}
+.kbd{display:inline-block; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:6px; padding:0 .4em; font-size:.9em; background:var(--field)}
+.primary{
+  font:inherit; font-weight:700; font-size:1.1rem; color:var(--paper); background:var(--rod);
+  border:0; border-radius:999px; padding:.7rem 1.6rem; cursor:pointer;
+}
+
+/* math */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .08em}
+.fr > span:first-child{border-bottom:.07em solid currentColor; padding:0 .12em .04em}
+.fr > span:last-child{padding:.04em .12em 0}
+.ex{font-size:.55em; vertical-align:super; margin-left:.04em; white-space:nowrap}
+.math{white-space:nowrap}
+.rad{display:inline-flex; align-items:flex-start; white-space:nowrap}
+.rad .idx{font-size:.42em; margin:.3em -.55em 0 0; font-weight:500}
+.rad .rs{font-weight:300; font-size:1.3em; line-height:1; margin-top:-.08em; margin-right:-.06em}
+.rad .rc{border-top:.075em solid currentColor; margin-top:.1em; padding:.06em .12em 0; line-height:1.1}
+
+.pl{font-size:1.6em; font-weight:400; line-height:1; vertical-align:-.12em}
+.ex.hi{vertical-align:1.25em}
+
+.board{display:flex; flex-direction:column; gap:.4rem; align-items:center; text-align:center}
+.row.done{font-size:1.05rem; color:var(--muted); min-height:1.9em; display:flex; gap:.4em; align-items:center; justify-content:center}
+.row.done .ok{color:var(--good); font-weight:700}
+.row.done .no{color:var(--bad); font-weight:700}
+.row.fresh{animation:popg .35s ease-out}
+@keyframes popg{from{transform:translateY(.4rem); opacity:.2}to{transform:none; opacity:1}}
+.prob{margin:.3rem 0 1rem; max-width:32rem}
+.prob .yr{font-size:clamp(2.6rem, 11vw, 3.8rem); font-weight:700; line-height:1.05}
+.prob .issue{font-size:1.1rem; margin-top:.4rem}
+.prob .ask{font-size:.9rem; color:var(--muted); margin:0 0 .5rem}
+.chars{list-style:none; margin:0 auto; padding:0; width:min(100%, 22rem); display:flex; flex-direction:column; gap:.3rem; max-width:24rem}
+.clue{max-width:34rem; margin:.4rem auto 0; text-align:left; font-size:1.08rem; line-height:1.6; min-height:7.5em}
+.clue .w{visibility:hidden}
+.clue .w.on{visibility:visible}
+.clue .slash{color:var(--muted); font-weight:700}
+.seg-btns{flex-wrap:wrap}
+.chars li{visibility:hidden; font-size:1.2rem; font-weight:500; padding:.35rem .8rem; border-radius:10px; background:var(--field); border:1.5px solid var(--line)}
+.chars li.on{visibility:visible; animation:popg .3s ease-out}
+.chars li.new{border-color:var(--rod)}
+.chars li.main{font-weight:700}
+.chars li.main::before{content:"★ "; color:var(--unit)}
+.prob .eq{color:var(--muted); font-weight:500; margin-left:.25em}
+
+.choice .math{white-space:normal; text-align:center}
+.choices{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); max-width:34rem !important; gap:.7rem; width:100%; max-width:30rem}
+.choice{
+  position:relative; min-width:0; overflow-wrap:break-word; padding-top:1.1rem !important; font:inherit; font-size:1rem; font-style:italic; font-weight:500; color:var(--ink); line-height:1.25;
+  background:var(--field); border:2px solid var(--line); border-radius:14px;
+  min-height:3.8rem; padding:.6rem .5rem; cursor:pointer; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+}
+.choice:hover{border-color:var(--rod)}
+.choice .tag{font-style:normal; position:absolute; top:.35rem; left:.55rem; font-size:.75rem; color:var(--muted); font-weight:500}
+.choice.right{border-color:var(--good); background:var(--goodbg)}
+.choice.wrong{border-color:var(--bad); background:var(--badbg); animation:shake .35s ease-out}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.over{text-align:center}
+.over h2{margin:0; font-size:1.1rem; color:var(--muted); font-weight:500}
+.final{font-size:3.2rem; font-weight:700; margin:.2rem 0 0; line-height:1.1}
+.final small{display:block; font-size:1rem; font-weight:400; color:var(--muted)}
+#bestLine{margin:.6rem 0 0; font-size:1rem}
+#bestLine.new{color:var(--good); font-weight:700}
+.misses{margin:1.25rem auto 0; max-width:30rem; text-align:left}
+.misses h3{font-size:1rem; margin:0 0 .5rem; font-weight:500}
+.misses ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem}
+.misses li{border:1.5px solid var(--line); border-radius:10px; padding:.5rem .75rem; background:var(--field)}
+.mq{font-size:1.25rem; font-weight:500}
+.mq b{color:var(--good)}
+.mw{font-size:.88rem; color:var(--muted); margin-top:.2rem}
+.clean{margin:1rem 0 0; color:var(--good)}
+.over .actions{margin-top:1.4rem}
+.over .hint{margin:.6rem 0 0; color:var(--muted); font-size:.88rem}
+
+footer{margin-top:1.5rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding-top:.8rem}
+footer p{margin:.25rem 0}
+
+.lb{margin:1.5rem auto 0; max-width:22rem; text-align:left}
+.lb h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.lb ol{margin:0; padding:0; list-style:none; counter-reset:r; border:1.5px solid var(--line); border-radius:12px; background:var(--field); overflow:hidden}
+.lb li{counter-increment:r; display:flex; gap:.6rem; align-items:baseline; padding:.35rem .8rem; border-top:1px solid var(--line)}
+.lb li:first-child{border-top:0}
+.lb li::before{content:counter(r); width:1.4rem; color:var(--muted); font-size:.85rem}
+.lb .lb-n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lb .lb-s{font-weight:700}
+.lb .lb-s small{font-weight:400; color:var(--muted)}
+.lb li.me{background:color-mix(in srgb, var(--rod) 18%, transparent); font-weight:700}
+.lb-note{color:var(--muted); font-size:.9rem; text-align:center; margin:0}
+.lb-clear{display:block; margin:.5rem auto 0; font:inherit; font-size:.8rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer}
+.save{margin:.9rem auto 0; max-width:22rem; text-align:left}
+.save label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem}
+.save-row{display:flex; gap:.5rem}
+.save input{flex:1; min-width:0; font:inherit; font-size:1rem; padding:.55rem .9rem; border:1.5px solid var(--line); border-radius:999px; background:var(--field); color:var(--ink)}
+.save input:focus-visible{outline:3px solid var(--unit); outline-offset:1px}
+.primary.small{font-size:.95rem; padding:.55rem 1.1rem}
+
+.cb{margin-top:1.4rem}
+.cb .cb-note{font-size:.8rem; color:var(--muted); margin:.4rem 0 .7rem; text-align:center}
+.cb .cb-msg{font-size:.9rem; text-align:center; margin:.4rem 0 .6rem}
+.cb .cb-msg.err{color:var(--bad)}
+.cb .cb-msg.okm{color:var(--good); font-weight:700}
+
+.home-link{display:inline-block; margin-left:.6rem; font:inherit; font-weight:700; font-size:1.1rem; color:var(--rod); background:transparent; border:2px solid var(--rod); border-radius:999px; padding:.6rem 1.4rem; text-decoration:none}
+.home-link:focus-visible{outline:3px solid var(--unit); outline-offset:2px}
+.top-home{display:inline-block; font-size:.85rem; color:var(--muted); text-decoration:none; margin-bottom:.6rem}
+.top-home:hover{color:var(--rod)}
+
+@media (prefers-reduced-motion: reduce){
+  .row.fresh,.choice.wrong{animation:none}
+}
+.cb-toggle{text-align:center; margin:.5rem 0 0}
+.cb-tbtn{font:inherit; font-size:.85rem; color:var(--muted); background:none; border:0; text-decoration:underline; cursor:pointer; padding:.2rem .4rem}
+.cb-tbtn:hover{color:inherit}
+.recap{margin:1rem auto 0; max-width:34rem; text-align:left}
+.recap h3{font-size:.95rem; font-weight:500; color:var(--muted); margin:0 0 .45rem; text-align:center}
+.recap-list{margin:0; padding:0 0 0 1.6rem; border:1.5px solid var(--line); border-radius:12px; background:var(--field)}
+.recap-list li{padding:.35rem .6rem .35rem .2rem; border-top:1px solid var(--line); font-size:.92rem; line-height:1.4}
+.recap-list li:first-child{border-top:0}
+.rc-q{color:var(--muted)}
+.rc-ok{color:var(--good); font-weight:700}
+.rc-bad{color:var(--bad); font-weight:700}
+.rc-fix{color:var(--good); font-weight:700}
+.cb-who{font-size:.85rem; color:var(--muted); text-align:center; margin:.2rem 0 .4rem}
+.cb-who b{color:var(--ink)}
+.plus1{position:absolute; font-size:1.6rem; font-weight:700; line-height:1; color:var(--good, #1f8456); pointer-events:none; white-space:nowrap; animation:plusUp .9s ease-out forwards}
+@keyframes plusUp{0%{opacity:0; transform:translateY(.4rem) scale(.8)} 20%{opacity:1; transform:translateY(0) scale(1.15)} 100%{opacity:0; transform:translateY(-1.6rem) scale(1)}}
+@media (prefers-reduced-motion: reduce){ .plus1{animation:none} }
+.prob .yr-q{font-size:clamp(1.3rem, 5.5vw, 1.8rem); font-weight:600; line-height:1.3; margin-top:.3rem}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="top-home" href="./" data-home>← All trivia games</a>
+  <header>
+    <div class="logo" aria-hidden="true">📚</div>
+    <div>
+      <h1>Young Reader Lit</h1>
+      <p class="sub">98 children’s and young adult classics, from <i>Goodnight Moon</i> to <i>The Hunger Games</i>. Name the book from its clues, name the author, or match a character to the book.</p>
+    </div>
+  </header>
+
+  <details class="rules">
+    <summary>How it works</summary>
+    <ul>
+      <li><strong>Books:</strong> clues appear word by word, hardest first, ending with a summary of the story. Pick the book as soon as you know it.</li>
+      <li><strong>Authors:</strong> who wrote the book?</li>
+      <li><strong>Characters:</strong> which book is the character from?</li>
+      <li><strong>Mixed</strong> mixes all three. Each question has six choices.</li>
+      <li>Each round is a race of 10 questions: the most right answers wins, and ties go to the faster time.</li>
+    </ul>
+  </details>
+
+  <div class="settings">
+    <div class="seg"><span class="seg-name" id="askLbl">Ask</span>
+      <div class="seg-btns" role="group" aria-labelledby="askLbl" data-setting="level">
+        <button type="button" data-v="mixed" aria-pressed="true">Mixed</button>
+        <button type="button" data-v="books" aria-pressed="false">Books</button>
+        <button type="button" data-v="authors" aria-pressed="false">Authors</button>
+        <button type="button" data-v="characters" aria-pressed="false">Characters</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="big" id="time">2:00</span><span class="lbl" id="tlbl">time left</span></div>
+    <div class="stat right" aria-live="polite"><span class="big" id="right">0</span><span class="lbl" id="tried">points</span></div>
+  </div>
+  <div class="timebar"><div id="timefill"></div></div>
+
+  <main class="stage">
+    <section class="ready" id="readyView">
+      <p>Press <span class="kbd">Space</span> or <span class="kbd">Enter</span> to start</p>
+      <button type="button" class="primary" id="startBtn">Start</button>
+      <div class="lb" id="lbReady"></div>
+    </section>
+
+    <section id="playView" hidden>
+      <div class="board">
+        <div id="history"></div>
+        <div class="prob" id="prob" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+    </section>
+
+    <section class="over" id="overView" hidden>
+      <h2 id="overTitle">Time’s up</h2>
+      <p class="final"><span id="fRight">0</span><small><span id="fTried"></span></small></p>
+      <p id="bestLine"></p>
+      <div class="lb cb" id="classBoard" hidden></div>
+      <div class="lb" id="lbOver"></div>
+      <div class="misses" id="missWrap" hidden>
+        <h3>Works to review</h3>
+        <ul id="missList"></ul>
+      </div>
+      <p class="clean" id="cleanLine" hidden>No misses this round.</p>
+      <div class="actions"><button type="button" class="primary" id="againBtn">Play again</button><a class="home-link" href="./" data-home>All trivia games</a></div>
+      <p class="hint">or press <span class="kbd">Space</span>. Press <span class="kbd">X</span> to reset.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Click or tap a choice, or press <span class="kbd">1</span>–<span class="kbd">6</span> (or <span class="kbd">A</span>–<span class="kbd">F</span>). <span class="kbd">X</span> resets.</p>
+  </footer>
+</div>
+
+<script src="scores-config.js"></script>
+<script>
+// a "+1" that floats up beside the score when an answer is right
+function plusOne(text, el){
+  el = el || document.getElementById("right");
+  if (!el) return;
+  var par = el.parentNode;
+  if (getComputedStyle(par).position === "static") par.style.position = "relative";
+  var f = document.createElement("span");
+  f.className = "plus1"; f.textContent = text || "+1";
+  par.appendChild(f);
+  // put it to the left of the score, unless the score sits at the left edge of the screen
+  var left = el.getBoundingClientRect().left > f.offsetWidth + 12 ? el.offsetLeft - f.offsetWidth - 6 : el.offsetLeft + el.offsetWidth + 6;
+  f.style.left = left + "px"; f.style.top = (el.offsetTop - 4) + "px";
+  setTimeout(function(){ f.remove(); }, 900);
+}
+/*GEN*/
+var YRGen = (function(){
+  // [title, author, tier, kind (p = picture book, n = everything else), clues (hardest first, summary last), characters]
+  var W = [["A Wrinkle in Time", "Madeleine L'Engle", 1, "n", ["Three mysterious beings guide the children: Mrs. Whatsit, Mrs. Who (who speaks in quotations), and Mrs. Which.", "The Happy Medium shows them the Dark Thing in a crystal ball.", "On Ixchel, a gentle furry creature Meg calls Aunt Beast nurses her back to health.", "Opening line: \"It was a dark and stormy night.\"", "Meg Murry, her little brother Charles Wallace, and Calvin O'Keefe \"tesser\" across the universe to rescue Meg's scientist father from the planet Camazotz, ruled by a giant disembodied brain called IT. 1963 Newbery Medal."], ["Meg Murry", "Charles Wallace Murry", "Calvin O'Keefe", "Mr. and Mrs. Murry", "Mrs. Whatsit"]], ["Holes", "Louis Sachar", 1, "n", ["Stanley's family is cursed because his \"no-good-dirty-rotten-pig-stealing-great-great-grandfather\" broke a promise to Madame Zeroni.", "The Warden wears nail polish laced with rattlesnake venom.", "Outlaw \"Kissin' Kate\" Barlow buried treasure after Sam the onion man was killed; Stanley and Zero survive on \"Big Thumb\" eating onions and 100-year-old spiced peaches (\"sploosh\").", "Stanley Yelnats is wrongly convicted of stealing sneakers donated by baseball star Clyde \"Sweet Feet\" Livingston and sent to Camp Green Lake, a dry lakebed where boys dig a hole every day. 1998 National Book Award and 1999 Newbery Medal."], ["Stanley Yelnats IV", "Hector Zeroni (\"Zero\")", "X-Ray", "Squid", "Armpit"]], ["The Giver", "Lois Lowry", 1, "n", ["Citizens take pills to suppress the \"Stirrings\"; the community practices \"Sameness.\"", "Jobs (Assignments) are given at the Ceremony of Twelve by the Committee of Elders.", "Jonas flees on a bicycle with the baby Gabriel and rides a sled toward music and lights, \"Elsewhere.\"", "In a community without color, pain, or memory, 12-year-old Jonas is chosen to be the Receiver of Memory and learns what \"release\" really means. 1994 Newbery Medal."], ["Jonas", "Rosemary (the previous Receiver)", "Gabriel (\"Gabe\")", "Fiona", "Asher"]], ["Number the Stars", "Lois Lowry", 1, "n", ["Annemarie yanks Ellen's Star of David necklace off her neck when soldiers search the apartment.", "The family holds a fake wake for a made-up \"Great-aunt Birte.\"", "Annemarie runs a basket to Uncle Henrik's fishing boat, the Ingeborg, hiding a handkerchief treated to ruin the dogs' sense of smell.", "In Nazi-occupied Copenhagen in 1943, ten-year-old Annemarie Johansen helps her Jewish best friend Ellen Rosen escape to Sweden. 1990 Newbery Medal."], ["Annemarie Johansen", "Ellen Rosen", "Kirsti Johansen", "Uncle Henrik", "Peter Neilsen"]], ["The Phantom Tollbooth", "Norton Juster", 1, "n", ["Milo gets stuck in the Doldrums with the Lethargarians and later jumps to the Island of Conclusions.", "King Azaz the Unabridged of Dictionopolis (words) feuds with his brother the Mathemagician of Digitopolis (numbers).", "His companion Tock is a \"watchdog\" with a clock in his body.", "Bored Milo drives a toy car through a mysterious tollbooth into the Kingdom of Wisdom, where he rescues the princesses Rhyme and Reason. Illustrated by Jules Feiffer."], ["Milo", "Tock", "the Humbug", "King Azaz the Unabridged", "the Mathemagician"]], ["The Tale of Despereaux", "Kate DiCamillo", 1, "n", ["The rat Chiaroscuro (Roscuro), who loves light, falls into the queen's soup and she dies, so the king bans soup.", "Half-deaf serving girl Miggery Sow dreams of becoming a princess.", "This mouse's brother Furlough reports him for sitting with humans; he is sent to the dungeon, where Gregory the jailer saves him.", "Despereaux Tilling, a tiny mouse with huge ears who loves music and stories, falls in love with Princess Pea and rescues her from the castle dungeon. 2004 Newbery Medal."], ["Princess Pea", "Chiaroscuro (Roscuro)", "Miggery Sow (\"Mig\")", "Gregory the jailer", "Botticelli Remorso"]], ["Because of Winn-Dixie", "Kate DiCamillo", 2, "n", ["Opal's father \"the preacher\" leads the Open Arms Baptist Church, which meets in a former convenience store.", "Librarian Miss Franny Block once scared off a bear with War and Peace.", "Opal hands out Littmus Lozenges, candy that tastes like sadness; Gloria Dump hangs bottles on a \"mistake tree.\"", "New in Naomi, Florida, India Opal Buloni adopts a stray dog she finds in a supermarket and names him after the store. Newbery Honor."], ["India Opal Buloni", "the Preacher", "Miss Franny Block", "Gloria Dump", "Otis"]], ["Sideways Stories from Wayside School", "Louis Sachar", 1, "n", ["The mean teacher Mrs. Gorf turns students into apples until she becomes an apple herself.", "Miss Zarves teaches on the 19th floor, which does not exist.", "Louis the yard teacher is \"the author's\" stand-in (Sachar was a yard teacher).", "Wayside School was built 30 stories tall with one classroom per floor (instead of sideways) by mistake; each chapter is about a kid in Mrs. Jewls's class on the 30th floor."], ["Mrs. Jewls", "Mrs. Gorf", "Louis the yard teacher", "Todd", "Dana"]], ["Winnie-the-Pooh", "A. A. Milne", 1, "n", ["This bear gets stuck in Rabbit's front door after eating too much honey.", "This bear and Piglet track a \"Woozle\" (their own footprints) and set a trap for a Heffalump.", "For Eeyore's birthday he gets an empty honey pot and a burst balloon; Tigger and \"Poohsticks\" appear in the sequel.", "Christopher Robin's teddy bear Pooh and friends have adventures in the Hundred Acre Wood; based on the toys of Milne's son; illustrated by E. H. Shepard."], ["Christopher Robin", "Piglet", "Eeyore", "Rabbit", "Owl"]], ["Ender's Game", "Orson Scott Card", 1, "n", ["His siblings Peter and Valentine become famous online political writers \"Locke\" and \"Demosthenes.\"", "The hero's motto as commander of Dragon Army: \"The enemy's gate is down.\"", "The hero's \"final exam\" simulation at Command School, under Mazer Rackham, is actually a real battle that destroys the Formic homeworld.", "Child genius Andrew \"Ender\" Wiggin trains at Battle School in zero-gravity war games to fight the insect-like \"buggers\" (Formics). Hugo and Nebula Awards."], ["Valentine Wiggin", "Peter Wiggin", "Colonel Hyrum Graff", "Mazer Rackham", "Bean"]], ["Charlotte's Web", "E. B. White", 1, "n", ["A spider's webs say \"Some Pig,\" \"Terrific,\" \"Radiant,\" and \"Humble.\"", "The greedy rat Templeton fetches words from the dump.", "At the County Fair, the spider makes her egg sac (her \"magnum opus\") and dies; three of her daughters, Joy, Aranea, and Nellie, stay with Wilbur.", "Fern Arable saves the runt pig Wilbur; the spider Charlotte A. Cavatica saves him from slaughter by weaving words into her web. Illustrated by Garth Williams."], ["Wilbur", "Fern Arable", "Templeton", "Homer Zuckerman", "Avery Arable"]], ["Stuart Little", "E. B. White", 2, "n", ["This mouse retrieves his mother's ring from the bathtub drain.", "He sails the toy schooner Wasp to victory in a Central Park boat race.", "As a substitute teacher he leads a lesson as \"Chairman of the World\"; he meets tiny Harriet Ames.", "A mouse born to the Little family of New York City has adventures and finally sets out north to find his friend, the bird Margalo."], ["Snowbell (cat)", "Margalo", "Harriet Ames"]], ["The Lion, the Witch and the Wardrobe", "C. S. Lewis", 1, "n", ["Lucy meets the faun Mr. Tumnus by a lamppost in the snowy woods.", "Edmund betrays his siblings for Turkish Delight.", "Aslan is killed on the Stone Table, which cracks when he returns through the \"Deeper Magic from before the Dawn of Time\"; Father Christmas gives the children gifts.", "Four Pevensie children, evacuated during WWII, enter Narnia through a wardrobe; the ______ Aslan gives his life to save Edmund and defeats the White Witch. A Christian allegory (Aslan as Christ). First published of the seven Chronicles of Narnia (1950)."], ["Peter, Susan, Edmund, and Lucy Pevensie", "Aslan", "Mr. Tumnus", "Mr. and Mrs. Beaver", "Professor Digory Kirke"]], ["The Hobbit", "J. R. R. Tolkien", 1, "n", ["Bilbo wins a riddle game with Gollum (\"What have I got in my pocket?\") and keeps a magic ring.", "The dwarves escape the Elvenking's halls floating in barrels.", "A thrush tells Bard the Bowman about a bare patch in Smaug's armor, and Bard kills the dragon with a black arrow; the Battle of Five Armies follows.", "Bilbo Baggins joins the wizard Gandalf and thirteen dwarves led by Thorin Oakenshield to win back the Lonely Mountain and its treasure from the dragon Smaug. Subtitle: There and Back Again."], ["Bilbo Baggins", "Gandalf", "Thorin Oakenshield", "Balin", "Fíli and Kíli"]], ["The Little Prince", "Antoine de Saint-Exupéry", 1, "n", ["Grown-ups mistake the narrator's childhood drawing of a boa constrictor digesting an elephant for a hat.", "The title character has visited a king, a conceited man, a drunkard, a businessman, a lamplighter, and a geographer.", "A fox asks to be \"tamed\"; a snake bites the title character so he can return home.", "\"What is essential is invisible to the eye.\"", "A pilot stranded in the Sahara meets a ______ from asteroid B-612, who tells of his beloved rose and the planets he has visited."], ["the aviator narrator", "the rose", "the fox", "the snake", "the lamplighter"]], ["Charlie and the Chocolate Factory", "Roald Dahl", 1, "n", ["The hero's four grandparents share one bed; Grandpa Joe goes on the tour.", "Augustus Gloop is sucked up a pipe from a river of melted candy; Violet Beauregarde turns into a blueberry; squirrels judge Veruca Salt a \"bad nut\"; Mike Teavee is shrunk.", "The workers are Oompa-Loompas from Loompaland.", "Poor Charlie Bucket finds the last Golden Ticket and tours Willy Wonka's factory with four other children; he wins the factory."], ["Willy Wonka", "Grandpa Joe", "Augustus Gloop", "Violet Beauregarde", "Veruca Salt"]], ["James and the Giant Peach", "Roald Dahl", 1, "n", ["The hero's parents were eaten by an escaped rhinoceros.", "A strange old man gives him magic green \"crocodile tongues.\"", "His companions are huge insects: the Centipede, Earthworm, Old-Green-Grasshopper, Ladybug, Miss Spider, Glow-worm, and Silkworm; the Cloud-Men attack.", "Orphan James escapes his cruel aunts when a giant peach rolls away (flattening them); seagulls carry it across the Atlantic to the Empire State Building."], ["Aunt Sponge", "Aunt Spiker", "the Centipede", "the Earthworm", "the Old-Green-Grasshopper"]], ["Matilda", "Roald Dahl", 1, "n", ["This girl reads Dickens and Hemingway before age five, helped by librarian Mrs. Phelps.", "Trunchbull throws Amanda Thripp by her pigtails and forces Bruce Bogtrotter to eat an entire chocolate cake.", "She tips over a glass with a newt and writes on the chalkboard as \"Magnus,\" Miss Honey's dead father.", "Brilliant ______ Wormwood, ignored by her crooked car-dealer father and bingo-playing mother, discovers she can move objects with her mind and helps her teacher Miss Honey defeat the headmistress Miss Trunchbull."], ["Miss Jennifer Honey", "Miss Agatha Trunchbull", "Mr. and Mrs. Wormwood", "Michael", "Lavender"]], ["The BFG", "Roald Dahl", 2, "n", ["______ eats snozzcumbers and drinks frobscottle, which causes \"whizzpoppers.\"", "The evil giants include the Fleshlumpeater, the Bloodbottler, and the Childchewer.", "He catches dreams in Dream Country and stores them in jars.", "Orphan Sophie is carried off by the Big Friendly Giant, who blows good dreams into children's bedrooms; with the help of the Queen of England they stop nine child-eating giants."], ["Sophie", "the BFG", "the Fleshlumpeater", "the Bloodbottler", "the Queen of England"]], ["The Witches", "Roald Dahl", 2, "n", ["The villains are bald, wear gloves over claws, and have square feet with no toes.", "They meet at the Hotel Magnificent disguised as the Royal Society for the Prevention of Cruelty to Children.", "The potion is Formula 86 Delayed Action Mouse-Maker; greedy Bruno Jenkins also becomes a mouse.", "A boy and his Norwegian grandmother discover the Grand High Witch's plan to turn all English children into mice; he is turned into a mouse and turns the potion on ______."], ["the boy narrator", "Grandmamma", "the Grand High Witch", "Bruno Jenkins"]], ["Where the Sidewalk Ends", "Shel Silverstein", 1, "n", ["In \"Smart,\" a boy proudly trades his dollar for two quarters because \"two is more than one.\"", "In \"Jimmy Jet and His TV Set,\" a boy watches so much TV he turns into one.", "\"Hug O' War\" replaces tug-of-war with hugging.", "1974 collection of funny poems and drawings, including \"Sick,\" \"Sarah Cynthia Sylvia Stout Would Not Take the Garbage Out,\" \"Invitation,\" and the title poem."], ["Sarah Cynthia Sylvia Stout", "Peggy Ann McKay (\"Sick\")", "Jimmy Jet"]], ["The Giving Tree", "Shel Silverstein", 2, "p", ["The boy uses her branches to build a house and her trunk to build a boat to sail away.", "A tree gives a boy her apples, branches, and trunk over his lifetime, until he is an old man who sits on her stump. \"And the tree was happy.\""], ["the boy"]], ["Coraline", "Neil Gaiman", 1, "n", ["Downstairs neighbors Miss Spink and Miss Forcible are retired actresses; upstairs, Mr. Bobo trains a mouse circus.", "A black cat can talk in the other world; The heroine uses a stone with a hole in it to find the souls of ghost children.", "She traps the beldam's severed hand in an old well.", "In her new flat, ______ Jones finds a door to an \"other\" world with an Other Mother who has black buttons for eyes and wants to sew buttons on ______'s eyes too. Hugo and Nebula Awards."], ["the Other Mother (the beldam)", "the cat", "Miss Spink", "Miss Forcible", "Mr. Bobo (Mr. Bobinsky)"]], ["The Graveyard Book", "Neil Gaiman", 2, "n", ["His guardian Silas is neither living nor dead; his tutor Miss Lupescu is a Hound of God.", "Bod befriends the witch Liza Hempstock and the living girl Scarlett Perkins.", "The man Jack belongs to the secret society of the Jacks of All Trades; the Sleer guards a barrow.", "A toddler escapes the man Jack, who murdered his family, and is raised by ghosts in a graveyard as Nobody \"Bod\" Owens. 2009 Newbery Medal and 2010 Carnegie Medal; modeled on Kipling's The Jungle Book."], ["Nobody \"Bod\" Owens", "Mr. and Mrs. Owens", "Silas", "Miss Lupescu", "Liza Hempstock"]], ["Across Five Aprils", "Irene Hunt", 1, "n", ["Jethro writes to President Lincoln about his cousin Eb, a deserter, and Lincoln replies with an amnesty.", "Brother Tom is killed at Pittsburg Landing (Shiloh).", "Teacher Shadrach Yale marries Jethro's sister Jenny.", "Young Jethro Creighton comes of age on a southern Illinois farm during the five Aprils of the Civil War, as one brother fights for the Confederacy and others for the Union. Newbery Honor."], ["Jethro Creighton", "Matt and Ellen Creighton", "Bill Creighton", "Tom Creighton", "John Creighton"]], ["Diary of a Wimpy Kid", "Jeff Kinney", 1, "n", ["Kids avoid the \"Cheese Touch\" from moldy cheese on the basketball court.", "Greg's brother Rodrick drums in the band Löded Diper.", "Best friend Rowley Jefferson draws the comic \"Zoo-Wee Mama!\"", "Middle-schooler Greg Heffley narrates his hand-drawn journal (\"not a diary\") about school, friends, and family."], ["Greg Heffley", "Rowley Jefferson", "Rodrick Heffley", "Manny Heffley", "Frank and Susan Heffley"]], ["A Series of Unfortunate Events", "Lemony Snicket", 1, "n", ["Violet invents, Klaus reads, and baby Sunny bites.", "Their guardians include Uncle Monty (a herpetologist) and Aunt Josephine; banker Mr. Poe handles their fortune.", "A secret organization called V.F.D. runs through these books.", "Thirteen books about the Baudelaire orphans fleeing the villain Count Olaf, who wants their fortune. \"Lemony Snicket\" is the pen name of Daniel Handler; the first book is The Bad Beginning."], ["Violet, Klaus, and Sunny Baudelaire", "Count Olaf", "Mr. Poe", "Uncle Monty", "Aunt Josephine"]], ["Are You There God? It's Me, Margaret", "Judy Blume", 1, "n", ["The heroine joins a secret club, the Pre-Teen Sensations, led by Nancy Wheeler.", "Her teacher Mr. Benedict assigns a yearlong personal project; she chooses religion.", "Her Grandma Sylvia takes her to Lincoln Center.", "Eleven-year-old Margaret Simon moves to the New Jersey suburbs, talks privately to God, and explores religion (her father is Jewish, her mother Christian) while growing up with her friends."], ["Nancy Wheeler", "Gretchen Potter", "Janie Loomis", "Laura Danker", "Moose Freed"]], ["Tales of a Fourth Grade Nothing", "Judy Blume", 2, "n", ["Fudge knocks out his front teeth trying to fly off the jungle gym.", "Peter's father works in advertising on the Juicy-O account.", "Peter's classmate is Sheila Tubman (later star of Otherwise Known as Sheila the Great).", "Peter Hatcher of New York City suffers the antics of his toddler brother Fudge, who finally swallows Peter's pet turtle, Dribble."], ["Peter Hatcher", "Farley Drexel \"Fudge\" Hatcher", "Dribble (turtle)", "Sheila Tubman", "Jimmy Fargo"]], ["The Hunger Games", "Suzanne Collins", 1, "n", ["Stylist Cinna dresses Katniss as \"the girl on fire\"; she wears a mockingjay pin.", "Her drunken mentor Haymitch Abernathy won an earlier Quarter Quell.", "She allies with Rue of District 11 and drops a nest of tracker jackers on her enemies; nightlock berries end the deadly contest.", "In Panem, Katniss Everdeen of District 12 volunteers in place of her sister Prim for a televised fight to the death; she and Peeta Mellark defy the Capitol with poisonous berries."], ["Katniss Everdeen", "Peeta Mellark", "Gale Hawthorne", "Primrose Everdeen", "Haymitch Abernathy"]], ["Harry Potter and the Sorcerer's Stone", "J. K. Rowling", 1, "n", ["The hero sleeps in the cupboard under the stairs at 4 Privet Drive.", "Hagrid hatches a dragon named Norbert; a three-headed dog, Fluffy, guards a trapdoor.", "The Mirror of Erised shows your deepest desire; Voldemort's face is hidden on the back of Professor Quirrell's head.", "Orphan Harry learns on his 11th birthday that he is a wizard, starts at Hogwarts, and stops Voldemort from stealing the Philosopher's (Sorcerer's) Stone made by Nicolas Flamel."], ["Ron Weasley", "Hermione Granger", "Albus Dumbledore", "Rubeus Hagrid", "Severus Snape"]], ["Percy Jackson and the Olympians: The Lightning Thief", "Rick Riordan", 1, "n", ["On a museum trip, the hero vaporizes his math teacher Mrs. Dodds, who is really a Fury.", "His ballpoint pen Riptide (Anaklusmos) becomes a bronze sword.", "The group escapes the time-trapping Lotus Hotel and Casino in Las Vegas; the real culprit is Luke, son of Hermes, serving Kronos.", "Percy Jackson learns he is a son of Poseidon and, with Annabeth (daughter of Athena) and the satyr Grover, travels to the Underworld to recover Zeus's stolen master bolt."], ["Annabeth Chase", "Grover Underwood", "Chiron (Mr. Brunner)", "Mr. D (Dionysus)", "Luke Castellan"]], ["Peter Pan", "J. M. Barrie", 1, "n", ["The Darling children's nursemaid is a Newfoundland dog named Nana.", "Wendy sews a boy's lost shadow back on.", "Captain Hook lost his hand to a crocodile that swallowed a clock; Tinker Bell drinks poison meant for the hero and is revived when children clap.", "______, the boy who never grows up, takes Wendy, John, and Michael Darling to Neverland. First a 1904 play, then the novel Peter and Wendy (1911). Barrie gave the rights to London's Great Ormond Street Hospital."], ["Wendy, John, and Michael Darling", "Tinker Bell", "Captain James Hook", "Mr. Smee", "Tiger Lily"]], ["Hatchet", "Gary Paulsen", 1, "n", ["Brian carries \"the Secret\" about why his parents divorced.", "He learns to make fire by striking his tool against rock after a porcupine attack; he calls grouse \"foolbirds.\"", "He recovers the survival pack from the sunken plane, sets off its emergency transmitter, and is rescued.", "When the pilot of a small plane dies of a heart attack, 13-year-old Brian Robeson crash-lands in a lake in the Canadian wilderness and survives alone for 54 days with only the ______ his mother gave him. Newbery Honor."], ["Brian Robeson", "the pilot", "Brian's mother and father"]], ["Bridge to Terabithia", "Katherine Paterson", 1, "n", ["Jess wants to be the fastest runner in the fifth grade, but Leslie beats him.", "Music teacher Miss Edmunds takes Jess to museums in Washington, D.C., on the day Leslie dies.", "Leslie's puppy is Prince Terrien (P.T.); Jess makes his little sister May Belle the new queen.", "Jess Aarons and his new neighbor Leslie Burke invent a secret kingdom, Terabithia, reached by a rope swing over a creek; Leslie drowns when the rope breaks. 1978 Newbery Medal."], ["Jesse Oliver Aarons", "Leslie Burke", "May Belle Aarons", "Miss Edmunds", "Janice Avery"]], ["Where the Red Fern Grows", "Wilson Rawls", 2, "n", ["Grandpa teaches Billy to trap a raccoon with a shiny object in a hole, since a coon won't let go of it.", "Rubin Pritchard dies falling on Billy's axe.", "The dogs win a gold cup at a coon-hunting championship.", "In the Ozarks, Billy Colman saves money for two years to buy two coonhounds, Old Dan and Little Ann; after both die following a mountain lion fight, a red fern grows between their graves."], ["Billy Colman", "Old Dan", "Little Ann", "Grandpa", "Rubin and Rainie Pritchard"]], ["Island of the Blue Dolphins", "Scott O'Dell", 1, "n", ["Aleut hunters under the Russian Captain Orlov kill the men of Ghalas-at, including Karana's father, Chief Chowig.", "Wild dogs kill her little brother Ramo; she later tames their leader and names him Rontu.", "She befriends Tutok, an Aleut girl.", "Karana, a Native girl, survives alone for years on an island off California after her people leave; based on the real \"Lone Woman of San Nicolas Island.\" 1961 Newbery Medal."], ["Karana", "Ramo", "Rontu", "Tutok", "Chief Chowig"]], ["Julie of the Wolves", "Jean Craighead George", 2, "n", ["The pack's leader is Amaroq; she befriends the pup Kapu; the outcast wolf is Jello.", "She learns her father Kapugen, whom she thought dead, is alive but has given up the old ways.", "Hunters shooting from an airplane kill Amaroq.", "Miyax (English name Julie), an Inupiat girl, runs away from a bad arranged marriage and survives on the Alaskan tundra by joining a wolf pack. 1973 Newbery Medal."], ["Amaroq", "Kapu", "Jello", "Kapugen", "Daniel"]], ["My Side of the Mountain", "Jean Craighead George", 2, "n", ["His pet weasel is called the Baron; a raccoon is Jessie Coon James.", "A lost English teacher Sam nicknames \"Bando\" visits him.", "Newspapers report sightings of a \"wild boy\" in the mountains.", "Sam Gribley runs away from New York City to live in a hollowed-out hemlock tree in the Catskills, training a peregrine falcon he names Frightful. Newbery Honor."], ["Sam Gribley", "Frightful", "the Baron (weasel)", "Jessie Coon James (raccoon)", "Bando"]], ["Tuck Everlasting", "Natalie Babbitt", 2, "n", ["A man in a yellow suit plans to sell the water; the mother of the immortal family strikes him with the butt of a shotgun.", "Winnie takes Mae's place in the jail cell so Mae can escape.", "The son, forever 17, asks Winnie to drink when she turns 17; she pours the water on a toad instead.", "Ten-year-old Winnie Foster discovers the Tuck family, who became immortal by drinking from a spring in the Fosters' woods; she ultimately chooses not to drink."], ["Winnie Foster", "the man in the yellow suit", "the constable"]], ["The Secret Garden", "Frances Hodgson Burnett", 1, "n", ["A robin shows Mary where a buried key lies.", "Mary befriends Dickon Sowerby, who charms animals, and his sister Martha, a maid.", "The walled space was locked after Colin's mother died there when a branch fell.", "Orphaned in India, spoiled Mary Lennox moves to her uncle's Misselthwaite Manor in Yorkshire, where she brings a locked garden back to life and her sickly cousin Colin learns to walk."], ["Mary Lennox", "Colin Craven", "Archibald Craven", "Dickon Sowerby", "Martha Sowerby"]], ["Anne of Green Gables", "L. M. Montgomery", 2, "n", ["This red-haired orphan breaks a slate over Gilbert Blythe's head when he calls her \"Carrots.\"", "She accidentally gets her \"bosom friend\" Diana Barry drunk on currant wine instead of raspberry cordial, and dyes her hair a disastrous color.", "Matthew dies of shock when the bank holding his savings fails.", "Elderly siblings Matthew and Marilla Cuthbert of Avonlea, Prince Edward Island, send for an orphan boy but get red-haired, imaginative Anne Shirley."], ["Matthew Cuthbert", "Marilla Cuthbert", "Diana Barry", "Gilbert Blythe", "Rachel Lynde"]], ["Little House on the Prairie", "Laura Ingalls Wilder", 2, "n", ["Pa plays the fiddle; the family's brindle bulldog is Jack.", "Neighbor Mr. Edwards swims a flooded creek to bring the girls Christmas presents.", "Sisters Mary, Laura, and baby Carrie.", "Autobiographical story of the pioneer Ingalls family building a log house in Indian Territory in Kansas; part of the Little House series."], ["Laura Ingalls", "Pa (Charles)", "Ma (Caroline)", "Mary", "Carrie"]], ["Black Beauty", "Anna Sewell", 2, "n", ["The narrator's stablemates are the chestnut mare Ginger and the pony Merrylegs; his mother is Duchess.", "He is owned by kind Squire Gordon and later by London cab driver Jerry Barker.", "The narrator later sees Ginger's dead body on a cart in London.", "Subtitled \"The Autobiography of a Horse\": narrated by the horse himself, it exposes cruelty to horses (such as the tight bearing rein) as Beauty passes through many owners. Sewell's only novel."], ["Ginger", "Merrylegs", "Duchess", "Squire Gordon", "John Manly"]], ["The Wind in the Willows", "Kenneth Grahame", 2, "n", ["Toad escapes from prison disguised as a washerwoman.", "Weasels and stoats from the Wild Wood take over Toad Hall.", "In the chapter \"The Piper at the Gates of Dawn,\" Rat and Mole meet the god Pan.", "Mole, Water Rat (Ratty), Badger, and the reckless, motorcar-crazy Mr. Toad of Toad Hall have adventures along the river."], ["Mole", "Ratty (Water Rat)", "Badger", "Mr. Toad", "Otter"]], ["Pippi Longstocking", "Astrid Lindgren", 2, "n", ["This girl lifts her horse with her bare hands.", "Her neighbors are the well-behaved Tommy and Annika.", "Her father, a sea captain, has become king of a South Sea island.", "Super-strong, red-braided nine-year-old Pippi lives alone at Villa Villekulla with her horse and her monkey, Mr. Nilsson."], ["Tommy", "Annika", "Mr. Nilsson (monkey)"]], ["The Wonderful Wizard of Oz", "L. Frank Baum", 1, "n", ["In the book, Dorothy's magic shoes are silver, not ruby.", "The Winged Monkeys must obey whoever holds the Golden Cap.", "Dorothy melts the Wicked Witch of the West with a bucket of water; Glinda is the Good Witch of the South.", "Kansas farm girl Dorothy Gale is carried by a cyclone to Oz and follows the yellow brick road to the Emerald City with the Scarecrow, the Tin Woodman, and the Cowardly Lion."], ["Dorothy Gale", "Toto", "the Scarecrow", "the Tin Woodman (Nick Chopper)", "the Cowardly Lion"]], ["Mrs. Frisby and the Rats of NIMH", "Robert C. O'Brien", 2, "n", ["The leader of the lab escapees is Nicodemus; her late husband Jonathan escaped the lab with them.", "She saves Jeremy the crow from Dragon, the farm cat, and Jeremy flies her to the Owl.", "Old Mr. Ages makes her medicine.", "Widowed field mouse Mrs. Frisby must move her family before the farmer plows, but her son Timothy is sick with pneumonia; she gets help from super-intelligent rats who escaped a laboratory, NIMH. 1972 Newbery Medal."], ["Timothy", "Nicodemus", "Justin", "Jenner", "Jeremy (crow)"]], ["From the Mixed-Up Files of Mrs. Basil E. Frankweiler", "E. L. Konigsburg", 2, "n", ["They bathe in the museum fountain and collect the coins.", "The wealthy old narrator shows them her file proving the statue's origin.", "She writes the story to her lawyer Saxonberg, the children's grandfather.", "Claudia Kincaid and her brother Jamie run away to live in the Metropolitan Museum of Art and investigate whether an angel statue was made by Michelangelo. 1968 Newbery Medal."], ["Claudia Kincaid", "Jamie Kincaid", "Saxonberg"]], ["The Westing Game", "Ellen Raskin", 2, "n", ["The clue words come from the song \"America the Beautiful.\"", "The heirs live in the Sunset Towers apartment building.", "The millionaire is alive in disguise as Sandy McSouthers, Barney Northrup, and Julian Eastman.", "Sixteen heirs of millionaire Samuel W. Westing are paired up and given clues to find his \"murderer\"; 13-year-old Turtle Wexler wins. 1979 Newbery Medal."], ["Tabitha Ruth \"Turtle\" Wexler", "Angela Wexler", "Sandy McSouthers", "Otis Amber", "Theo and Chris Theodorakis"]], ["Bud, Not Buddy", "Christopher Paul Curtis", 2, "n", ["______ follows his \"Rules and Things for Having a Funner Life and Making a Better Liar Out of Yourself.\"", "His suitcase holds flyers for Herman E. Calloway and the Dusky Devastators of the Depression.", "Calloway turns out to be ______'s grandfather; Lefty Lewis gives ______ a ride to Grand Rapids.", "Ten-year-old orphan ______ Caldwell runs away in Depression-era Michigan to find the jazz bandleader he believes is his father. 2000 Newbery Medal and Coretta Scott King Award."], ["Bud Caldwell", "Herman E. Calloway", "Miss Thomas", "Lefty Lewis", "Bugs"]], ["The Watsons Go to Birmingham—1963", "Christopher Paul Curtis", 2, "n", ["Narrator Kenny's older brother Byron gets his lips frozen to a car mirror.", "The family car is the \"Brown Bomber.\"", "Kenny nearly drowns and believes he saw the \"Wool Pooh\" underwater.", "The \"Weird Watsons\" of Flint, Michigan drive to Alabama to visit Grandma Sands during the summer of the 16th Street Baptist Church bombing. Newbery Honor."], ["Kenny Watson", "Byron Watson", "Joetta Watson", "Momma and Dad", "Grandma Sands"]], ["Roll of Thunder, Hear My Cry", "Mildred D. Taylor", 2, "n", ["Cassie's brother Little Man refuses a worn textbook when he sees the record showing it was passed to Black students only after being worn out.", "The Logan children dig a ditch that traps the white students' school bus.", "Papa sets fire to his own cotton to stop a lynch mob coming for T.J. Avery.", "Cassie Logan's Black family in 1930s Mississippi fights to keep their land in the face of racism. 1977 Newbery Medal."], ["Cassie Logan", "Stacey", "Christopher-John", "Little Man (Clayton Chester)", "Big Ma"]], ["Maniac Magee", "Jerry Spinelli", 2, "n", ["This legendary runner unties the famous Cobble's Knot.", "He hits a \"frogball\" off star pitcher John McNab.", "He lives with the Beale family, then with old Grayson in the band shell at the zoo.", "Legendary orphan runner Jeffrey Lionel \"Maniac\" Magee crosses the racial divide in the town of Two Mills. 1991 Newbery Medal."], ["Amanda Beale", "Grayson", "Mars Bar Thompson", "John McNab", "the Pickwells"]], ["Walk Two Moons", "Sharon Creech", 2, "n", ["Mysterious notes appear on Phoebe's porch, including one saying not to judge a man until you've walked in his moccasins.", "Phoebe suspects their neighbor Mrs. Cadaver of being an ax murderer.", "Another note: \"Everyone has his own agenda.\"", "Thirteen-year-old Salamanca Tree Hiddle drives from Ohio to Idaho with her grandparents to find her mother, telling them the story of her friend Phoebe Winterbottom along the way. 1995 Newbery Medal."], ["Salamanca (Sal) Hiddle", "Phoebe Winterbottom", "Gram and Gramps Hiddle", "Mrs. Winterbottom", "Ben Finney"]], ["The Outsiders", "S. E. Hinton", 1, "n", ["Johnny Cade kills a Soc, Bob Sheldon, to save Ponyboy; they hide in a church in Windrixville and read Gone with the Wind.", "Ponyboy recites Frost's \"Nothing Gold Can Stay\"; dying, Johnny tells him to \"stay gold.\"", "Dally Winston is shot by police.", "Ponyboy Curtis narrates the fight between the poor greasers and the rich Socs in 1960s Tulsa, Oklahoma. Hinton started writing it at 15."], ["Ponyboy Curtis", "Sodapop Curtis", "Darry Curtis", "Johnny Cade", "Dallas \"Dally\" Winston"]], ["Wonder", "R. J. Palacio", 2, "n", ["Teacher Mr. Browne gives monthly \"precepts,\" starting with \"When given the choice between being right or being kind, choose kind.\"", "At Halloween, dressed as the Bleeding Scream, Auggie overhears Jack Will insult him.", "Julian is the bully; Summer sits with Auggie at lunch; his sister is Via.", "August \"Auggie\" Pullman, born with a facial difference, starts fifth grade at Beecher Prep after years of homeschooling; chapters switch narrators."], ["Auggie Pullman", "Via (Olivia) Pullman", "Jack Will", "Summer Dawson", "Julian Albans"]], ["Esperanza Rising", "Pam Muñoz Ryan", 2, "n", ["Chapters are named for fruits and vegetables of each harvest, like Las Uvas (grapes) and Las Papayas.", "Her Abuelita teaches her to crochet a zigzag blanket.", "Her villainous uncle Tío Luis burns down their ranch.", "After her father is killed, wealthy Mexican girl Esperanza Ortega and her mother flee to California and become farmworkers in a labor camp during the Great Depression."], ["Mama (Ramona Ortega)", "Abuelita", "Miguel", "Hortensia", "Alfonso"]], ["The Diary of a Young Girl", "Anne Frank", 1, "n", ["She addresses her entries to \"Kitty\"; she received the book as a gift for her 13th birthday.", "The van Pels family (called van Daan) and dentist Fritz Pfeffer (\"Albert Dussel\") hide with them.", "Miep Gies helps hide them and saves her writings.", "\"In spite of everything, I still believe that people are really good at heart.\"", "Anne's diary of two years hiding from the Nazis in the \"Secret Annex\" behind her father's Amsterdam business; she died at Bergen-Belsen, and her father Otto published it."], ["Anne Frank", "Otto Frank", "Edith Frank", "Margot Frank", "Peter van Pels"]], ["Johnny Tremain", "Esther Forbes", 2, "n", ["He apprentices to Mr. Lapham and later claims a silver cup against merchant Jonathan Lyte.", "His friend Rab Silsbee dies after Lexington; the hero rides the horse Goblin.", "He meets Paul Revere, Sam Adams, John Hancock, and Dr. Joseph Warren.", "Silversmith's apprentice ______ burns his hand on molten silver, becomes a messenger for the Sons of Liberty, and witnesses the Boston Tea Party and Lexington. 1944 Newbery Medal."], ["Rab Silsbee", "Cilla Lapham", "Mr. Lapham", "Jonathan Lyte", "Paul Revere"]], ["The Witch of Blackbird Pond", "Elizabeth George Speare", 2, "n", ["Kit shocks the Puritans by jumping overboard to rescue a child's doll.", "She secretly teaches young Prudence Cruff to read.", "Sailor Nat Eaton helps Hannah escape the mob.", "In 1687, Kit Tyler moves from Barbados to Puritan Wethersfield, Connecticut, befriends Quaker widow Hannah Tupper, and is accused of witchcraft. 1959 Newbery Medal."], ["Kit Tyler", "Nat Eaton", "Hannah Tupper", "Prudence Cruff", "Matthew Wood"]], ["Old Yeller", "Fred Gipson", 2, "n", ["The title dog first shows up stealing meat from the family.", "He saves Little Arliss from a mother bear.", "Bud Searcy's granddaughter Lisbeth later gives Travis one of the dog's pups.", "In 1860s Texas Hill Country, Travis Coates takes in a stray yellow dog who protects the family, but must shoot him after a rabid wolf bites him. Newbery Honor."], ["Travis Coates", "Little Arliss", "Mama", "Bud Searcy", "Lisbeth Searcy"]], ["Shiloh", "Phyllis Reynolds Naylor", 2, "n", ["A German shepherd attacks the hidden beagle in his hidden pen.", "Marty works 20 hours for Judd to earn the dog.", "In West Virginia, Marty Preston hides an abused beagle from its cruel owner Judd Travers. 1992 Newbery Medal."], ["Marty Preston", "Judd Travers", "Dara Lynn", "Becky", "Ma and Dad Preston"]], ["Frindle", "Andrew Clements", 2, "n", ["Mrs. Granger writes Nick a letter to be opened only when the word enters the dictionary.", "Fifth-grader Nick Allen invents the word \"______\" for pen and battles his dictionary-loving teacher, Mrs. Granger, until the word spreads nationwide."], ["Nick Allen", "Mrs. Lorelei Granger", "Janet Hills", "Bud Lawrence"]], ["Harriet the Spy", "Louise Fitzhugh", 2, "n", ["Her wise nurse Ole Golly leaves to get married.", "This girl eats a tomato sandwich every day for lunch; her friends are Sport and Janie.", "Eleven-year-old Harriet M. Welsch of Manhattan spies on neighbors and writes honest notes in a notebook, which her classmates find and read."], ["Ole Golly", "Sport (Simon Rocque)", "Janie Gibbs", "Marion Hawthorne"]], ["The Cricket in Times Square", "George Selden", 2, "n", ["Chester's friends are Tucker Mouse and Harry Cat.", "He can play opera and classical music by rubbing his wings.", "Chester, a cricket from Connecticut, ends up in the Times Square subway station, where the Bellini family's newsstand is saved by his concerts. Newbery Honor."], ["Tucker Mouse", "Harry Cat", "Mario Bellini", "Mama and Papa Bellini", "Sai Fong"]], ["The Book Thief", "Markus Zusak", 2, "n", ["Her first stolen book is The Grave Digger's Handbook.", "Max Vandenburg paints over pages of Mein Kampf to write her the story \"The Standover Man.\"", "Her friend Rudy Steiner covers himself in charcoal to imitate Jesse Owens.", "Narrated by Death, the story of Liesel Meminger, a foster girl in Nazi Germany who steals books while her foster family hides a Jewish man in the basement."], ["Liesel Meminger", "Hans Hubermann (plays accordion)", "Rosa Hubermann", "Max Vandenburg", "Rudy Steiner"]], ["The House on Mango Street", "Sandra Cisneros", 2, "n", ["\"In English my name means hope. In Spanish it means too many letters.\"", "The vignette \"Four Skinny Trees\" describes trees that grow despite the concrete.", "Short vignettes of Esperanza Cordero growing up in a Latino neighborhood of Chicago and dreaming of a house of her own."], ["Esperanza Cordero", "Nenny", "Rachel and Lucy", "Sally", "Alicia"]], ["The Borrowers", "Mary Norton", 2, "n", ["Arrietty is seen by a human boy staying in the house, and they become friends.", "The Clock family of tiny people live under the floor of an old English house and \"borrow\" what they need from the humans. 1952 Carnegie Medal."], ["Pod Clock", "Homily Clock", "Arrietty Clock", "the Boy", "Mrs. Driver"]], ["Mary Poppins", "P. L. Travers", 2, "n", ["Her friend Bert is a match-man and pavement artist.", "Their neighbor is the retired naval officer Admiral Boom.", "A magical, stern nanny blows in on the east wind to look after the Banks children at 17 Cherry Tree Lane, London."], ["Jane and Michael Banks", "Mr. and Mrs. Banks", "Bert", "Admiral Boom"]], ["The Adventures of Pinocchio", "Carlo Collodi", 2, "n", ["The puppet kills the Talking Cricket with a hammer.", "He is turned into a donkey in the Land of Toys.", "He and Geppetto are swallowed by the Terrible Dogfish; the Blue Fairy helps him.", "A wooden puppet carved by Geppetto longs to become a real boy; his nose grows when he lies."], ["Geppetto", "the Talking Cricket", "the Blue Fairy (Fairy with Turquoise Hair)", "the Fox and the Cat", "Candlewick"]], ["Heidi", "Johanna Spyri", 2, "n", ["Her grandfather is known as the Alm-Uncle.", "The jealous goatherd Peter pushes Clara's wheelchair down the mountain.", "Strict housekeeper Fräulein Rottenmeier runs the Sesemann house.", "Orphan ______ lives with her gruff grandfather in the Swiss Alps, is taken to Frankfurt as a companion for wheelchair-using Clara Sesemann, and returns to the mountains, where Clara learns to walk."], ["the Alm-Uncle (Grandfather)", "Peter the goatherd", "Clara Sesemann", "Fräulein Rottenmeier", "Aunt Dete"]], ["Andersen's Fairy Tales", "Hans Christian Andersen", 1, "n", ["In \"The Snow Queen,\" a splinter of a troll's mirror lodges in Kai's eye and Gerda sets out to rescue him.", "In \"The Nightingale,\" a Chinese emperor prefers a jeweled mechanical bird to a real one.", "Nineteenth-century literary fairy tales, including \"The Little Mermaid\" (statue in Copenhagen harbor), \"The Ugly Duckling,\" \"The Emperor's New Clothes,\" \"The Princess and the Pea,\" \"The Snow Queen\" (inspired Frozen), \"The Little Match Girl,\" \"Thumbelina,\" and \"The Steadfast Tin Soldier.\""], ["the Little Mermaid", "the Ugly Duckling", "the Emperor", "Thumbelina", "Kai and Gerda"]], ["Grimms' Fairy Tales", "Jacob and Wilhelm Grimm", 1, "n", ["Rumpelstiltskin spins straw into gold for a miller's daughter.", "In \"Town Musicians of Bremen,\" a donkey, dog, cat, and rooster scare off robbers.", "In this collection's Cinderella, birds help her and the stepsisters cut off parts of their feet to fit the slipper.", "Children's and Household Tales (1812), collected by two brothers: \"Hansel and Gretel,\" \"Rapunzel,\" \"Rumpelstiltskin,\" \"Snow White,\" \"Little Red Cap\" (Little Red Riding Hood), \"Aschenputtel\" (Cinderella), \"The Frog Prince,\" and \"Town Musicians of Bremen.\" Jacob also studied language (Grimm's law)."], ["Hansel and Gretel", "Rapunzel", "Rumpelstiltskin", "Snow White", "Little Red Cap"]], ["Aesop's Fables", "Aesop", 1, "n", ["In \"The North Wind and the Sun,\" the two compete to make a traveler take off his cloak.", "\"The Town Mouse and the Country Mouse\" compares a rich, dangerous life with a plain, safe one.", "Short moral stories attributed to an enslaved Greek storyteller of the 500s BC: \"The Tortoise and the Hare\" (\"slow and steady wins the race\"), \"The Boy Who Cried Wolf,\" \"The Fox and the Grapes\" (origin of \"sour grapes\"), \"The Ant and the Grasshopper,\" \"The Lion and the Mouse,\" and \"The Goose That Laid the Golden Eggs.\""], ["the Tortoise and the Hare", "the Fox", "the Ant and the Grasshopper", "the Lion and the Mouse", "the Town Mouse and the Country Mouse"]], ["Tales of Mother Goose", "Charles Perrault", 2, "n", ["In \"Bluebeard,\" a wife opens the one forbidden room and finds the bodies of his earlier wives.", "Each tale ends with a rhymed moral.", "1697 collection that gave us the classic versions of \"Cinderella\" (with the fairy godmother, pumpkin coach, and glass slipper), \"Puss in Boots,\" \"Sleeping Beauty,\" \"Little Red Riding Hood,\" and \"Bluebeard.\""], ["Cinderella", "Puss in Boots", "Sleeping Beauty", "Little Red Riding Hood", "Bluebeard"]], ["Where the Wild Things Are", "Maurice Sendak", 1, "p", ["A forest grows in Max's bedroom.", "Max tames the monsters by staring into their yellow eyes without blinking.", "Sent to bed without supper for making mischief in his wolf suit, Max sails to the land of the Wild Things, becomes their king, and shouts \"Let the wild rumpus start!\"; he returns to find his supper \"still hot.\" 1964 Caldecott Medal."], ["Max"]], ["The Cat in the Hat", "Dr. Seuss", 1, "p", ["The Cat balances the fish bowl, a cake, and a rake while standing on a ball.", "On a rainy day, a tall cat in a striped hat wrecks the house of Sally and her brother, with Thing One and Thing Two, while the Fish objects. Dr. Seuss (Theodor Geisel) wrote it using only 236 different words, all from a beginning-reader word list."], ["the Cat in the Hat", "Sally", "the narrator (her brother)", "Thing One and Thing Two", "the Fish"]], ["How the Grinch Stole Christmas!", "Dr. Seuss", 1, "p", ["He ties an antler to his dog Max to make a reindeer.", "Little Cindy-Lou Who, \"who was not more than two,\" catches him taking the tree.", "The grumpy Grinch, whose heart is \"two sizes too small,\" steals the Whos' Christmas presents from Whoville, but they sing anyway and his heart grows three sizes."], ["Max (dog)", "Cindy-Lou Who", "the Whos of Whoville"]], ["Goodnight Moon", "Margaret Wise Brown", 2, "p", ["A \"quiet old lady who was whispering 'hush'\" sits in a rocking chair.", "A picture on the wall shows a cow jumping over something.", "A little bunny says goodnight to everything in \"the great green room,\" ending with \"Goodnight nobody\" and \"Goodnight noises everywhere.\" Illustrated by Clement Hurd."], ["the little bunny", "the quiet old lady"]], ["The Very Hungry Caterpillar", "Eric Carle", 2, "p", ["On Saturday he eats chocolate cake, ice cream, a pickle, Swiss cheese, salami, and more.", "A caterpillar eats through more and more food each day (with holes punched in the pages), gets a stomachache on Saturday, eats a green leaf, builds a cocoon, and becomes a butterfly."], []], ["The Tale of Peter Rabbit", "Beatrix Potter", 1, "p", ["Mr. McGregor uses the hero's jacket and shoes as a scarecrow.", "The hero's sisters are Flopsy, Mopsy, and Cotton-tail.", "Disobeying his mother, Peter sneaks into Mr. McGregor's garden, loses his blue jacket and shoes, and escapes; he gets chamomile tea for supper while his sisters get bread, milk, and blackberries."], ["Flopsy, Mopsy, and Cotton-tail", "Mr. McGregor"]], ["Curious George", "H. A. and Margret Rey", 2, "p", ["The Reys fled Paris by bicycle in 1940, just before the Nazis arrived, carrying the manuscript.", "The monkey accidentally calls the fire department and ends up in jail.", "The Man with the Yellow Hat brings a curious little monkey, George, from Africa to the city, where his curiosity gets him into trouble."], ["the Man with the Yellow Hat"]], ["Madeline", "Ludwig Bemelmans", 2, "p", ["Their teacher is Miss Clavel.", "The other girls all want appendix scars too.", "\"In an old house in Paris that was covered with vines / lived twelve little girls in two straight lines.\" The smallest, ______, has her appendix out."], ["Miss Clavel", "Pepito (sequel)", "Genevieve the dog (sequel)"]], ["Make Way for Ducklings", "Robert McCloskey", 2, "p", ["The babies are Jack, Kack, Lack, Mack, Nack, Ouack, Pack, and Quack.", "The helpful policeman is named Michael.", "Mr. and Mrs. Mallard raise eight ducklings in Boston; a policeman stops traffic so Mrs. Mallard can lead them to the Public Garden. 1942 Caldecott Medal."], ["Mr. and Mrs. Mallard", "Michael (policeman)"]], ["The Polar Express", "Chris Van Allsburg", 2, "p", ["He loses the bell through a hole in his pocket, and Santa returns it in a box.", "As an adult, the narrator can still hear the bell ring.", "On Christmas Eve a boy rides a train to the North Pole and receives a sleigh bell that only believers can hear. 1986 Caldecott Medal."], ["the boy (narrator)", "the conductor", "Santa Claus", "Sarah (his sister)"]], ["Eragon", "Christopher Paolini", 2, "n", ["The old storyteller Brom, a former Dragon Rider, trains the hero.", "The hero rescues the elf Arya and meets the mysterious Murtagh.", "The land is called Alagaësia.", "Farm boy ______ finds a blue stone that hatches into the dragon Saphira and becomes a Dragon Rider opposed to the evil king Galbatorix. Paolini began writing it at 15."], ["Saphira", "Brom", "Arya", "Murtagh", "Galbatorix"]], ["The Fault in Our Stars", "John Green", 2, "n", ["Hazel's favorite novel is An Imperial Affliction by Peter Van Houten; they fly to Amsterdam to meet him.", "They visit the Anne Frank House.", "Their friend Isaac loses his sight.", "Teen cancer patients Hazel Grace Lancaster and Augustus Waters meet at a support group and fall in love. Title from Shakespeare's Julius Caesar (\"The fault, dear Brutus, is not in our stars\")."], ["Hazel Grace Lancaster", "Augustus Waters", "Isaac", "Peter Van Houten", "Lidewij Vliegenthart"]], ["Sarah, Plain and Tall", "Patricia MacLachlan", 2, "n", ["The new arrival brings her cat, Seal, and misses the sea.", "She says she will wear a yellow bonnet so they recognize her.", "Widowed prairie farmer Jacob Witting advertises for a wife; ______ Wheaton comes from Maine and wins over his children, Anna and Caleb. 1986 Newbery Medal."], ["Jacob Witting", "Anna", "Caleb", "Seal (cat)"]], ["The Boxcar Children", "Gertrude Chandler Warner", 2, "n", ["Benny treasures a cracked pink cup from the dump.", "They adopt a dog named Watch.", "Four orphaned siblings, Henry, Jessie, Violet, and Benny Alden, run away and live in an abandoned boxcar in the woods, until they discover their grandfather is kind and rich."], ["Henry Alden", "Jessie Alden", "Violet Alden", "Benny Alden", "Watch (dog)"]], ["Nancy Drew Mystery Stories", "Carolyn Keene", 2, "n", ["This teen sleuth drives a blue roadster.", "Her friends are cousins Bess Marvin and George Fayne; her boyfriend is Ned Nickerson.", "Her father is a lawyer; the housekeeper is Hannah Gruen.", "Teen detective Nancy Drew of River Heights solves mysteries, starting with The Secret of the Old Clock (1930). \"Carolyn Keene\" is a pen name used by ghostwriters of the Stratemeyer Syndicate, which also created the Hardy Boys (\"Franklin W. Dixon\")."], ["Bess Marvin", "George Fayne", "Ned Nickerson", "Hannah Gruen"]], ["The Adventures of Captain Underpants", "Dav Pilkey", 2, "n", ["They use a 3-D Hypno-Ring.", "The boys run Treehouse Comix at Jerome Horwitz Elementary.", "Fourth-graders George Beard and Harold Hutchins hypnotize their mean principal, Mr. Krupp, into believing he is their comic-book superhero, Captain Underpants."], ["George Beard", "Harold Hutchins"]], ["Magic Tree House", "Mary Pope Osborne", 2, "n", ["The time-traveling hideout belongs to Morgan le Fay, King Arthur's sister (a librarian).", "Siblings Jack and Annie of Frog Creek, Pennsylvania find a tree house full of books that carries them through time; the first book is Dinosaurs Before Dark."], ["Jack", "Annie", "Morgan le Fay", "Merlin"]], ["Frog and Toad Are Friends", "Arnold Lobel", 2, "n", ["In \"Spring,\" one friend tears pages off the other's calendar to wake him from winter sleep.", "In \"A Lost Button,\" one hunts for his lost button; in the sequel's \"Cookies,\" they try to use willpower.", "Early-reader stories about two best friends. Caldecott Honor; the sequel Frog and Toad Together won a Newbery Honor."], []], ["Amelia Bedelia", "Peggy Parish", 2, "n", ["She works for Mr. and Mrs. Rogers.", "A maid takes every instruction literally: she \"dresses the chicken\" in clothes, \"draws the drapes\" on paper, and \"dusts the furniture\" with dusting powder; her lemon meringue pie saves her job."], ["Mr. and Mrs. Rogers"]], ["Beezus and Ramona", "Beverly Cleary", 2, "n", ["The pesky little sister takes one bite out of every apple in a box.", "Neighbor Henry Huggins and his dog Ribsy star in Cleary's first books.", "Responsible Beezus (Beatrice) Quimby struggles with her pesky little sister Ramona on Klickitat Street in Portland, Oregon; the first of the Ramona books."], ["Aunt Beatrice", "Henry Huggins", "Ribsy"]], ["The Snowy Day", "Ezra Jack Keats", 2, "p", ["Peter puts a snowball in his pocket to save it, but it melts.", "A boy named Peter explores his city neighborhood after a snowfall; one of the first major picture books with a Black child as the hero. 1963 Caldecott Medal."], ["Peter"]], ["Mr. Popper's Penguins", "Richard and Florence Atwater", 2, "n", ["The first penguin is Captain Cook; a second penguin, Greta, arrives from a zoo.", "Stillwater house painter Mr. Popper, who dreams of polar exploration, receives a penguin from Admiral Drake; soon he has twelve penguins and takes them on tour as a stage act. Newbery Honor."], ["Captain Cook", "Greta", "Admiral Drake"]]];
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  var deck = [];
+  function nextWork(ok){
+    for (var tries = 0; tries < 500; tries++){
+      if (!deck.length) deck = shuffle(W.slice());
+      var w = deck.pop(); if (!ok || ok(w)) return w;
+    }
+    return W[0];
+  }
+  // five wrong answers: same kind of book first (picture books with picture books), then anything
+  function wrongTitles(w){
+    var same = shuffle(W.filter(function(x){ return x !== w && x[3] === w[3]; })), rest = shuffle(W.filter(function(x){ return x[3] !== w[3]; }));
+    return same.concat(rest).slice(0, 5).map(function(x){ return x[0]; });
+  }
+  function wrongAuthors(w){
+    var seen = {}; seen[w[1]] = 1; var out = [];
+    shuffle(W.slice()).forEach(function(x){ if (!seen[x[1]] && out.length < 5){ seen[x[1]] = 1; out.push(x[1]); } });
+    return out;
+  }
+  function pack(ask, html, ans, wrong, id, steps){
+    var opts = shuffle([ans].concat(wrong));
+    return { id: id, probH: esc(ask === "a" ? "Who wrote it?" : ask === "c" ? "Which book?" : "Name the book"), ansH: esc(ans),
+      bigH: html, optH: opts.map(esc), answer: opts.indexOf(ans), steps: steps };
+  }
+  function bookQ(){
+    var w = nextWork(), h = "";
+    w[4].forEach(function(seg, si){
+      seg.split(/\s+/).forEach(function(word, wi){
+        h += "<span class=\"w" + (si > 0 && wi === 0 ? " pause" : "") + "\">" + (si > 0 && wi === 0 ? "<span class=\"slash\">/</span> " : "") + esc(word) + " </span>";
+      });
+    });
+    var q = pack("b", "<div class=\"ask\">Name the book</div><div class=\"clue\">" + h + "</div>", w[0], wrongTitles(w), "b" + w[0], esc(w[0]) + " by " + esc(w[1]) + ".");
+    q.probH = "Name the book"; return q;
+  }
+  function authorQ(){
+    var w = nextWork();
+    var q = pack("a", "<div class=\"ask\">Who wrote it?</div><div class=\"issue yr-q\"><i>" + esc(w[0]) + "</i></div>", w[1], wrongAuthors(w), "a" + w[0], esc(w[0]) + " is by " + esc(w[1]) + ".");
+    q.probH = "<i>" + esc(w[0]) + "</i>"; return q;
+  }
+  function charQ(){
+    var w = nextWork(function(x){ return x[5].length > 0; }), ch = w[5][Math.floor(Math.random() * Math.min(3, w[5].length))];
+    var q = pack("c", "<div class=\"ask\">Which book is this character from?</div><div class=\"issue yr-q\">" + esc(ch) + "</div>", w[0], wrongTitles(w), "c" + ch, esc(ch) + " is in " + esc(w[0]) + " by " + esc(w[1]) + ".");
+    q.probH = esc(ch); return q;
+  }
+  function make(mode){
+    var m = mode === "mixed" ? ["books", "books", "authors", "characters"][Math.floor(Math.random() * 4)] : mode;
+    return m === "authors" ? authorQ() : m === "characters" ? charQ() : bookQ();
+  }
+  return { make: make, count: W.length };
+})();
+/*ENDGEN*/
+
+
+(function(){
+  var DUR_NAMES = {120:"2 minutes", 0:"Untimed"};
+  var LVL_NAMES = {all:"All works", novel:"Novels", play:"Plays", poem:"Poems", story:"Stories"};
+
+  var level = "mixed", clueOrder = "hard", dur = 0, state = "ready";
+  var cur = null, done = [], correct = 0, attempted = 0, locked = false, lockTimer = 0;
+  var misses = new Map(), endAt = 0, raf = 0, overAt = 0, lastId = "";
+  var roundLog = [];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var els = {
+    time:$("time"), right:$("right"), tried:$("tried"), fill:$("timefill"),
+    ready:$("readyView"), play:$("playView"), over:$("overView"),
+    history:$("history"), prob:$("prob"), choices:$("choices"),
+    fRight:$("fRight"), fTried:$("fTried"), best:$("bestLine"),
+    tlbl:$("tlbl"), lbReady:$("lbReady"), lbOver:$("lbOver"), classBoard:$("classBoard"),
+    missWrap:$("missWrap"), missList:$("missList"), clean:$("cleanLine")
+  };
+
+  // HTML rendering
+  function frac(r){
+    var sg = r.n < 0 ? "−" : "";
+    if (r.d === 1) return sg + Math.abs(r.n);
+    return sg + "<span class=\"fr\"><span>" + Math.abs(r.n) + "</span><span>" + r.d + "</span></span>";
+  }
+  function baseHTML(A){
+    if (A.d !== 1) return "<span class=\"pl\">(</span>" + frac(A) + "<span class=\"pl\">)</span>";
+    if (A.n < 0) return "(" + frac(A) + ")";
+    return String(A.n);
+  }
+  function probHTML(p){
+    return "<span class=\"math\">" + baseHTML(p.A) + "<span class=\"ex" + (p.A.d !== 1 ? " hi" : "") + "\">" + (p.negExp ? "−" : "") + p.m + "/" + p.n + "</span></span>";
+  }
+
+  function newProblem(){
+    var p;
+    do { p = YRGen.make(level); } while (p.id === lastId);
+    lastId = p.id;
+    return p;
+  }
+
+  var QN = 10, startedAt = 0;
+  function lbKey(){ return "youngreader:race:" + level; }
+  function lbLabel(){ return ({mixed: "Mixed", books: "Books", authors: "Authors", characters: "Characters"}[level] + ", race to 10"); }
+  function score(){ return dur ? 2 * correct - attempted : correct; }
+  // Race scoring: the most right answers wins; ties go to the faster time.
+  function rawSecs(){ return Math.max(1, Math.round(((overAt || performance.now()) - startedAt) / 1000)); }
+  function timeScore(){ return rawSecs(); }
+  function fmtTime(sec){ sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
+  function fmtScore(n){ return n < 0 ? "−" + (-n) : String(n); }
+  function tally(){ return correct + " right · " + (attempted - correct) + " wrong"; }
+  function lbEsc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function lbGet(){ try { var a = JSON.parse(localStorage.getItem(lbKey()) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function lbSet(a){ try { localStorage.setItem(lbKey(), JSON.stringify(a)); return true; } catch(e){ return false; } }
+  function lbCmp(x, y){ return ((y.c || 0) - (x.c || 0)) || (x.s - y.s) || (x.t - y.t); }
+  function lbQualifies(s, a){
+    var l = lbGet();
+    return l.length < 10 || lbCmp({s: s, c: correct, t: Date.now()}, l[l.length - 1]) < 0;
+  }
+  function lbDate(t){ try { return new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"}); } catch(e){ return ""; } }
+  function renderLB(box, hi){
+    var l = lbGet();
+    var h = "<h3>Your best scores · " + lbEsc(lbLabel()) + "</h3>";
+    if (!l.length) h += "<p class=\"lb-note\">No scores yet. Play a round to set one.</p>";
+    else {
+      h += "<ol>" + l.map(function(r, i){
+        return "<li" + (i === hi ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbDate(r.t) + "</span><span class=\"lb-s\">" + (r.c || 0) + "/" + QN + " <small>in " + fmtTime(r.s) + "</small></span></li>";
+      }).join("") + "</ol>" + "<button type=\"button\" class=\"lb-clear\">Clear my scores</button>";
+    }
+    box.innerHTML = h;
+    var c = box.querySelector(".lb-clear");
+    if (c) c.addEventListener("click", function(){
+      if (c.getAttribute("data-armed")){ lbSet([]); renderLB(els.lbReady, -1); renderLB(els.lbOver, -1); }
+      else { c.setAttribute("data-armed", "1"); c.textContent = "Click again to clear"; }
+    });
+  }
+  // ----- Class leaderboard (shared online, via a Google Sheet) -----
+  // The web address comes from scores-config.js in the same folder. Without it, only personal bests are shown.
+  var GAME_ID = "young-reader";
+  var SCORE_URL = (typeof window.TRIVIA_SCORE_URL === "string") ? window.TRIVIA_SCORE_URL.trim() : "";
+  function cbName(){ try { return localStorage.getItem("trivia:name") || ""; } catch(e){ return ""; } }
+  function cbSaveName(n){ try { localStorage.setItem("trivia:name", n); } catch(e){} }
+  function cbCall(params){
+    var q = Object.keys(params).map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    return fetch(SCORE_URL + "?" + q).then(function(r){ return r.json(); });
+  }
+  // After posting: show who it was posted as, with a way to change the saved name for the next round
+  function nameChanger(msg, name){
+    var wrap = document.createElement("div"); wrap.className = "cb-who";
+    wrap.innerHTML = "Posted as <b></b> · <button type=\"button\" class=\"cb-tbtn\">Change name</button>";
+    wrap.querySelector("b").textContent = name;
+    msg.parentNode.insertBefore(wrap, msg.nextSibling);
+    wrap.querySelector("button").addEventListener("click", function(){
+      wrap.innerHTML = "<div class=\"save-row\"><input type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\">Save</button></div>";
+      var inp = wrap.querySelector("input"), b = wrap.querySelector("button");
+      inp.value = name; inp.focus(); inp.select();
+      function save(){
+        var n = inp.value.trim().slice(0, 15);
+        try { if (n) localStorage.setItem("trivia:name", n); else localStorage.removeItem("trivia:name"); } catch(e){}
+        wrap.innerHTML = n ? "Next round will post as <b></b>." : "Name cleared. You’ll be asked for a name next time.";
+        if (n) wrap.querySelector("b").textContent = n;
+      }
+      b.addEventListener("click", save);
+      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); save(); } });
+    });
+  }
+  function classBoard(){
+    var box = els.classBoard;
+    if (!SCORE_URL){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var setting = "time-" + level + ":" + QN, round = {score: timeScore(), right: correct, wrong: attempted - correct}, posted = false;
+    box.innerHTML = "<h3>Class top 10 · " + lbEsc(lbLabel()) + "</h3>" +
+      (round.score > 0 ? "<div class=\"save-row\"><input id=\"cbName\" type=\"text\" maxlength=\"15\" autocomplete=\"off\" placeholder=\"First name + last initial\"><button type=\"button\" class=\"primary small\" id=\"cbPost\">Post score</button></div>" +
+        "<p class=\"cb-note\">Anyone with the game link can see names on this list.</p>" : "") +
+      "<div class=\"cb-msg\" id=\"cbMsg\"></div><div class=\"cb-list\"><p class=\"lb-note\">Loading the class list…</p></div>";
+    var list = box.querySelector(".cb-list"), msg = box.querySelector("#cbMsg");
+    // Teacher scores are hidden by default; a button below the list shows them.
+    var cbData = null, cbMine = null, cbAll = false;
+    function cbRender(){
+      show(cbData ? (cbAll && cbData.topAll ? cbData.topAll : cbData.top) : null, cbMine);
+      if (cbData && cbData.teachers > 0){
+        var p = document.createElement("p"); p.className = "cb-toggle";
+        p.innerHTML = "<button type=\"button\" class=\"cb-tbtn\">" + (cbAll ? "Hide teacher scores" : "Show teacher scores") + "</button>";
+        list.appendChild(p);
+        p.firstChild.addEventListener("click", function(){ cbAll = !cbAll; cbRender(); });
+      }
+    }
+    function show(top, myId){
+      if (!top){ list.innerHTML = "<p class=\"lb-note\">Couldn’t reach the class leaderboard right now.</p>"; return; }
+      if (!top.length){ list.innerHTML = "<p class=\"lb-note\">No class scores yet. Post yours to be first!</p>"; return; }
+      list.innerHTML = "<ol>" + top.map(function(r){
+        return "<li" + (myId && r.id === myId ? " class=\"me\"" : "") + "><span class=\"lb-n\">" + lbEsc(r.name) + "</span><span class=\"lb-s\">" + (r.right == null ? "" : r.right + "/" + QN + " ") + "<small>in " + fmtTime(r.score) + "</small></span></li>";
+      }).join("") + "</ol>";
+    }
+    cbCall({action: "top", game: GAME_ID, setting: setting})
+      .then(function(d){ if (posted) return; cbData = d && d.ok ? d : null; cbRender(); })
+      .catch(function(){ show(null); });
+    var input = box.querySelector("#cbName"), btn = box.querySelector("#cbPost");
+    if (!input) return;
+    input.value = cbName();
+    function post(){
+      if (posted) return;
+      var name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      btn.disabled = true; msg.className = "cb-msg"; msg.textContent = "Posting…";
+      cbCall({action: "add", game: GAME_ID, setting: setting, name: name, score: round.score, right: round.right, wrong: round.wrong})
+        .then(function(d){
+          if (d && d.ok){
+            posted = true; cbSaveName(name);
+            box.querySelector(".save-row").remove(); box.querySelector(".cb-note").remove();
+            msg.className = "cb-msg okm"; msg.textContent = d.rank > 0 ? "Posted! You’re #" + d.rank + " in the class." : "Posted!"; nameChanger(msg, name);
+            cbData = d; cbMine = d.id; cbRender();
+          } else {
+            btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = (d && d.error) || "That didn’t work. Try again.";
+          }
+        })
+        .catch(function(){ btn.disabled = false; msg.className = "cb-msg err"; msg.textContent = "Couldn’t reach the class leaderboard. Try again."; });
+    }
+    btn.addEventListener("click", post);
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); post(); } });
+    if (input.value.trim()) post(); // auto-submit with the saved name
+  }
+  function afterRound(){
+    classBoard();
+    var title = document.getElementById("overTitle");
+    title.textContent = "Done!";
+    var miss = attempted - correct, ts = timeScore();
+    els.best.className = "";
+    els.best.textContent = correct + " of " + QN + " right in " + fmtTime(ts) + ".";
+    var entry = {s: ts, c: correct, a: attempted, t: Date.now()};
+    if (lbQualifies(ts, attempted)){
+      var l = lbGet(); l.push(entry); l.sort(lbCmp); l = l.slice(0, 10);
+      lbSet(l);
+      var rank = l.indexOf(entry);
+      els.best.textContent += rank === 0 ? " New personal best!" : " That’s #" + (rank + 1) + " on your list.";
+      els.best.className = "new";
+      renderLB(els.lbOver, rank);
+      return;
+    }
+    renderLB(els.lbOver, -1);
+  }
+
+  window.addEventListener("hashchange", function(){ if (state !== "playing") renderLB(els.lbReady, -1); });
+
+  function show(which){
+    els.ready.hidden = which !== "ready";
+    els.play.hidden = which !== "play";
+    els.over.hidden = which !== "over";
+    document.querySelectorAll(".seg-btns button").forEach(function(b){ b.disabled = which === "play"; });
+  }
+
+  function setTimeDisplay(ms){
+    if (!dur){
+      els.time.textContent = Math.min(attempted + 1, QN) + "/" + QN; els.tlbl.textContent = "question";
+      els.fill.style.transform = "scaleX(" + Math.min(1, attempted / QN) + ")"; els.fill.classList.remove("low");
+      return;
+    }
+    els.tlbl.textContent = "time left";
+    var s = Math.ceil(ms / 1000);
+    els.time.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+    els.fill.style.transform = "scaleX(" + Math.max(0, ms / (dur * 1000)) + ")";
+    els.fill.classList.toggle("low", ms <= 15000 && state === "playing");
+  }
+  function updateScore(){ els.right.textContent = fmtScore(score()); els.tried.textContent = attempted ? "points · " + tally() : "points"; if (!dur) setTimeDisplay(0); }
+
+  function reset(){
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer);
+    state = "ready"; cur = null; done = []; locked = false; overAt = 0;
+    correct = 0; attempted = 0; misses = new Map(); roundLog = [];
+    updateScore(); setTimeDisplay(dur * 1000); show("ready"); renderLB(els.lbReady, -1);
+  }
+
+  function start(){
+    reset();
+    state = "playing";
+    cur = newProblem();
+    startedAt = performance.now(); endAt = startedAt + dur * 1000;
+    show("play"); render(false);
+    if (dur) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now){
+    var left = endAt - now;
+    if (left <= 0) { setTimeDisplay(0); finish(); return; }
+    setTimeDisplay(left);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function render(fresh){
+    var h = "";
+    if (done.length){
+      var d = done[done.length - 1];
+      h = "<div class=\"row done" + (fresh ? " fresh" : "") + "\"><span class=\"math\">" + d.p.probH + ":</span> " +
+        (d.ok ? "<span class=\"ok\"><span class=\"math\">" + d.p.ansH + "</span> ✓</span>"
+              : "<span class=\"no\">✗</span> <span class=\"math\">" + d.p.ansH + "</span>") + "</div>";
+    } else {
+      h = "<div class=\"row done\" aria-hidden=\"true\"></div>";
+    }
+    els.history.innerHTML = h;
+    els.prob.innerHTML = cur.bigH;
+    startReveal();
+    els.choices.innerHTML = cur.optH.map(function(o, i){
+      return "<button type=\"button\" class=\"choice\" data-i=\"" + i + "\"><span class=\"tag\">" + "ABCDEF"[i] + "</span><span class=\"math\">" + o + "</span></button>";
+    }).join("");
+  }
+
+  var revealTimer = 0;
+  // Words appear 5 per second, with a 1 second pause before each new clue (at each "/")
+  function startReveal(){
+    clearTimeout(revealTimer);
+    var items = els.prob.querySelectorAll(".clue .w"), shown = 0;
+    function next(){
+      if (shown >= items.length) return;
+      items[shown].classList.add("on"); shown++;
+      if (shown < items.length) revealTimer = setTimeout(next, items[shown].classList.contains("pause") ? 1000 : 200);
+    }
+    next();
+  }
+  function revealAll(){
+    clearTimeout(revealTimer);
+    els.prob.querySelectorAll(".clue .w").forEach(function(w){ w.classList.add("on"); });
+  }
+  function choose(i){
+    if (state !== "playing" || locked || i < 0 || i > 5) return;
+    locked = true;
+    revealAll();
+    var ok = i === cur.answer;
+    roundLog.push({p: cur, ok: ok, pick: i});
+    attempted++;
+    if (ok){ correct++; plusOne(); }
+    else {
+      var m = misses.get(cur.id) || {p: cur, n: 0};
+      m.n++; misses.set(cur.id, m);
+    }
+    updateScore();
+    var btns = els.choices.querySelectorAll(".choice");
+    btns[cur.answer].classList.add("right");
+    if (!ok) btns[i].classList.add("wrong");
+    var last = !dur && attempted >= QN;
+    if (last) overAt = performance.now(); // the race clock stops at the last answer
+    lockTimer = setTimeout(function(){
+      if (state !== "playing") return;
+      if (last){ finish(); return; }
+      done.push({p: cur, ok: ok});
+      if (done.length > 3) done.shift();
+      cur = newProblem();
+      locked = false;
+      render(true);
+    }, last ? 2000 : (ok ? 300 : 1200)); // pause 2 seconds on the last question so the result can be seen
+  }
+
+  function renderRecap(){
+    var box = document.getElementById("recap"); if (!box) return; // (no recap in trivia races)
+    box.innerHTML = "<h3>Your round</h3><ol class=\"recap-list\">" + roundLog.map(function(d){
+      return "<li>" + (d.ok ? "<span class=\"rc-ok\">✓ " + d.p.ansH + "</span>"
+        : "<span class=\"rc-bad\">✗ <s>" + d.p.optH[d.pick] + "</s></span> <span class=\"rc-fix\">" + d.p.ansH + "</span>") + "</li>";
+    }).join("") + "</ol>";
+  }
+  function finish(){
+    state = "over"; overAt = overAt || performance.now();
+    renderRecap();
+    cancelAnimationFrame(raf); clearTimeout(lockTimer); clearInterval(revealTimer); locked = false;
+    els.fRight.textContent = correct + "/" + QN;
+    els.fTried.textContent = tally();
+    afterRound();
+    var list = Array.from(misses.values()).slice(0, 12);
+    els.missList.innerHTML = list.map(function(m){
+      return "<li><div class=\"mq\">" + m.p.probH + ": <b>" + m.p.ansH + "</b></div><div class=\"mw\">" + m.p.steps + "</div></li>";
+    }).join("");
+    els.missWrap.hidden = true; // trivia races show only the leaderboards, no review list
+    els.clean.hidden = true;
+    show("over");
+  }
+
+  document.querySelectorAll(".seg-btns").forEach(function(group){
+    group.addEventListener("click", function(e){
+      var btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      var setting = group.getAttribute("data-setting");
+      var v = btn.getAttribute("data-v");
+      if (setting === "level") level = v; else if (setting === "order") clueOrder = v; else dur = parseInt(v, 10);
+      group.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      btn.blur();
+      reset();
+    });
+  });
+
+  $("startBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+  $("againBtn").addEventListener("click", function(e){ e.currentTarget.blur(); start(); });
+
+  els.choices.addEventListener("click", function(e){
+    var btn = e.target.closest(".choice"); if (!btn) return;
+    btn.blur();
+    choose(parseInt(btn.getAttribute("data-i"), 10));
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (state === "playing") {
+      var idx = "123456".indexOf(k);
+      if (idx < 0) idx = "abcdef".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx >= 0) { e.preventDefault(); choose(idx); }
+      else if (k === "x" || k === "X" || k === "Escape") { e.preventDefault(); reset(); }
+      else if (k === " " || k === "Enter") { e.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "Enter") {
+      e.preventDefault();
+      if (state === "over" && performance.now() - overAt < 800) return;
+      start();
+    } else if (k === "x" || k === "X" || k === "Escape") {
+      e.preventDefault(); reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+<script>if (/claude/.test(location.hostname) || location.protocol === "blob:") document.querySelectorAll("[data-home]").forEach(function(a){ a.hidden = true; });</script>
+</body>
+</html>
